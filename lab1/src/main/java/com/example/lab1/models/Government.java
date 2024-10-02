@@ -1,5 +1,8 @@
 package com.example.lab1.models;
 
-public class Government {
-    
+public enum Government {
+    DICTATORSHIP,
+    NOOCRACY,
+    REPUBLIC,
+    STRATOCRACY;
 }
