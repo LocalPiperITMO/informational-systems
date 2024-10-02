@@ -1,4 +1,4 @@
-package com.example.lab1.models;
+package com.example.backend.model;
 
 public enum Climate {
     MONSOON,
