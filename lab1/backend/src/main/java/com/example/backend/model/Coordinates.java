@@ -1,13 +1,22 @@
 package com.example.backend.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@Embeddable
 public class Coordinates {
-    private Long x; //Максимальное значение поля: 443, Поле не может быть null
-    private int y; //Максимальное значение поля: 273
+    @Column(nullable = false) // Ensure this field cannot be null
+    private Long x; // Max value: 443
+
+    @Column(nullable = false) // Ensure this field cannot be null
+    private int y; // Max value: 273
+
     public Coordinates(Long x, int y) {
         this.x = x;
         this.y = y;

@@ -4,7 +4,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.example.backend.model.City;
 
-public interface CityRepository extends CrudRepository<City, Long>{
+public interface CityRepository extends CrudRepository<City, Integer>{
     
     City findByName(String name);
 }

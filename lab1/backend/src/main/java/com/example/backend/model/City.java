@@ -2,34 +2,77 @@ package com.example.backend.model;
 
 import java.time.ZonedDateTime;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Entity
 public class City {
-    private int id; //Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
-    private String name; //Поле не может быть null, Строка не может быть пустой
-    private Coordinates coordinates; //Поле не может быть null
-    private ZonedDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
-    private double area; //Значение поля должно быть больше 0
-    private int population; //Значение поля должно быть больше 0
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Automatically generate ID
+    private int id; // Auto-generated ID should be unique and greater than 0
+
+    @Column(nullable = false)
+    private String name; // Must not be null
+
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "x", column = @Column(name = "coordinate_x", nullable = false)),
+        @AttributeOverride(name = "y", column = @Column(name = "coordinate_y", nullable = false))
+    })
+    private Coordinates coordinates; // Must not be null
+
+    @Column(nullable = false)
+    private ZonedDateTime creationDate; // Automatically generated
+
+    @Column(nullable = false)
+    private double area; // Must be greater than 0
+
+    @Column(nullable = false)
+    private int population; // Must be greater than 0
+
     private ZonedDateTime establishmentDate;
     private boolean capital;
+
+    @Column(name = "meters_above_sea_level")
     private Float metersAboveSeaLevel;
-    private long telephoneCode; //Значение поля должно быть больше 0, Максимальное значение поля: 100000
-    private Climate climate; //Поле не может быть null
-    private Government government; //Поле может быть null
-    private Human governor; //Поле может быть null
-    public City(String name, Coordinates coordinates, double area, int population, Climate climate, Government government, Human human) {
+
+    @Column(nullable = false)
+    private long telephoneCode; // Must be greater than 0, max: 100000
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Climate climate; // Must not be null
+
+    @Enumerated(EnumType.STRING)
+    private Government government; // Can be null
+
+    @Embedded
+    private Human governor; // Can be null
+
+    public City() {
+        // No-args constructor for JPA
+    }
+
+    public City(String name, Coordinates coordinates, double area, int population, Climate climate, Government government, Human governor) {
         this.name = name;
         this.coordinates = coordinates;
-        this.creationDate = java.time.ZonedDateTime.now();
+        this.creationDate = ZonedDateTime.now();
         this.area = area;
         this.population = population;
         this.climate = climate;
         this.government = government;
-        this.governor = human;
+        this.governor = governor;
     }
 }
-
