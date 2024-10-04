@@ -67,7 +67,9 @@ const AuthForm: React.FC = () => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              pattern=".{6,}"
               required
+              title="6 characters minimum"
             />
           </label>
         </div>
