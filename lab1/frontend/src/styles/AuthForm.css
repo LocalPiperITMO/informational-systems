@@ -1,0 +1,49 @@
+/* styles/AuthForm.css */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0; /* Remove default padding */
+    display: block; /* Ensure body uses block display */
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Makes sure the footer is at the bottom */
+    width: 100%; /* Full width of the viewport */
+}
+
+.header {
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+    width: 100%; /* Ensure header takes full width */
+}
+
+.footer {
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+    width: 100%; /* Ensure footer takes full width */
+    margin-top: auto; /* Push footer to the bottom */
+}
+
+.form-container {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center;    /* Center vertically */
+    flex-grow: 1;           /* Allow container to grow */
+    width: 100%;            /* Full width for the container */
+}
+
+form {
+    width: 100%;            /* Full width for smaller screens */
+    max-width: 400px;      /* Maximum width for larger screens */
+    padding: 20px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    background-color: #f8f9fa; /* Bootstrap light background */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
+}

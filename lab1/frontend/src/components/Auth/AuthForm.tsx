@@ -3,6 +3,7 @@ import { useAuth } from "../../AuthContext";
 import { useNavigate } from "react-router-dom";
 import Header from "../Header";
 import Footer from "../Footer";
+import '../../styles/AuthForm.css'; // Import the CSS file
 
 const AuthForm: React.FC = () => {
   const [isRegister, setIsRegister] = useState(false);
@@ -47,41 +48,47 @@ const AuthForm: React.FC = () => {
     }
   };
 
-
   return (
-    <div>
+    <div className="wrapper">
       <Header role=""/>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>
-            Username:
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Password:
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              pattern=".{6,}"
-              required
-              title="6 characters minimum"
-            />
-          </label>
-        </div>
-        {error && <div style={{ color: 'red' }}>{error}</div>}
-        {successMessage && <div style={{ color: 'green' }}>{successMessage}</div>}
-        <button type="submit">{isRegister ? 'Register' : 'Login'}</button>
-      </form>
-      <button onClick={() => setIsRegister(!isRegister)}>
+      <div className="form-container">
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label>
+              Username:
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                className="form-control"
+              />
+            </label>
+          </div>
+          <div>
+            <label>
+              Password:
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                pattern=".{6,}"
+                required
+                title="6 characters minimum"
+                className="form-control"
+              />
+            </label>
+          </div>
+          {error && <div style={{ color: 'red' }}>{error}</div>}
+          {successMessage && <div style={{ color: 'green' }}>{successMessage}</div>}
+          <button type="submit" className="btn btn-primary">
+            {isRegister ? 'Register' : 'Login'}
+          </button>
+        </form>
+      </div>
+
+      <button className="btn btn-link" onClick={() => setIsRegister(!isRegister)}>
         Switch to {isRegister ? 'Login' : 'Register'}
       </button>
 
