@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-// Data structure to represent the tables
+
 interface TableData {
   name: string;
   data: Array<Record<string, any>>;
@@ -12,16 +12,16 @@ const Table: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const tableNames = ["User Information", "Product List", "Course Offerings"];
+  const tableNames = ["Cities", "Coordinates", "Humans"];
 
   // Function to fetch data for the tables
   const fetchData = async () => {
     try {
       setLoading(true);
       const responses = await Promise.all([
-        fetch('/api/user-info'), // Endpoint for User Information
-        fetch('/api/product-list'), // Endpoint for Product List
-        fetch('/api/course-offerings') // Endpoint for Course Offerings
+        fetch('/api/data/cities', { cache: 'no-store'}), // Endpoint for User Information
+        fetch('/api/data/coordinates', { cache: 'no-store'}), // Endpoint for Product List
+        fetch('/api/data/humans', { cache: 'no-store'}) // Endpoint for Course Offerings
       ]);
 
       if (!responses.every(res => res.ok)) {

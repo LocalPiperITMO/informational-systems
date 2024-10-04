@@ -19,7 +19,7 @@ import com.example.backend.validation.AuthValidator;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
 @CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
     @Autowired

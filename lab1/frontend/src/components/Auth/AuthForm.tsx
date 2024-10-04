@@ -19,7 +19,7 @@ const AuthForm: React.FC = () => {
     setError('');
     setSuccessMessage('');
 
-    const url = isRegister ? 'http://localhost:8080/api/register' : 'http://localhost:8080/api/login';
+    const url = isRegister ? 'http://localhost:8080/api/auth/register' : 'http://localhost:8080/api/auth/login';
     const data = { username, password };
 
     try {
