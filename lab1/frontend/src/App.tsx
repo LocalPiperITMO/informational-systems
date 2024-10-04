@@ -13,7 +13,6 @@ const App: React.FC = () => {
           <Route
             path="/main"
             element={
-              // unauthorized user will be redirected back to auth
               <PrivateRoute>
                 <MainPage />
               </PrivateRoute>
