@@ -1,6 +1,8 @@
 import React from 'react';
 import { useAuth } from '../../AuthContext';
 import { useNavigate } from 'react-router-dom';
+import Header from '../Header';
+import Footer from '../Footer';
 
 const MainPage: React.FC<{ username: string }> = ({ username }) => {
   const { logout } = useAuth();
@@ -13,11 +15,7 @@ const MainPage: React.FC<{ username: string }> = ({ username }) => {
 
   return (
     <div>
-      <header style={{ backgroundColor: 'green', color: 'white', padding: '10px' }}>
-        <h1>Informational Systems</h1>
-        <h2>Lab 1</h2>
-        <h3>Num. 12086</h3>
-      </header>
+      <Header role={"user"} />
 
       <div style={{ display: 'flex', padding: '20px' }}>
         <aside style={{ flex: '1', marginRight: '20px' }}>
@@ -36,9 +34,7 @@ const MainPage: React.FC<{ username: string }> = ({ username }) => {
         </div>
       </div>
 
-      <footer style={{ backgroundColor: 'green', color: 'white', padding: '10px' }}>
-        <p>Contact: your.email@example.com | GitHub: your-github | Telegram: @your-telegram</p>
-      </footer>
+      <Footer role={"user"} />
     </div>
   );
 };
