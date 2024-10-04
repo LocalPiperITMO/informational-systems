@@ -1,7 +1,10 @@
 package com.example.backend.model;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,16 +12,25 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@Embeddable
+@Entity
 public class Coordinates {
-    @Column(nullable = false) // Ensure this field cannot be null
-    private Long x; // Max value: 443
 
-    @Column(nullable = false) // Ensure this field cannot be null
-    private int y; // Max value: 273
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id; // Auto-generated ID for Coordinates
 
+    @Column(nullable = false) // Cannot be null, with a maximum value of 443
+    private Long x;
+
+    @Column(nullable = false) // Cannot be null, with a maximum value of 273
+    private int y;
+
+
+    // Constructor with parameters
     public Coordinates(Long x, int y) {
         this.x = x;
         this.y = y;
     }
+
+    // Getters and Setters omitted for brevity
 }
