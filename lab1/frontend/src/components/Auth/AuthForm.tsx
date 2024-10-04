@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useAuth } from "../../AuthContext";
 import { useNavigate } from "react-router-dom";
+import Header from "../Header";
+import Footer from "../Footer";
 
 const AuthForm: React.FC = () => {
   const [isRegister, setIsRegister] = useState(false);
@@ -48,6 +50,8 @@ const AuthForm: React.FC = () => {
 
   return (
     <div>
+      <Header role=""/>
+
       <form onSubmit={handleSubmit}>
         <div>
           <label>
@@ -80,6 +84,8 @@ const AuthForm: React.FC = () => {
       <button onClick={() => setIsRegister(!isRegister)}>
         Switch to {isRegister ? 'Login' : 'Register'}
       </button>
+
+      <Footer role=""/>
     </div>
   );
 };
