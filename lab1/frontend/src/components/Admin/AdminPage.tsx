@@ -2,7 +2,7 @@ import React from 'react';
 import { useAuth } from '../../AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-const AdminPage: React.FC = () => {
+const AdminPage: React.FC<{ username: string }> = ({ username }) => {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -13,24 +13,47 @@ const AdminPage: React.FC = () => {
 
   return (
     <div>
-      <h1>Admin Page</h1>
-      {}
-      <p>This is where the main content will go.</p>
-      <Clock />
-      <button onClick={handleLogout}>Logout</button>
+      <header style={{ backgroundColor: 'red', color: 'white', padding: '10px' }}>
+        <h1>Informational Systems</h1>
+        <h2>Lab 1</h2>
+        <h3>Num. 12086</h3>
+      </header>
+
+      <div style={{ display: 'flex', padding: '20px' }}>
+        <aside style={{ flex: '1', marginRight: '20px' }}>
+          <h2>Welcome to Admin Panel, {username}</h2>
+          <button>Create</button>
+          <button>Update</button>
+          <button>Delete</button>
+          <button>Visual</button>
+          <button>Spec</button>
+          <button onClick={handleLogout}>Logout</button>
+          <button>Show Requests</button>
+        </aside>
+
+        <div style={{ flex: '3', overflow: 'auto', height: '400px', border: '1px solid black' }}>
+          <Table />
+        </div>
+      </div>
+
+      <footer style={{ backgroundColor: 'red', color: 'white', padding: '10px' }}>
+        <p>Contact: your.email@example.com | GitHub: your-github | Telegram: @your-telegram</p>
+      </footer>
     </div>
   );
 };
 
-const Clock: React.FC = () => {
-  const [time, setTime] = React.useState(new Date());
-
-  React.useEffect(() => {
-    const timerId = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(timerId);
-  }, []);
-
-  return <div>{time.toLocaleTimeString()}</div>;
+const Table: React.FC = () => {
+  return (
+    <div>
+      <div style={{ marginBottom: '20px' }}>Table 1</div>
+      {/* Add table implementation for table 1 */}
+      <div style={{ marginBottom: '20px' }}>Table 2</div>
+      {/* Add table implementation for table 2 */}
+      <div style={{ marginBottom: '20px' }}>Table 3</div>
+      {/* Add table implementation for table 3 */}
+    </div>
+  );
 };
 
 export default AdminPage;
