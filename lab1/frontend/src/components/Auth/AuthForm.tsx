@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../AuthContext';
 
 const AuthForm: React.FC = () => {
   const [isRegister, setIsRegister] = useState(false);
@@ -7,6 +8,7 @@ const AuthForm: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -33,6 +35,7 @@ const AuthForm: React.FC = () => {
 
       const result = await response.json();
       setSuccessMessage(result.message);
+      login();
       navigate('/main');
 
     } catch (err: any) {
