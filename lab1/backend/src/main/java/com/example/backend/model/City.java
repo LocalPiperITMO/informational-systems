@@ -26,7 +26,7 @@ public class City {
    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id; // Auto-generated ID (must be unique and greater than 0)
+    private Long id; // Auto-generated ID (must be unique and greater than 0)
 
     @Column(nullable = false)
     private String name; // Cannot be null, cannot be empty
