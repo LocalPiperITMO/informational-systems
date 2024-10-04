@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './AuthContext';
 import AuthForm from './components/Auth/AuthForm';
 import MainPage from './components/Main/MainPage';
+import AdminPage from './components/Admin/AdminPage';
 
 const App: React.FC = () => {
   return (
@@ -13,11 +14,18 @@ const App: React.FC = () => {
           <Route
             path="/main"
             element={
-              <PrivateRoute>
+              <PrivateRoute allowedRoles={['user']}>
                 <MainPage />
               </PrivateRoute>
             }
           />
+          <Route
+            path="/admin"
+            element={
+              <PrivateRoute allowedRoles={['admin']}>
+                <AdminPage />
+            </PrivateRoute>
+            }/>
           <Route path="*" element={<Navigate to="/auth" />} />
         </Routes>
       </Router>
@@ -25,9 +33,19 @@ const App: React.FC = () => {
   );
 };
 
-const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
-  const { isAuthenticated } = useAuth();
-  return isAuthenticated ? children : <Navigate to="/auth" />;
+const PrivateRoute: React.FC<{ children: JSX.Element; allowedRoles: string[] }> = ({ children, allowedRoles }) => {
+  const { isAuthenticated, isAdmin } = useAuth();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/auth" />;
+  }
+
+  if (allowedRoles.includes('admin') && !isAdmin) {
+    return <Navigate to="/main" />;
+  }
+
+  return children;
 };
+
 
 export default App;

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../AuthContext';
+import { useState } from "react";
+import { useAuth } from "../../AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const AuthForm: React.FC = () => {
   const [isRegister, setIsRegister] = useState(false);
@@ -35,13 +35,16 @@ const AuthForm: React.FC = () => {
 
       const result = await response.json();
       setSuccessMessage(result.message);
-      login();
-      navigate('/main');
+      
+      login(result.admin);
+
+      navigate(result.admin ? '/admin' : '/main');
 
     } catch (err: any) {
       setError(err.message);
     }
   };
+
 
   return (
     <div>

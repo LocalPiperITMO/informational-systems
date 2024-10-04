@@ -35,7 +35,7 @@ public class AuthController {
                 return ResponseEntity.ok(new AuthResponse("Login successful for user", authRequest.getUsername(), user.isAdmin()));
             }
         }
-        return ResponseEntity.status(401).body(new AuthResponse("Invalid username/password", authRequest.getUsername(), false));
+        return ResponseEntity.status(401).body(new AuthResponse("Invalid username/password", null, false));
     }
      
     @PostMapping("/register")
@@ -44,7 +44,7 @@ public class AuthController {
         User user = userRepository.findByUsername(authRequest.getUsername());
         if (user == null) {
             if (!AuthValidator.validateUsername(authRequest.getUsername()) || !AuthValidator.validatePassword(authRequest.getPassword())) {
-                return ResponseEntity.status(422).body(new AuthResponse("User data did not pass validation", authRequest.getUsername(), false));
+                return ResponseEntity.status(422).body(new AuthResponse("User data did not pass validation", null, false));
             }
             boolean isAdmin = userRepository.count() == 0;
             PasswordHasher.HashedPassword hashedPassword = PasswordHasher.hashPassword(authRequest.getPassword());
@@ -52,6 +52,6 @@ public class AuthController {
             userRepository.save(newUser);
             return ResponseEntity.ok(new AuthResponse("Registration successful for user", authRequest.getUsername(), isAdmin));
         }
-        return ResponseEntity.status(409).body(new AuthResponse("Username already in use", authRequest.getUsername(), false));
+        return ResponseEntity.status(409).body(new AuthResponse("Username already in use", null, false));
     }
 }
