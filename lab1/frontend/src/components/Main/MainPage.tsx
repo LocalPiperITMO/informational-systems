@@ -3,9 +3,10 @@ import { useAuth } from '../../AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Header from '../Header';
 import Footer from '../Footer';
+import Table from '../Table';
 
-const MainPage: React.FC<{ username: string }> = ({ username }) => {
-  const { logout } = useAuth();
+const MainPage: React.FC = () => {
+  const { logout, username } = useAuth(); // Add username from context
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -16,10 +17,9 @@ const MainPage: React.FC<{ username: string }> = ({ username }) => {
   return (
     <div>
       <Header role={"user"} />
-
       <div style={{ display: 'flex', padding: '20px' }}>
         <aside style={{ flex: '1', marginRight: '20px' }}>
-          <h2>Welcome to Main Page, {username}</h2>
+          <h2>Welcome to Main Page, {username}</h2> {/* Display username */}
           <button>Create</button>
           <button>Update</button>
           <button>Delete</button>
@@ -33,23 +33,10 @@ const MainPage: React.FC<{ username: string }> = ({ username }) => {
           <Table />
         </div>
       </div>
-
       <Footer role={"user"} />
     </div>
   );
 };
 
-const Table: React.FC = () => {
-  return (
-    <div>
-      <div style={{ marginBottom: '20px' }}>Table 1</div>
-      {/* Add table implementation for table 1 */}
-      <div style={{ marginBottom: '20px' }}>Table 2</div>
-      {/* Add table implementation for table 2 */}
-      <div style={{ marginBottom: '20px' }}>Table 3</div>
-      {/* Add table implementation for table 3 */}
-    </div>
-  );
-};
-
+// Export MainPage component
 export default MainPage;

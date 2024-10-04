@@ -39,7 +39,7 @@ const AuthForm: React.FC = () => {
       const result = await response.json();
       setSuccessMessage(result.message);
       
-      login(result.admin);
+      login(result.admin, result.username);
 
       navigate(result.admin ? '/admin' : '/main');
 
