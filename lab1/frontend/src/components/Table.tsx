@@ -1,84 +1,109 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-// Mock Data for the three tables, including names
-const tables = [
-  {
-    name: "User Information",
-    data: [
-      { name: 'Alice', age: 25, city: 'New York' },
-      { name: 'Bob', age: 30, city: 'Los Angeles' },
-      { name: 'Charlie', age: 35, city: 'Chicago' },
-    ],
-  },
-  {
-    name: "Product List",
-    data: [
-      { product: 'Laptop', price: 999, inStock: true },
-      { product: 'Phone', price: 699, inStock: false },
-      { product: 'Tablet', price: 499, inStock: true },
-      { product: 'Laptop', price: 999, inStock: true },
-      { product: 'Phone', price: 699, inStock: false },
-      { product: 'Tablet', price: 499, inStock: true },
-      { product: 'Laptop', price: 999, inStock: true },
-      { product: 'Phone', price: 699, inStock: false },
-      { product: 'Tablet', price: 499, inStock: true },
-    ],
-  },
-  {
-    name: "Course Offerings",
-    data: [
-      { course: 'Math', instructor: 'Dr. Smith', duration: '10 weeks' },
-      { course: 'History', instructor: 'Prof. Johnson', duration: '8 weeks' },
-      { course: 'Science', instructor: 'Dr. Brown', duration: '12 weeks' },
-    ],
-  },
-];
+// Data structure to represent the tables
+interface TableData {
+  name: string;
+  data: Array<Record<string, any>>;
+}
 
 const Table: React.FC = () => {
+  const [tables, setTables] = useState<TableData[]>([]);
   const [currentTable, setCurrentTable] = useState(0);
-  const { name: tableName, data } = tables[currentTable];
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Function to switch to the next table
+  const tableNames = ["User Information", "Product List", "Course Offerings"];
+
+  // Function to fetch data for the tables
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const responses = await Promise.all([
+        fetch('/api/user-info'), // Endpoint for User Information
+        fetch('/api/product-list'), // Endpoint for Product List
+        fetch('/api/course-offerings') // Endpoint for Course Offerings
+      ]);
+
+      if (!responses.every(res => res.ok)) {
+        throw new Error("Failed to fetch data for one or more tables.");
+      }
+
+      const data = await Promise.all(responses.map(res => res.json()));
+
+      const formattedTables = data.map((tableData, index) => {
+        return {
+          name: tableNames[index],
+          data: tableData,
+        };
+      });
+
+      setTables(formattedTables);
+    } catch (err : any) {
+      setError(err.message);
+      setTables(tableNames.map(name => ({ name, data: [] }))); // Prepare empty data
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const nextTable = () => {
     setCurrentTable((prevTable) => (prevTable + 1) % tables.length);
   };
 
-  // Function to switch to the previous table
   const prevTable = () => {
     setCurrentTable((prevTable) => (prevTable - 1 + tables.length) % tables.length);
   };
 
+  // Fixed data for the current table
+  const currentTableData = tables[currentTable];
+
   return (
     <div style={{ width: '500px', height: '300px', border: '1px solid black', padding: '10px', position: 'relative', display: 'flex', flexDirection: 'column' }}>
-      {/* Table Name */}
-      <div style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: '10px' }}>
-        {tableName}
+      {/* Fixed Table Name */}
+      <div style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: '10px', position: 'sticky', top: 0, background: 'white', zIndex: 2 }}>
+        {currentTableData ? currentTableData.name : ''}
       </div>
 
       <div style={{ overflow: 'auto', flexGrow: 1 }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              {data.length > 0 &&
-                Object.keys(data[0]).map((key) => (
-                  <th key={key} style={{ border: '1px solid black', padding: '8px' }}>
-                    {key}
-                  </th>
-                ))}
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((row, index) => (
-              <tr key={index}>
-                {Object.values(row).map((value, i) => (
-                  <td key={i} style={{ border: '1px solid black', padding: '8px' }}>
-                    {value !== undefined ? String(value) : '-'}
-                  </td>
-                ))}
+        {loading ? (
+          <div>Loading...</div>
+        ) : error ? (
+          <div style={{ color: 'red', textAlign: 'center' }}>
+            Error: {error}
+          </div>
+        ) : currentTableData.data.length === 0 ? (
+          <div style={{ textAlign: 'center' }}>
+            No data available.
+          </div>
+        ) : (
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr>
+                {currentTableData.data.length > 0 &&
+                  Object.keys(currentTableData.data[0]).map((key) => (
+                    <th key={key} style={{ border: '1px solid black', padding: '8px' }}>
+                      {key}
+                    </th>
+                  ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {currentTableData.data.map((row, index) => (
+                <tr key={index}>
+                  {Object.values(row).map((value, i) => (
+                    <td key={i} style={{ border: '1px solid black', padding: '8px' }}>
+                      {value !== undefined ? String(value) : '-'}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center', position: 'absolute', bottom: '10px', left: '50%', transform: 'translateX(-50%)', width: '100%', zIndex: 1 }}>
