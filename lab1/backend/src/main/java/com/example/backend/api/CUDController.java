@@ -18,7 +18,9 @@ import com.example.backend.dto.HumanRequest;
 import com.example.backend.model.City;
 import com.example.backend.model.Coordinates;
 import com.example.backend.model.Human;
-import com.example.backend.service.CUDService;
+import com.example.backend.service.CityService;
+import com.example.backend.service.CoordinatesService;
+import com.example.backend.service.HumanService;
 
 @RestController
 @RequestMapping("/api/logic")
@@ -26,13 +28,19 @@ import com.example.backend.service.CUDService;
 public class CUDController {
 
     @Autowired
-    private CUDService cudService;
+    private CityService cityService;
+
+    @Autowired
+    private CoordinatesService coordinatesService;
+
+    @Autowired
+    private HumanService humanService;
 
     // City Endpoints
     @PostMapping("/createCity")
     public ResponseEntity<List<City>> createCity(@RequestBody CityRequest request) {
         try {
-            List<City> cities = cudService.createCity(request);
+            List<City> cities = cityService.createCity(request);
             return ResponseEntity.status(201).body(cities);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(null);
@@ -42,7 +50,7 @@ public class CUDController {
     @PostMapping("/updateCity")
     public ResponseEntity<List<City>> updateCity(@RequestBody CityRequest request) {
         try {
-            List<City> cities = cudService.updateCity(request);
+            List<City> cities = cityService.updateCity(request);
             return ResponseEntity.ok(cities);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(null);
@@ -51,7 +59,7 @@ public class CUDController {
 
     @DeleteMapping("/deleteCity")
     public ResponseEntity<List<City>> deleteCity(@PathVariable Long id) {
-        List<City> cities = cudService.deleteCity(id);
+        List<City> cities = cityService.deleteCity(id);
         return ResponseEntity.ok(cities);
     }
 
@@ -59,7 +67,7 @@ public class CUDController {
     @PostMapping("/createCoordinates")
     public ResponseEntity<List<Coordinates>> createCoordinates(@RequestBody CoordinatesRequest request) {
         try {
-            List<Coordinates> coordinatesList = cudService.createCoordinates(request);
+            List<Coordinates> coordinatesList = coordinatesService.createCoordinates(request);
             return ResponseEntity.status(201).body(coordinatesList);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(null);
@@ -69,7 +77,7 @@ public class CUDController {
     @PostMapping("/updateCoordinates")
     public ResponseEntity<List<Coordinates>> updateCoordinates(@RequestBody CoordinatesRequest request) {
         try {
-            List<Coordinates> coordinatesList = cudService.updateCoordinates(request);
+            List<Coordinates> coordinatesList = coordinatesService.updateCoordinates(request);
             return ResponseEntity.ok(coordinatesList);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(null);
@@ -78,7 +86,7 @@ public class CUDController {
 
     @DeleteMapping("/deleteCoordinates")
     public ResponseEntity<List<Coordinates>> deleteCoordinates(@PathVariable Long id) {
-        List<Coordinates> coordinatesList = cudService.deleteCoordinates(id);
+        List<Coordinates> coordinatesList = coordinatesService.deleteCoordinates(id);
         return ResponseEntity.ok(coordinatesList);
     }
 
@@ -86,7 +94,7 @@ public class CUDController {
     @PostMapping("/createHuman")
     public ResponseEntity<List<Human>> createHuman(@RequestBody HumanRequest request) {
         try {
-            List<Human> humans = cudService.createHuman(request);
+            List<Human> humans = humanService.createHuman(request);
             return ResponseEntity.status(201).body(humans);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(null);
@@ -96,7 +104,7 @@ public class CUDController {
     @PostMapping("/updateHuman")
     public ResponseEntity<List<Human>> updateHuman(@RequestBody HumanRequest request) {
         try {
-            List<Human> humans = cudService.updateHuman(request);
+            List<Human> humans = humanService.updateHuman(request);
             return ResponseEntity.ok(humans);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(null);
@@ -105,7 +113,7 @@ public class CUDController {
 
     @DeleteMapping("/deleteHuman")
     public ResponseEntity<List<Human>> deleteHuman(@PathVariable Long id) {
-        List<Human> humans = cudService.deleteHuman(id);
+        List<Human> humans = humanService.deleteHuman(id);
         return ResponseEntity.ok(humans);
     }
 }
