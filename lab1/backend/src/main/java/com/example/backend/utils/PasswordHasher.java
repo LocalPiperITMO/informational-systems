@@ -3,7 +3,10 @@ package com.example.backend.utils;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.Base64;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 public class PasswordHasher {
 
@@ -18,13 +21,11 @@ public class PasswordHasher {
         byte[] salt = generateSalt();
         byte[] hashedPassword = hashPasswordWithSalt(password, salt);
 
-        return new HashedPassword(Base64.getEncoder().encodeToString(hashedPassword),
-                                  Base64.getEncoder().encodeToString(salt));
+        return new HashedPassword(hashedPassword, salt);
     }
 
-    public static String retrievePassword(String password, byte[] salt) {
-        byte[] hashedPassword = hashPasswordWithSalt(password, salt);
-        return Base64.getEncoder().encodeToString(hashedPassword);
+    public static byte[] retrievePassword(String password, byte[] salt) {
+        return hashPasswordWithSalt(password, salt);
     }
     
     private static byte[] hashPasswordWithSalt(String password, byte[] salt) {
@@ -36,22 +37,11 @@ public class PasswordHasher {
             throw new RuntimeException("Error hashing password", e);
         }
     }
-
+    @Getter
+    @Setter
+    @AllArgsConstructor
     public static class HashedPassword {
-        private final String hashedPassword;
-        private final String salt;
-
-        public HashedPassword(String hashedPassword, String salt) {
-            this.hashedPassword = hashedPassword;
-            this.salt = salt;
-        }
-
-        public String getHashedPassword() {
-            return hashedPassword;
-        }
-
-        public String getSalt() {
-            return salt;
-        }
+        private final byte[] hashedPassword;
+        private final byte[] salt;
     }
 }

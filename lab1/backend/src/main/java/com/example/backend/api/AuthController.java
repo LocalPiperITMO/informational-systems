@@ -1,5 +1,7 @@
 package com.example.backend.api;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -27,8 +29,8 @@ public class AuthController {
         System.out.println("Login attempt - Username: " + authRequest.getUsername());
         User user = userRepository.findByUsername(authRequest.getUsername());
         if (user != null) {
-            String hashedPassword = PasswordHasher.retrievePassword(authRequest.getPassword(), user.getSalt().getBytes());
-            if (hashedPassword.equals(user.getPassword())) {
+            byte[] hashedPassword = PasswordHasher.retrievePassword(authRequest.getPassword(), user.getSalt());
+            if (Arrays.equals(hashedPassword, user.getPassword())) {
                 return ResponseEntity.ok(new AuthResponse("Login successful for user", authRequest.getUsername()));
             }
         }

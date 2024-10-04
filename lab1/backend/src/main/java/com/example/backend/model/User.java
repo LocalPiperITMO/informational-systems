@@ -24,12 +24,12 @@ public class User {
     private String username;
 
     @Column(nullable=false)
-    private String password;
+    private byte[] password;
 
     @Column(nullable=false)
-    private String salt;
+    private byte[] salt;
 
-    public User(String username, String password, String salt) {
+    public User(String username, byte[] password, byte[] salt) {
         this.username = username;
         this.password = password;
         this.salt= salt;
