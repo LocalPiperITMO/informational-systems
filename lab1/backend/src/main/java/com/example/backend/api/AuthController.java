@@ -15,6 +15,7 @@ import com.example.backend.dto.AuthResponse;
 import com.example.backend.model.User;
 import com.example.backend.repo.UserRepository;
 import com.example.backend.utils.PasswordHasher;
+import com.example.backend.validation.AuthValidator;
 
 
 @RestController
@@ -42,6 +43,9 @@ public class AuthController {
         System.out.println("Registration attempt - Username: " + authRequest.getUsername());
         User user = userRepository.findByUsername(authRequest.getUsername());
         if (user == null) {
+            if (!AuthValidator.validateUsername(authRequest.getUsername()) || !AuthValidator.validatePassword(authRequest.getPassword())) {
+                return ResponseEntity.status(422).body(new AuthResponse("User data did not pass validation", authRequest.getUsername(), false));
+            }
             boolean isAdmin = userRepository.count() == 0;
             PasswordHasher.HashedPassword hashedPassword = PasswordHasher.hashPassword(authRequest.getPassword());
             User newUser = new User(authRequest.getUsername(), hashedPassword.getHashedPassword(), hashedPassword.getSalt(), isAdmin);
