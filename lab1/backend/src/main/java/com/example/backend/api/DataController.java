@@ -14,9 +14,9 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.backend.model.City;
 import com.example.backend.model.Coordinates;
 import com.example.backend.model.Human;
-import com.example.backend.repo.CityRepository;
-import com.example.backend.repo.CoordinatesRepository;
-import com.example.backend.repo.HumanRepository;
+import com.example.backend.service.CityService;
+import com.example.backend.service.CoordinatesService;
+import com.example.backend.service.HumanService;
 
 @RestController
 @RequestMapping("/api/data")
@@ -24,18 +24,18 @@ import com.example.backend.repo.HumanRepository;
 public class DataController {
 
     @Autowired
-    private CityRepository cityRepository;
+    private CityService cityService;
 
     @Autowired
-    private CoordinatesRepository coordinatesRepository;
+    private CoordinatesService coordinatesService;
 
     @Autowired
-    private HumanRepository humanRepository;
+    private HumanService humanService;
 
     @GetMapping("/cities")
     public ResponseEntity<List<City>> getAllCities() {
         try {
-            List<City> cities = cityRepository.findAll();
+            List<City> cities = cityService.findAllCities();
             if (cities.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
             }
@@ -48,7 +48,7 @@ public class DataController {
     @GetMapping("/coordinates")
     public ResponseEntity<List<Coordinates>> getAllCoordinates() {
         try {
-            List<Coordinates> coordinates = coordinatesRepository.findAll();
+            List<Coordinates> coordinates = coordinatesService.findAllCoordinates();
             if (coordinates.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
             }
@@ -57,11 +57,11 @@ public class DataController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching coordinates", e);
         }
     }
-    
+
     @GetMapping("/humans")
     public ResponseEntity<List<Human>> getAllHumans() {
         try {
-            List<Human> humans = humanRepository.findAll();
+            List<Human> humans = humanService.findAllHumans();
             if (humans.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
             }
