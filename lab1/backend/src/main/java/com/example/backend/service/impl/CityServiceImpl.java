@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.backend.dto.CityRequest;
+import com.example.backend.dto.request.CityRequest;
 import com.example.backend.model.City;
 import com.example.backend.repo.CityRepository;
 import com.example.backend.service.CityService;

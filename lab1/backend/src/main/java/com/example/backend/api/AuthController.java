@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.backend.dto.AuthRequest;
-import com.example.backend.dto.AuthResponse;
+import com.example.backend.dto.request.AuthRequest;
+import com.example.backend.dto.response.AuthResponse;
 import com.example.backend.model.User;
-import com.example.backend.repo.UserRepository;
+import com.example.backend.service.UserService;
 import com.example.backend.utils.PasswordHasher;
 import com.example.backend.validation.AuthValidator;
 
@@ -22,13 +22,14 @@ import com.example.backend.validation.AuthValidator;
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
+
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
         System.out.println("Login attempt - Username: " + authRequest.getUsername());
-        User user = userRepository.findByUsername(authRequest.getUsername());
+        User user = userService.findByUsername(authRequest.getUsername());
         if (user != null) {
             byte[] hashedPassword = PasswordHasher.retrievePassword(authRequest.getPassword(), user.getSalt());
             if (Arrays.equals(hashedPassword, user.getPassword())) {
@@ -41,15 +42,15 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> postMethodName(@RequestBody AuthRequest authRequest) {
         System.out.println("Registration attempt - Username: " + authRequest.getUsername());
-        User user = userRepository.findByUsername(authRequest.getUsername());
+        User user = userService.findByUsername(authRequest.getUsername());
         if (user == null) {
             if (!AuthValidator.validateUsername(authRequest.getUsername()) || !AuthValidator.validatePassword(authRequest.getPassword())) {
                 return ResponseEntity.status(422).body(new AuthResponse("User data did not pass validation", null, false));
             }
-            boolean isAdmin = userRepository.count() == 0;
+            boolean isAdmin = userService.countAllUsers() == 0;
             PasswordHasher.HashedPassword hashedPassword = PasswordHasher.hashPassword(authRequest.getPassword());
             User newUser = new User(authRequest.getUsername(), hashedPassword.getHashedPassword(), hashedPassword.getSalt(), isAdmin);
-            userRepository.save(newUser);
+            userService.createUser(newUser);
             return ResponseEntity.ok(new AuthResponse("Registration successful for user", authRequest.getUsername(), isAdmin));
         }
         return ResponseEntity.status(409).body(new AuthResponse("Username already in use", null, false));

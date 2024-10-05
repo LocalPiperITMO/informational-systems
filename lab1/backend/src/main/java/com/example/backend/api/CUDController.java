@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.backend.dto.CityRequest;
-import com.example.backend.dto.CoordinatesRequest;
-import com.example.backend.dto.HumanRequest;
+import com.example.backend.dto.request.CityRequest;
+import com.example.backend.dto.request.CoordinatesRequest;
+import com.example.backend.dto.request.HumanRequest;
 import com.example.backend.model.City;
 import com.example.backend.model.Coordinates;
 import com.example.backend.model.Human;

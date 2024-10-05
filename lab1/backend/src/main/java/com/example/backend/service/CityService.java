@@ -2,7 +2,7 @@ package com.example.backend.service;
 
 import java.util.List;
 
-import com.example.backend.dto.CityRequest;
+import com.example.backend.dto.request.CityRequest;
 import com.example.backend.model.City;
 
 public interface CityService {

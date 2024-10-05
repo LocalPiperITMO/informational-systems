@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.backend.dto.HumanRequest;
+import com.example.backend.dto.request.HumanRequest;
 import com.example.backend.model.Human;
 import com.example.backend.repo.HumanRepository;
 import com.example.backend.service.HumanService;

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.example.backend.dto.CoordinatesRequest;
+import com.example.backend.dto.request.CoordinatesRequest;
 import com.example.backend.model.Coordinates;
 import com.example.backend.repo.CoordinatesRepository;
 import com.example.backend.service.CoordinatesService;
