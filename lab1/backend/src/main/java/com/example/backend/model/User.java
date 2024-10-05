@@ -29,13 +29,10 @@ public class User {
     @Column(nullable=false)
     private byte[] salt;
 
-    @Column(nullable=false)
-    private boolean admin;
 
-    public User(String username, byte[] password, byte[] salt, boolean admin) {
+    public User(String username, byte[] password, byte[] salt) {
         this.username = username;
         this.password = password;
-        this.salt= salt;
-        this.admin = admin;
+        this.salt = salt;
     }
 }
