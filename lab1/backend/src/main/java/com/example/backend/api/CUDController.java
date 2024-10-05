@@ -21,6 +21,7 @@ import com.example.backend.model.Human;
 import com.example.backend.service.CityService;
 import com.example.backend.service.CoordinatesService;
 import com.example.backend.service.HumanService;
+import com.example.backend.validation.CityValidator;
 
 @RestController
 @RequestMapping("/api/logic")
@@ -40,6 +41,9 @@ public class CUDController {
     @PostMapping("/createCity")
     public ResponseEntity<List<City>> createCity(@RequestBody CityRequest request) {
         try {
+            if (!CityValidator.validateCity(request.getCity())) {
+                return ResponseEntity.status(422).body(null);
+            }
             List<City> cities = cityService.createCity(request);
             return ResponseEntity.status(201).body(cities);
         } catch (IllegalArgumentException e) {
@@ -50,6 +54,9 @@ public class CUDController {
     @PostMapping("/updateCity")
     public ResponseEntity<List<City>> updateCity(@RequestBody CityRequest request) {
         try {
+            if (!CityValidator.validateCity(request.getCity())) {
+                return ResponseEntity.status(422).body(null);
+            }
             List<City> cities = cityService.updateCity(request);
             return ResponseEntity.ok(cities);
         } catch (IllegalArgumentException e) {
