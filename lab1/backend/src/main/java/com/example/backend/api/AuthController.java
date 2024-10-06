@@ -29,19 +29,19 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
-@PostMapping("/login")
-public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
-    System.out.println("Login attempt - Username: " + authRequest.getUsername());
-    User user = userService.findByUsername(authRequest.getUsername());
-    if (user != null) {
-        byte[] hashedPassword = PasswordHasher.retrievePassword(authRequest.getPassword(), user.getSalt());
-        if (Arrays.equals(hashedPassword, user.getPassword())) {
-            UserSession userSession = userService.createUserSession(user);
-            return ResponseEntity.ok(new AuthResponse("Login successful for user", authRequest.getUsername(), userService.isAdmin(authRequest.getUsername()), userSession.getSessionId()));
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
+        System.out.println("Login attempt - Username: " + authRequest.getUsername());
+        User user = userService.findByUsername(authRequest.getUsername());
+        if (user != null) {
+            byte[] hashedPassword = PasswordHasher.retrievePassword(authRequest.getPassword(), user.getSalt());
+            if (Arrays.equals(hashedPassword, user.getPassword())) {
+                UserSession userSession = userService.createUserSession(user);
+                return ResponseEntity.ok(new AuthResponse("Login successful for user", authRequest.getUsername(), userService.isAdmin(authRequest.getUsername()), userSession.getSessionId()));
+            }
         }
+        return ResponseEntity.status(401).body(new AuthResponse("Invalid username/password", null, false, null));
     }
-    return ResponseEntity.status(401).body(new AuthResponse("Invalid username/password", null, false, null));
-}
 
      
     @PostMapping("/register")
@@ -70,8 +70,6 @@ public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) 
         UserSession userSession = userService.validateUserSession(userSessionRequest.getSessionId());
 
         if (userSession != null) {
-
-            // Check if the session is expired
             if (userSession.getExpiresAt().isAfter(LocalDateTime.now())) {
                 User user = userService.findById(userSession.getUser().getId());
                 return ResponseEntity.ok(new AuthResponse("Session is valid", user.getUsername(), userService.isAdmin(user.getUsername()), userSession.getSessionId()));
@@ -82,5 +80,17 @@ public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) 
 
         return ResponseEntity.status(404).body(new AuthResponse("Session not found", null, false, null));
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestBody UserSessionRequest userSessionRequest) {
+        UserSession userSession = userService.validateUserSession(userSessionRequest.getSessionId());
+
+        if (userSession != null) {
+            userService.deleteUserSession(userSession.getId());
+            return ResponseEntity.ok("Session ended");
+        }
+        return ResponseEntity.status(204).body("No session to end.");
+    }
+    
     
 }

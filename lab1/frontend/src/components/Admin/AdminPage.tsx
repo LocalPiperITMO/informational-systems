@@ -14,7 +14,6 @@ const AdminPage: React.FC = () => {
     navigate('/auth');
   };
 
-  // Store current page when component mounts
   useEffect(() => {
     localStorage.setItem('currentPage', '/admin');
   }, []);
@@ -26,7 +25,6 @@ const AdminPage: React.FC = () => {
         <aside style={{ flex: '1', marginRight: '20px' }}>
           <h2>Welcome to Admin Panel, {username}</h2>
           <button onClick={handleLogout}>Logout</button>
-          {/* Other buttons and logic */}
         </aside>
 
         <div style={{ flex: '3', overflow: 'auto', height: '400px', border: '1px solid black' }}>

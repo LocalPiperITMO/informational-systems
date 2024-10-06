@@ -11,6 +11,7 @@ public interface UserService {
     void createUser(User user);
     UserSession createUserSession(User user);
     UserSession validateUserSession(String sessionId);
+    void deleteUserSession(Long id);
 
     boolean requestAdminChange(String username);
     boolean isAdmin(String username);
