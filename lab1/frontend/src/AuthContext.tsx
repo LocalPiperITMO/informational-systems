@@ -1,10 +1,10 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  isAdmin : boolean;
-  username : string | null;
-  login: (isAdmin : boolean, username : string | null) => void;
+  isAdmin: boolean;
+  username: string | null;
+  login: (isAdmin: boolean, username: string | null) => void;
   logout: () => void;
 }
 
@@ -15,15 +15,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAdmin, setIsAdmin] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
 
-  const login = (isAdmin : boolean, username : string | null) => {
+  useEffect(() => {
+    const storedSessionId = localStorage.getItem('sessionId');
+    const storedUsername = localStorage.getItem('username');
+    const storedIsAdmin = localStorage.getItem('isAdmin') === 'true';
+
+    if (storedSessionId) {
+      setIsAuthenticated(true);
+      setIsAdmin(storedIsAdmin);
+      setUsername(storedUsername);
+    }
+  }, []);
+
+  const login = (isAdmin: boolean, username: string | null) => {
     setIsAuthenticated(true);
     setIsAdmin(isAdmin);
-    setUsername(username)
+    setUsername(username);
+
+    localStorage.setItem('username', username || '');
+    localStorage.setItem('isAdmin', String(isAdmin));
+    localStorage.setItem('sessionId', 'someSessionId'); // Replace with actual ID from login
   };
 
   const logout = () => {
     setIsAuthenticated(false);
     setUsername(null);
+    setIsAdmin(false);
+
+    localStorage.removeItem('sessionId');
+    localStorage.removeItem('username');
+    localStorage.removeItem('isAdmin');
   };
 
   return (

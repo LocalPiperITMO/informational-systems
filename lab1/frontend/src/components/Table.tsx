@@ -27,7 +27,7 @@ const Table: React.FC = () => {
       if (!responses.every(res => res.ok)) {
         throw new Error("Failed to fetch data for one or more tables.");
       }
-
+      
       const data = await Promise.all(responses.map(res => res.json()));
 
       const formattedTables = data.map((tableData, index) => {

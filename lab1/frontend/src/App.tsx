@@ -1,51 +1,29 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './AuthContext';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import AuthForm from './components/Auth/AuthForm';
-import MainPage from './components/Main/MainPage';
 import AdminPage from './components/Admin/AdminPage';
+import MainPage from './components/Main/MainPage';
+import { AuthProvider, useAuth } from './AuthContext'; // Ensure this import is correct
 
-const App: React.FC = () => {
+const AppRoutes = () => {
+  const { isAuthenticated, isAdmin } = useAuth(); // This should work fine inside AuthProvider
+
   return (
-    <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/auth" element={<AuthForm />} />
-          <Route
-            path="/main"
-            element={
-              <PrivateRoute allowedRoles={['user']}>
-                <MainPage />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/admin"
-            element={
-              <PrivateRoute allowedRoles={['admin']}>
-                <AdminPage />
-            </PrivateRoute>
-            }/>
-          <Route path="*" element={<Navigate to="/auth" />} />
-        </Routes>
-      </Router>
-    </AuthProvider>
+    <Routes>
+      <Route path="/auth" element={<AuthForm />} />
+      <Route path="/admin" element={isAuthenticated && isAdmin ? <AdminPage /> : <Navigate to="/auth" />} />
+      <Route path="/main" element={isAuthenticated ? <MainPage /> : <Navigate to="/auth" />} />
+      <Route path="*" element={<Navigate to="/auth" />} /> {/* Redirect unknown routes */}
+      <Route path="/" element={<Navigate to={isAuthenticated ? '/main' : '/auth'} />} />
+    </Routes>
   );
 };
 
-const PrivateRoute: React.FC<{ children: JSX.Element; allowedRoles: string[] }> = ({ children, allowedRoles }) => {
-  const { isAuthenticated, isAdmin } = useAuth();
-
-  if (!isAuthenticated) {
-    return <Navigate to="/auth" />;
-  }
-
-  if (allowedRoles.includes('admin') && !isAdmin) {
-    return <Navigate to="/main" />;
-  }
-
-  return children;
-};
-
+const App = () => (
+  <AuthProvider> {/* Wrap the Routes with AuthProvider */}
+    <Router>
+      <AppRoutes />
+    </Router>
+  </AuthProvider>
+);
 
 export default App;
