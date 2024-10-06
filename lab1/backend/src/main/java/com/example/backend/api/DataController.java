@@ -3,20 +3,24 @@ package com.example.backend.api;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.example.backend.dto.response.CitiesResponse;
+import com.example.backend.dto.response.CoordinatesResponse;
+import com.example.backend.dto.response.HumansResponse;
 import com.example.backend.model.City;
 import com.example.backend.model.Coordinates;
 import com.example.backend.model.Human;
 import com.example.backend.service.CityService;
 import com.example.backend.service.CoordinatesService;
 import com.example.backend.service.HumanService;
+
 
 @RestController
 @RequestMapping("/api/data")
@@ -31,43 +35,43 @@ public class DataController {
 
     @Autowired
     private HumanService humanService;
-
-    @GetMapping("/cities")
-    public ResponseEntity<List<City>> getAllCities() {
+    
+    @PostMapping("/cities")
+    public ResponseEntity<CitiesResponse> getAllCities(@RequestBody String entity) {
         try {
             List<City> cities = cityService.findAllCities();
             if (cities.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+                return ResponseEntity.status(204).body(new CitiesResponse(cities));
             }
-            return ResponseEntity.ok(cities);
+            return ResponseEntity.ok(new CitiesResponse(cities));
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching cities", e);
+            throw new ResponseStatusException(500, "Error fetching cities", e);
         }
     }
 
-    @GetMapping("/coordinates")
-    public ResponseEntity<List<Coordinates>> getAllCoordinates() {
+    @PostMapping("/coordinates")
+    public ResponseEntity<CoordinatesResponse> getAllCoordinates(@RequestBody String entity) {
         try {
             List<Coordinates> coordinates = coordinatesService.findAllCoordinates();
             if (coordinates.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+                return ResponseEntity.status(204).body(new CoordinatesResponse(coordinates));
             }
-            return ResponseEntity.ok(coordinates);
+            return ResponseEntity.ok(new CoordinatesResponse(coordinates));
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching coordinates", e);
+            throw new ResponseStatusException(500, "Error fetching coordinates", e);
         }
     }
 
-    @GetMapping("/humans")
-    public ResponseEntity<List<Human>> getAllHumans() {
+    @PostMapping("/humans")
+    public ResponseEntity<HumansResponse> getAllHumans(@RequestBody String entity) {
         try {
             List<Human> humans = humanService.findAllHumans();
             if (humans.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+                return ResponseEntity.status(204).body(new HumansResponse(humans));
             }
-            return ResponseEntity.ok(humans);
+            return ResponseEntity.ok(new HumansResponse(humans));
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching humans", e);
+            throw new ResponseStatusException(500, "Error fetching humans", e);
         }
     }
 }

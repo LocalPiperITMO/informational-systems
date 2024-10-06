@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
-
 interface TableData {
   name: string;
-  data: Array<Record<string, any>>;
+  data: any[]; // Using any[] is okay since we are dealing with dynamically shaped data
 }
 
 const Table: React.FC = () => {
@@ -14,33 +13,55 @@ const Table: React.FC = () => {
 
   const tableNames = ["Cities", "Coordinates", "Humans"];
 
-  // Function to fetch data for the tables
+  // Function to fetch data for the tables using POST requests
   const fetchData = async () => {
     try {
       setLoading(true);
-      const responses = await Promise.all([
-        fetch('/api/data/cities', { cache: 'no-store'}), // Endpoint for User Information
-        fetch('/api/data/coordinates', { cache: 'no-store'}), // Endpoint for Product List
-        fetch('/api/data/humans', { cache: 'no-store'}) // Endpoint for Course Offerings
-      ]);
-
-      if (!responses.every(res => res.ok)) {
-        throw new Error("Failed to fetch data for one or more tables.");
-      }
       
-      const data = await Promise.all(responses.map(res => res.json()));
-
-      const formattedTables = data.map((tableData, index) => {
-        return {
-          name: tableNames[index],
-          data: tableData,
-        };
+      // Fetch Cities
+      const citiesResponse = await fetch('http://localhost:8080/api/data/cities', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}) // Send an empty body or any required payload
       });
 
+      const citiesData = citiesResponse.status == 200 ? await citiesResponse.json() : { cities: [] };
+
+      // Fetch Coordinates
+      const coordinatesResponse = await fetch('http://localhost:8080/api/data/coordinates', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({})
+      });
+      
+      const coordinatesData = coordinatesResponse.status == 200 ? await coordinatesResponse.json() : { coordinates: [] };
+
+      // Fetch Humans
+      const humansResponse = await fetch('http://localhost:8080/api/data/humans', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({})
+      });
+      
+      const humansData = humansResponse.status == 200 ? await humansResponse.json() : { humans: [] };
+
+      // Create an array of formatted tables
+      const formattedTables = [
+        { name: tableNames[0], data: citiesData.cities },
+        { name: tableNames[1], data: coordinatesData.coordinates },
+        { name: tableNames[2], data: humansData.humans },
+      ];
+
       setTables(formattedTables);
-    } catch (err : any) {
-      setError(err.message);
-      setTables(tableNames.map(name => ({ name, data: [] }))); // Prepare empty data
+    } catch (err: any) {
+      setError(err.message); // Handle errors gracefully
+      setTables(tableNames.map(name => ({ name, data: [] }))); // Fallback for empty data
     } finally {
       setLoading(false);
     }
@@ -58,7 +79,7 @@ const Table: React.FC = () => {
     setCurrentTable((prevTable) => (prevTable - 1 + tables.length) % tables.length);
   };
 
-  // Fixed data for the current table
+  // Current table data
   const currentTableData = tables[currentTable];
 
   return (
@@ -75,34 +96,58 @@ const Table: React.FC = () => {
           <div style={{ color: 'red', textAlign: 'center' }}>
             Error: {error}
           </div>
-        ) : currentTableData.data.length === 0 ? (
-          <div style={{ textAlign: 'center' }}>
-            No data available.
-          </div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr>
-                {currentTableData.data.length > 0 &&
-                  Object.keys(currentTableData.data[0]).map((key) => (
-                    <th key={key} style={{ border: '1px solid black', padding: '8px' }}>
-                      {key}
-                    </th>
-                  ))}
-              </tr>
-            </thead>
-            <tbody>
-              {currentTableData.data.map((row, index) => (
-                <tr key={index}>
-                  {Object.values(row).map((value, i) => (
-                    <td key={i} style={{ border: '1px solid black', padding: '8px' }}>
-                      {value !== undefined ? String(value) : '-'}
-                    </td>
-                  ))}
+          <>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr>
+                  {currentTableData.data.length > 0
+                    ? Object.keys(currentTableData.data[0]).map((key) => (
+                      <th key={key} style={{ border: '1px solid black', padding: '8px' }}>
+                        {key}
+                      </th>
+                    ))
+                    : tableNames[currentTable] === "Cities"
+                      ? ["id", "name", "area", "population", "capital", "telephoneCode", "climate"].map((key, index) => (
+                        <th key={index} style={{ border: '1px solid black', padding: '8px' }}>
+                          {key}
+                        </th>
+                      ))
+                      : tableNames[currentTable] === "Coordinates"
+                      ? ["id", "x", "y"].map((key, index) => (
+                        <th key={index} style={{ border: '1px solid black', padding: '8px' }}>
+                          {key}
+                        </th>
+                      ))
+                      : ["id", "age"].map((key, index) => (
+                        <th key={index} style={{ border: '1px solid black', padding: '8px' }}>
+                          {key}
+                        </th>
+                      ))
+                  }
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {currentTableData.data.length === 0 ? (
+                  <tr>
+                    <td colSpan={Object.keys(currentTableData).length} style={{ textAlign: 'center' }}>
+                      No data available.
+                    </td>
+                  </tr>
+                ) : (
+                  currentTableData.data.map((row, index) => (
+                    <tr key={index}>
+                      {Object.values(row).map((value, i) => (
+                        <td key={i} style={{ border: '1px solid black', padding: '8px' }}>
+                          {value !== undefined ? String(value) : '-'}
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </>
         )}
       </div>
 
