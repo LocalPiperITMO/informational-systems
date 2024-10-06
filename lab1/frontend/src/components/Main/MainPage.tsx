@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../Header';
 import Footer from '../Footer';
 import Table from '../Table';
+import '../../styles/MainPage.css'; // Importing style file
 
 const MainPage: React.FC = () => {
   const { logout, username } = useAuth();
@@ -14,7 +15,26 @@ const MainPage: React.FC = () => {
     navigate('/auth');
   };
 
-  // Store current page when component mounts
+  const handleCreate = () => {
+    console.log("Create button clicked");
+  };
+
+  const handleUpdate = () => {
+    console.log("Update button clicked");
+  };
+
+  const handleDelete = () => {
+    console.log("Delete button clicked");
+  };
+
+  const handleRequestAdmin = () => {
+    console.log("Request Admin button clicked");
+  };
+
+  const handleSpecial = () => {
+    console.log("Special button clicked");
+  };
+
   useEffect(() => {
     localStorage.setItem('currentPage', '/main');
   }, []);
@@ -22,18 +42,27 @@ const MainPage: React.FC = () => {
   return (
     <div>
       <Header role={"user"} />
-      <div style={{ display: 'flex', padding: '20px' }}>
-        <aside style={{ flex: '1', marginRight: '20px' }}>
-          <h2>Welcome to Main Page, {username}</h2>
-          <button onClick={handleLogout}>Logout</button>
-          {/* Other buttons and logic */}
-        </aside>
+      <div className="main-page-container">
+            <div className="main-content">
+              <aside className="sidebar">
+                <h2>Welcome to Main Page, {username}</h2>
+                <div className="button-container">
+                  <button onClick={handleCreate}>Create</button>
+                  <button onClick={handleUpdate}>Update</button>
+                  <button onClick={handleDelete}>Delete</button>
+                  <button onClick={handleRequestAdmin}>Request Admin</button>
+                  <button disabled onClick={() => alert("Feature not available yet")}>Visualize</button>
+                  <button onClick={handleSpecial}>Special</button>
+                  <button className="logout-button" onClick={handleLogout}>Logout</button>
+                </div>
+              </aside>
 
-        <div style={{ flex: '3', overflow: 'auto', height: '400px', border: '1px solid black' }}>
-          <Table />
-        </div>
-      </div>
-      <Footer role={"user"} />
+              <div className="table-container">
+                <Table />
+              </div>
+            </div>
+          </div>
+          <Footer role={"user"} />
     </div>
   );
 };

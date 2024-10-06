@@ -3,7 +3,7 @@ import { useAuth } from "../../AuthContext";
 import { useNavigate } from "react-router-dom";
 import Header from "../Header";
 import Footer from "../Footer";
-import '../../styles/AuthForm.css'; // Import styles
+import '../../styles/AuthForm.css';
 
 const AuthForm: React.FC = () => {
   const [isRegister, setIsRegister] = useState(false);
@@ -11,7 +11,7 @@ const AuthForm: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const { login } = useAuth(); // Ensure useAuth does not throw an error here
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -39,14 +39,12 @@ const AuthForm: React.FC = () => {
       const result = await response.json();
       setSuccessMessage(result.message);
 
-      // Store the session ID and update context
       localStorage.setItem('sessionId', result.sessionId);
-      login(result.admin, result.username);
+      login(result.admin, result.username, result.sessionId);
 
-      // Navigate to the appropriate page
       const targetPage = result.admin ? '/admin' : '/main';
       localStorage.setItem('currentPage', targetPage);
-      navigate(targetPage); // Redirect to the target page
+      navigate(targetPage);
 
     } catch (err: any) {
       setError(err.message);
