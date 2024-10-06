@@ -73,5 +73,16 @@ public class UserServiceImpl implements UserService {
         UserSession userSession = new UserSession(user);
         return userSessionRepository.save(userSession);
     }
+
+    @Override
+    public UserSession validateUserSession(String sessionId) {
+        return userSessionRepository.findBySessionId(sessionId);
+
+    }
+
+    @Override
+    public User findById(Long id) {
+        return userRepository.findById(id).get();
+    }
    
 }

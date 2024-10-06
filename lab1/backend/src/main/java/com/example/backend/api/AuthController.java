@@ -1,5 +1,6 @@
 package com.example.backend.api;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.dto.request.AuthRequest;
+import com.example.backend.dto.request.UserSessionRequest;
 import com.example.backend.dto.response.AuthResponse;
 import com.example.backend.model.User;
 import com.example.backend.model.UserSession;
@@ -62,4 +64,23 @@ public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) 
         }
         return ResponseEntity.status(409).body(new AuthResponse("Username already in use", null, false, null));
     }
+
+    @PostMapping("/validate")
+    public ResponseEntity<AuthResponse> validateSession(@RequestBody UserSessionRequest userSessionRequest) {
+        UserSession userSession = userService.validateUserSession(userSessionRequest.getSessionId());
+
+        if (userSession != null) {
+
+            // Check if the session is expired
+            if (userSession.getExpiresAt().isAfter(LocalDateTime.now())) {
+                User user = userService.findById(userSession.getUser().getId());
+                return ResponseEntity.ok(new AuthResponse("Session is valid", user.getUsername(), userService.isAdmin(user.getUsername()), userSession.getSessionId()));
+            } else {
+                return ResponseEntity.status(401).body(new AuthResponse("Session expired", null, false, null));
+            }
+        }
+
+        return ResponseEntity.status(404).body(new AuthResponse("Session not found", null, false, null));
+    }
+    
 }
