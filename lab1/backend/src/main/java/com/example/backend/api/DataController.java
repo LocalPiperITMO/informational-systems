@@ -43,6 +43,7 @@ public class DataController {
             if (cities.isEmpty()) {
                 return ResponseEntity.status(204).body(new CitiesResponse(cities));
             }
+            
             return ResponseEntity.ok(new CitiesResponse(cities));
         } catch (Exception e) {
             throw new ResponseStatusException(500, "Error fetching cities", e);

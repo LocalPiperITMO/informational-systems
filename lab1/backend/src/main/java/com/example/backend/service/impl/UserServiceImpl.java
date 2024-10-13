@@ -7,10 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.example.backend.model.Admin;
 import com.example.backend.model.User;
-import com.example.backend.model.UserSession;
 import com.example.backend.repo.AdminRepository;
 import com.example.backend.repo.UserRepository;
-import com.example.backend.repo.UserSessionRepository;
 import com.example.backend.service.UserService;
 
 @Service
@@ -18,9 +16,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private UserSessionRepository userSessionRepository;
 
     @Autowired
     private AdminRepository adminRepository;
@@ -69,25 +64,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserSession createUserSession(User user) {
-        UserSession userSession = new UserSession(user);
-        return userSessionRepository.save(userSession);
-    }
-
-    @Override
-    public UserSession validateUserSession(String sessionId) {
-        return userSessionRepository.findBySessionId(sessionId);
-
-    }
-
-    @Override
     public User findById(Long id) {
         return userRepository.findById(id).get();
     }
-
-    @Override
-    public void deleteUserSession(Long id) {
-        userSessionRepository.deleteById(id);
-    }
-   
 }

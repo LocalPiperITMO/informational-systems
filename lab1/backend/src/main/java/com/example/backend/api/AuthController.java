@@ -1,6 +1,5 @@
 package com.example.backend.api;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.dto.request.AuthRequest;
-import com.example.backend.dto.request.UserSessionRequest;
+import com.example.backend.dto.request.TokenRequest;
 import com.example.backend.dto.response.AuthResponse;
 import com.example.backend.model.User;
-import com.example.backend.model.UserSession;
 import com.example.backend.service.UserService;
+import com.example.backend.utils.JwtUtil;
 import com.example.backend.utils.PasswordHasher;
 import com.example.backend.validation.AuthValidator;
 
@@ -29,6 +28,9 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
         System.out.println("Login attempt - Username: " + authRequest.getUsername());
@@ -36,8 +38,8 @@ public class AuthController {
         if (user != null) {
             byte[] hashedPassword = PasswordHasher.retrievePassword(authRequest.getPassword(), user.getSalt());
             if (Arrays.equals(hashedPassword, user.getPassword())) {
-                UserSession userSession = userService.createUserSession(user);
-                return ResponseEntity.ok(new AuthResponse("Login successful for user", authRequest.getUsername(), userService.isAdmin(authRequest.getUsername()), userSession.getSessionId()));
+                String token = jwtUtil.generateToken(user.getUsername());
+                return ResponseEntity.ok(new AuthResponse("Login successful for user", authRequest.getUsername(), userService.isAdmin(authRequest.getUsername()), token));
             }
         }
         return ResponseEntity.status(401).body(new AuthResponse("Invalid username/password", null, false, null));
@@ -59,38 +61,24 @@ public class AuthController {
             if (isAdmin) {
                 userService.changeUserRoleToAdmin(authRequest.getUsername());
             }
-            UserSession userSession = userService.createUserSession(newUser);
-            return ResponseEntity.ok(new AuthResponse("Registration successful for user", authRequest.getUsername(), isAdmin, userSession.getSessionId()));
+            String token = jwtUtil.generateToken(newUser.getUsername());
+            return ResponseEntity.ok(new AuthResponse("Registration successful for user", authRequest.getUsername(), isAdmin, token));
         }
         return ResponseEntity.status(409).body(new AuthResponse("Username already in use", null, false, null));
     }
 
     @PostMapping("/validate")
-    public ResponseEntity<AuthResponse> validateSession(@RequestBody UserSessionRequest userSessionRequest) {
-        UserSession userSession = userService.validateUserSession(userSessionRequest.getSessionId());
-
-        if (userSession != null) {
-            if (userSession.getExpiresAt().isAfter(LocalDateTime.now())) {
-                User user = userService.findById(userSession.getUser().getId());
-                return ResponseEntity.ok(new AuthResponse("Session is valid", user.getUsername(), userService.isAdmin(user.getUsername()), userSession.getSessionId()));
-            } else {
-                return ResponseEntity.status(401).body(new AuthResponse("Session expired", null, false, null));
-            }
+    public ResponseEntity<AuthResponse> validateSession(@RequestBody TokenRequest tokenRequest) {
+        String username = jwtUtil.extractUsername(tokenRequest.getToken());
+        if (username != null && jwtUtil.validateToken(tokenRequest.getToken(), username)) {
+            return ResponseEntity.ok(new AuthResponse("Session is valid", username, userService.isAdmin(username), tokenRequest.getToken()));
         }
-
-        return ResponseEntity.status(404).body(new AuthResponse("Session not found", null, false, null));
+        return ResponseEntity.status(401).body(new AuthResponse("Session is invalid", null, false, null));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(@RequestBody UserSessionRequest userSessionRequest) {
-        UserSession userSession = userService.validateUserSession(userSessionRequest.getSessionId());
-
-        if (userSession != null) {
-            userService.deleteUserSession(userSession.getId());
-            return ResponseEntity.ok("Session ended");
-        }
-        return ResponseEntity.status(204).body("No session to end.");
+    public ResponseEntity<String> logout(@RequestBody TokenRequest userSessionRequest) {
+        return ResponseEntity.ok("Session ended");
     }
-    
-    
+       
 }

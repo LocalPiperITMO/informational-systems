@@ -11,5 +11,5 @@ public class AuthResponse {
     private String message;
     private String username;
     private boolean admin;
-    private String sessionId;
+    private String token;
 }
