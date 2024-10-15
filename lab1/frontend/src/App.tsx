@@ -1,28 +1,22 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import AuthForm from './components/Auth/AuthForm';
-import AdminPage from './components/Admin/AdminPage';
-import MainPage from './components/Main/MainPage';
-import { AuthProvider, useAuth } from './AuthContext';
+// src/App.tsx
+import React from 'react';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import AuthPage from './components/pages/AuthPage';
+import MainPage from './components/pages/MainPage';
+import { AuthProvider } from './context/AuthContext';
 
-const AppRoutes = () => {
-  const { isAuthenticated, isAdmin } = useAuth();
-
+const App: React.FC = () => {
   return (
-    <Routes>
-      <Route path="/auth" element={<AuthForm />} />
-      <Route path="/admin" element={isAdmin ? <AdminPage /> : <MainPage/>} />
-      <Route path="/main" element={<MainPage />} />
-      <Route path="/" element={<Navigate to={isAuthenticated ? '/main' : '/auth'} />} />
-    </Routes>
+    <AuthProvider>
+      <BrowserRouter>
+      <Routes>
+        <Route path="/auth" element={<AuthPage />}/>
+        <Route path="/main" element={<MainPage />}/>
+        <Route path="/" element={<Navigate to="/auth"/>}/>
+      </Routes>
+    </BrowserRouter>
+    </AuthProvider>
   );
 };
-
-const App = () => (
-  <AuthProvider>
-    <Router>
-      <AppRoutes />
-    </Router>
-  </AuthProvider>
-);
 
 export default App;
