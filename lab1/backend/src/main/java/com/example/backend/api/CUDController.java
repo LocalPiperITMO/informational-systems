@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.dto.request.CityRequest;
 import com.example.backend.dto.request.CoordinatesRequest;
+import com.example.backend.dto.request.DeleteRequest;
 import com.example.backend.dto.request.HumanRequest;
 import com.example.backend.model.City;
 import com.example.backend.model.Climate;
@@ -25,6 +26,8 @@ import com.example.backend.service.CoordinatesService;
 import com.example.backend.service.HumanService;
 import com.example.backend.validation.ClimateValidator;
 import com.example.backend.validation.GovernmentValidator;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/logic")
@@ -42,7 +45,9 @@ public class CUDController {
 
     // City Endpoints
     @PostMapping("/createCity")
-    public ResponseEntity<List<City>> createCity(@RequestBody CityRequest request) {
+    public ResponseEntity<List<City>> createCity(
+        @Valid 
+        @RequestBody CityRequest request) {
         try {
             Long coordinatesId = request.getCoordinatesId();
             if (coordinatesId == null) {
@@ -72,7 +77,9 @@ public class CUDController {
     }
 
     @PostMapping("/updateCity")
-    public ResponseEntity<List<City>> updateCity(@RequestBody CityRequest request) {
+    public ResponseEntity<List<City>> updateCity(
+    @Valid    
+    @RequestBody CityRequest request) {
         try {
             if (request.getId() == null || cityService.findCityById(request.getId()) == null) return ResponseEntity.status(422).body(null);
             Long coordinatesId = request.getCoordinatesId();
@@ -103,14 +110,19 @@ public class CUDController {
     }
 
     @DeleteMapping("/deleteCity")
-    public ResponseEntity<List<City>> deleteCity(@PathVariable Long id) {
-        List<City> cities = cityService.deleteCity(id);
+    public ResponseEntity<List<City>> deleteCity(
+        @Valid
+        @RequestBody DeleteRequest request
+    ) {
+        List<City> cities = cityService.deleteCity(request.getId());
         return ResponseEntity.ok(cities);
     }
 
     // Coordinates Endpoints
     @PostMapping("/createCoordinates")
-    public ResponseEntity<List<Coordinates>> createCoordinates(@RequestBody CoordinatesRequest request) {
+    public ResponseEntity<List<Coordinates>> createCoordinates(
+    @Valid    
+    @RequestBody CoordinatesRequest request) {
         try {
             List<Coordinates> coordinatesList = coordinatesService.createCoordinates(request);
             return ResponseEntity.status(201).body(coordinatesList);
@@ -120,7 +132,9 @@ public class CUDController {
     }
 
     @PostMapping("/updateCoordinates")
-    public ResponseEntity<List<Coordinates>> updateCoordinates(@RequestBody CoordinatesRequest request) {
+    public ResponseEntity<List<Coordinates>> updateCoordinates(
+    @Valid    
+    @RequestBody CoordinatesRequest request) {
         try {
             List<Coordinates> coordinatesList = coordinatesService.updateCoordinates(request);
             return ResponseEntity.ok(coordinatesList);
@@ -137,7 +151,9 @@ public class CUDController {
 
     // Human Endpoints
     @PostMapping("/createHuman")
-    public ResponseEntity<List<Human>> createHuman(@RequestBody HumanRequest request) {
+    public ResponseEntity<List<Human>> createHuman(
+    @Valid    
+    @RequestBody HumanRequest request) {
         try {
             List<Human> humans = humanService.createHuman(request);
             return ResponseEntity.status(201).body(humans);
@@ -147,7 +163,9 @@ public class CUDController {
     }
 
     @PostMapping("/updateHuman")
-    public ResponseEntity<List<Human>> updateHuman(@RequestBody HumanRequest request) {
+    public ResponseEntity<List<Human>> updateHuman(
+    @Valid    
+    @RequestBody HumanRequest request) {
         try {
             List<Human> humans = humanService.updateHuman(request);
             return ResponseEntity.ok(humans);
