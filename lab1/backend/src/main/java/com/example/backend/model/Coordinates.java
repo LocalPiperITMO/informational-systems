@@ -6,6 +6,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,18 +24,23 @@ public class Coordinates {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // Auto-generated ID for Coordinates
 
-    @Column(nullable = false) // Cannot be null, with a maximum value of 443
+    @Column(nullable = false)
+    @NotNull
+    @Max(443)
+    @Min(-443)
     private Long x;
 
-    @Column(nullable = false) // Cannot be null, with a maximum value of 273
-    private int y;
+    @Column(nullable = false)
+    @NotNull
+    @Max(273)
+    @Min(273)
+    private Double y;
 
 
     // Constructor with parameters
-    public Coordinates(Long x, int y) {
+    public Coordinates(Long x, Double y) {
         this.x = x;
         this.y = y;
     }
 
-    // Getters and Setters omitted for brevity
 }

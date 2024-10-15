@@ -17,7 +17,6 @@ import com.example.backend.model.User;
 import com.example.backend.service.UserService;
 import com.example.backend.utils.JwtUtil;
 import com.example.backend.utils.PasswordHasher;
-import com.example.backend.validation.AuthValidator;
 
 
 @RestController
@@ -51,9 +50,6 @@ public class AuthController {
         System.out.println("Registration attempt - Username: " + authRequest.getUsername());
         User user = userService.findByUsername(authRequest.getUsername());
         if (user == null) {
-            if (!AuthValidator.validateUsername(authRequest.getUsername()) || !AuthValidator.validatePassword(authRequest.getPassword())) {
-                return ResponseEntity.status(422).body(new AuthResponse("User data did not pass validation", null, false, null));
-            }
             boolean isAdmin = userService.countAllUsers() == 0;
             PasswordHasher.HashedPassword hashedPassword = PasswordHasher.hashPassword(authRequest.getPassword());
             User newUser = new User(authRequest.getUsername(), hashedPassword.getHashedPassword(), hashedPassword.getSalt());

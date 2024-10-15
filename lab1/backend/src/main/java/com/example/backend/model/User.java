@@ -6,6 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,12 +23,16 @@ public class User {
     private Long id;
 
     @Column(nullable=false, unique=true)
+    @NotNull
+    @NotBlank
     private String username;
 
     @Column(nullable=false)
+    @NotNull
     private byte[] password;
 
     @Column(nullable=false)
+    @NotNull
     private byte[] salt;
 
 

@@ -22,6 +22,11 @@ public class HumanServiceImpl implements HumanService{
     }
 
     @Override
+    public Human findHumanById(Long humanId) {
+        return (humanRepository.findById(humanId).isPresent()) ? humanRepository.findById(humanId).get() : null;
+    }
+
+    @Override
     public List<Human> createHuman(HumanRequest request) {
         Human human = request.getHuman();
         humanRepository.save(human);

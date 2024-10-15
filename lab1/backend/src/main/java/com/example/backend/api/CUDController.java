@@ -16,12 +16,15 @@ import com.example.backend.dto.request.CityRequest;
 import com.example.backend.dto.request.CoordinatesRequest;
 import com.example.backend.dto.request.HumanRequest;
 import com.example.backend.model.City;
+import com.example.backend.model.Climate;
 import com.example.backend.model.Coordinates;
+import com.example.backend.model.Government;
 import com.example.backend.model.Human;
 import com.example.backend.service.CityService;
 import com.example.backend.service.CoordinatesService;
 import com.example.backend.service.HumanService;
-import com.example.backend.validation.CityValidator;
+import com.example.backend.validation.ClimateValidator;
+import com.example.backend.validation.GovernmentValidator;
 
 @RestController
 @RequestMapping("/api/logic")
@@ -41,10 +44,27 @@ public class CUDController {
     @PostMapping("/createCity")
     public ResponseEntity<List<City>> createCity(@RequestBody CityRequest request) {
         try {
-            if (!CityValidator.validateCity(request.getCity())) {
+            Long coordinatesId = request.getCoordinatesId();
+            if (coordinatesId == null) {
                 return ResponseEntity.status(422).body(null);
             }
-            List<City> cities = cityService.createCity(request);
+            Coordinates coords = coordinatesService.findCoordinatesById(coordinatesId);
+            if (coords == null) {
+                return ResponseEntity.status(422).body(null);
+            }
+            Long humanId = request.getHumanId();
+            Human governor = null;
+            if (humanId != null) {
+                governor = humanService.findHumanById(humanId);
+                if (governor == null) {
+                    return ResponseEntity.status(422).body(null);
+                }
+            }
+            Climate climate = ClimateValidator.validateClimate(request.getClimate());
+            Government government = GovernmentValidator.validateGovernment(request.getGovernment());
+            if (climate == null) return ResponseEntity.status(422).body(null);            
+            City city = new City(request.getName(), coords, request.getArea(), request.getPopulation(), request.getEstablishmentDate(), request.getCapital(), request.getMetersAboveSeaLevel(), request.getTelephoneCode(), climate, government, governor);
+            List<City> cities = cityService.createCity(city);
             return ResponseEntity.status(201).body(cities);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(null);
@@ -54,10 +74,28 @@ public class CUDController {
     @PostMapping("/updateCity")
     public ResponseEntity<List<City>> updateCity(@RequestBody CityRequest request) {
         try {
-            if (!CityValidator.validateCity(request.getCity())) {
+            if (request.getId() == null || cityService.findCityById(request.getId()) == null) return ResponseEntity.status(422).body(null);
+            Long coordinatesId = request.getCoordinatesId();
+            if (coordinatesId == null) {
                 return ResponseEntity.status(422).body(null);
             }
-            List<City> cities = cityService.updateCity(request);
+            Coordinates coords = coordinatesService.findCoordinatesById(coordinatesId);
+            if (coords == null) {
+                return ResponseEntity.status(422).body(null);
+            }
+            Long humanId = request.getHumanId();
+            Human governor = null;
+            if (humanId != null) {
+                governor = humanService.findHumanById(humanId);
+                if (governor == null) {
+                    return ResponseEntity.status(422).body(null);
+                }
+            }
+            Climate climate = ClimateValidator.validateClimate(request.getClimate());
+            Government government = GovernmentValidator.validateGovernment(request.getGovernment());
+            if (climate == null) return ResponseEntity.status(422).body(null);            
+            City city = new City(request.getName(), coords, request.getArea(), request.getPopulation(), request.getEstablishmentDate(), request.getCapital(), request.getMetersAboveSeaLevel(), request.getTelephoneCode(), climate, government, governor);
+            List<City> cities = cityService.updateCity(city, request.getId());
             return ResponseEntity.ok(cities);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(null);

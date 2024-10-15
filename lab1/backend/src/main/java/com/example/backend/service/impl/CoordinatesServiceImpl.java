@@ -22,6 +22,11 @@ public class CoordinatesServiceImpl implements CoordinatesService {
     }
 
     @Override
+    public Coordinates findCoordinatesById(Long coordinatesId) {
+        return (coordinatesRepository.findById(coordinatesId).isPresent())? coordinatesRepository.findById(coordinatesId).get() : null; 
+    }
+
+    @Override
     public List<Coordinates> createCoordinates(CoordinatesRequest request) {
         Coordinates coordinates = request.getCoordinates();
         coordinatesRepository.save(coordinates);

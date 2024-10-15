@@ -48,7 +48,7 @@ public class City {
 
     private boolean capital;
 
-    private Float metersAboveSeaLevel;
+    private Integer metersAboveSeaLevel;
 
     @Column(nullable = false)
     private long telephoneCode;
@@ -65,16 +65,17 @@ public class City {
     private Human governor;
 
 
-    public City(String name, Coordinates coordinates, double area, int population, Climate climate, Government government, Human governor) {
+    public City(String name, Coordinates coordinates, Double area, Integer population, ZonedDateTime establishmentDate, Boolean capital, Integer metersAboveSeaLevel, Long long1, Climate climate, Government government, Human governor) {
         this.name = name;
         this.coordinates = coordinates;
         this.creationDate = ZonedDateTime.now();
         this.area = area;
         this.population = population;
+        this.establishmentDate = establishmentDate;
+        this.capital = capital;
+        this.metersAboveSeaLevel = metersAboveSeaLevel;
         this.climate = climate;
         this.government = government;
         this.governor = governor;
     }
-
-    // Getters and Setters omitted for brevity
 }

@@ -7,6 +7,7 @@ import com.example.backend.model.Human;
 
 public interface HumanService {
     List<Human> findAllHumans();
+    Human findHumanById(Long humanId);
 
     List<Human> createHuman(HumanRequest humanRequest);
     List<Human> updateHuman(HumanRequest humanRequest);

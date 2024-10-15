@@ -6,6 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,6 +24,8 @@ public class Human {
     private Long id; // Auto-generated ID for Human
 
     @Column(nullable = false) // Cannot be null, age must be greater than 0
+    @NotNull
+    @Positive
     private int age;
 
     public Human(int age) {
