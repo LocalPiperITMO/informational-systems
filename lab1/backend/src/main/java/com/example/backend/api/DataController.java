@@ -40,10 +40,6 @@ public class DataController {
     public ResponseEntity<CitiesResponse> getAllCities(@RequestBody String entity) {
         try {
             List<City> cities = cityService.findAllCities();
-            if (cities.isEmpty()) {
-                return ResponseEntity.status(204).body(new CitiesResponse(cities));
-            }
-            
             return ResponseEntity.ok(new CitiesResponse(cities));
         } catch (Exception e) {
             throw new ResponseStatusException(500, "Error fetching cities", e);
@@ -54,9 +50,6 @@ public class DataController {
     public ResponseEntity<CoordinatesResponse> getAllCoordinates(@RequestBody String entity) {
         try {
             List<Coordinates> coordinates = coordinatesService.findAllCoordinates();
-            if (coordinates.isEmpty()) {
-                return ResponseEntity.status(204).body(new CoordinatesResponse(coordinates));
-            }
             return ResponseEntity.ok(new CoordinatesResponse(coordinates));
         } catch (Exception e) {
             throw new ResponseStatusException(500, "Error fetching coordinates", e);
@@ -67,9 +60,6 @@ public class DataController {
     public ResponseEntity<HumansResponse> getAllHumans(@RequestBody String entity) {
         try {
             List<Human> humans = humanService.findAllHumans();
-            if (humans.isEmpty()) {
-                return ResponseEntity.status(204).body(new HumansResponse(humans));
-            }
             return ResponseEntity.ok(new HumansResponse(humans));
         } catch (Exception e) {
             throw new ResponseStatusException(500, "Error fetching humans", e);
