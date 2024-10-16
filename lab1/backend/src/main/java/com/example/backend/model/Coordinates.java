@@ -33,7 +33,7 @@ public class Coordinates {
     @Column(nullable = false)
     @NotNull
     @Max(273)
-    @Min(273)
+    @Min(-273)
     private Double y;
 
 
