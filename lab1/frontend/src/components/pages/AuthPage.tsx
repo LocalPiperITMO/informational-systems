@@ -1,6 +1,6 @@
 import React from "react";
-import LoginForm from "../LoginForm";
-import RegisterForm from "../RegisterForm";
+import LoginForm from "../forms/LoginForm";
+import RegisterForm from "../forms/RegisterForm";
 import Header from "../Header";
 import Footer from "../Footer";
 

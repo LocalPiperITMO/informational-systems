@@ -1,6 +1,9 @@
 // src/components/modals/CreateModal.tsx
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
+import CreateCityForm from '../forms/create/CreateCityForm';
+import CreateCoordinatesForm from '../forms/create/CreateCoordinatesForm';
+import CreateHumanForm from '../forms/create/CreateHumanForm';
 
 interface CreateModalProps {
     isOpen: boolean;
@@ -69,142 +72,16 @@ const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose }) => {
                 </div>
 
                 <form onSubmit={handleSubmit}>
-
                     {objectType === ObjectType.CITY && (
-                        <>
-                            <div>
-                                <label>Name:</label>
-                                <input
-                                    type="text"
-                                    value={cityForm.name}
-                                    onChange={(e) => setCityForm({ ...cityForm, name: e.target.value })}
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label>Area:</label>
-                                <input
-                                    type="number"
-                                    value={cityForm.area}
-                                    onChange={(e) => setCityForm({ ...cityForm, area: parseFloat(e.target.value) })}
-                                    required
-                                    min={0}
-                                />
-                            </div>
-                            <div>
-                                <label>Population:</label>
-                                <input
-                                    type="number"
-                                    value={cityForm.population}
-                                    onChange={(e) => setCityForm({ ...cityForm, population: parseInt(e.target.value) })}
-                                    required
-                                    min={0}
-                                />
-                            </div>
-                            <div>
-                                <label>Establishment Date:</label>
-                                <input
-                                    type="date"
-                                    value={cityForm.establishmentDate}
-                                    onChange={(e) => setCityForm({ ...cityForm, establishmentDate: e.target.value })}
-                                />
-                            </div>
-                            <div>
-                                <label>Capital:</label>
-                                <input
-                                    type="checkbox"
-                                    checked={cityForm.capital}
-                                    onChange={(e) => setCityForm({ ...cityForm, capital: e.target.checked })}
-                                />
-                            </div>
-                            <div>
-                                <label>Meters Above Sea Level:</label>
-                                <input
-                                    type="number"
-                                    value={cityForm.metersAboveSeaLevel}
-                                    onChange={(e) => setCityForm({ ...cityForm, metersAboveSeaLevel: parseInt(e.target.value) })}
-                                />
-                            </div>
-                            <div>
-                                <label>Telephone Code:</label>
-                                <input
-                                    type="number"
-                                    value={cityForm.telephoneCode}
-                                    onChange={(e) => setCityForm({ ...cityForm, telephoneCode: parseInt(e.target.value) })}
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label>Climate:</label>
-                                <select
-                                    value={cityForm.climate}
-                                    onChange={(e) => setCityForm({ ...cityForm, climate: e.target.value })}
-                                    required
-                                >
-                                    <option value="">Select Climate</option>
-                                    <option value="MONSOON">Monsoon</option>
-                                    <option value="SUBARCTIC">Subarctic</option>
-                                    <option value="POLAR_ICECAP">Polar Icecap</option>
-                                    <option value="DESERT">Desert</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label>Government:</label>
-                                <select
-                                    value={cityForm.government}
-                                    onChange={(e) => setCityForm({ ...cityForm, government: e.target.value })}
-                                    required
-                                >
-                                    <option value="">Select Government</option>
-                                    <option value="DICTATORSHIP">Dictatorship</option>
-                                    <option value="NOOCRACY">Noocracy</option>
-                                    <option value="REPUBLIC">Republic</option>
-                                    <option value="STRATOCRACY">Stratocracy</option>
-                                </select>
-                            </div>
-                        </>
+                        <CreateCityForm cityForm={cityForm} setCityForm={setCityForm} />
                     )}
 
                     {objectType === ObjectType.COORDINATES && (
-                        <>
-                            <div>
-                                <label>X:</label>
-                                <input
-                                    type="number"
-                                    value={coordinatesForm.x}
-                                    onChange={(e) => setCoordinatesForm({ ...coordinatesForm, x: parseInt(e.target.value) })}
-                                    required
-                                    min={-443}
-                                    max={443}
-                                />
-                            </div>
-                            <div>
-                                <label>Y:</label>
-                                <input
-                                    type="number"
-                                    value={coordinatesForm.y}
-                                    onChange={(e) => setCoordinatesForm({ ...coordinatesForm, y: parseFloat(e.target.value) })}
-                                    required
-                                    min={273}
-                                    max={273}
-                                />
-                            </div>
-                        </>
+                        <CreateCoordinatesForm coordinatesForm={coordinatesForm} setCoordinatesForm={setCoordinatesForm} />
                     )}
 
                     {objectType === ObjectType.HUMAN && (
-                        <>
-                            <div>
-                                <label>Age:</label>
-                                <input
-                                    type="number"
-                                    value={humanForm.age}
-                                    onChange={(e) => setHumanForm({ ...humanForm, age: parseInt(e.target.value) })}
-                                    required
-                                    min={1}
-                                />
-                            </div>
-                        </>
+                        <CreateHumanForm humanForm={humanForm} setHumanForm={setHumanForm} />
                     )}
 
                     <button type="submit">Submit</button>
