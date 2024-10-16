@@ -1,4 +1,3 @@
-// src/components/modals/CreateModal.tsx
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import CreateCityForm from '../forms/create/CreateCityForm';
