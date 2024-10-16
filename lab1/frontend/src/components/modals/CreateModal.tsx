@@ -1,9 +1,11 @@
 // src/components/modals/CreateModal.tsx
+
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import CreateCityForm from '../forms/create/CreateCityForm';
 import CreateCoordinatesForm from '../forms/create/CreateCoordinatesForm';
 import CreateHumanForm from '../forms/create/CreateHumanForm';
+import { createCity, createCoordinates, createHuman } from '../../services/apiService'; // Import the new service
 
 interface CreateModalProps {
     isOpen: boolean;
@@ -54,16 +56,45 @@ const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data }) => {
         setObjectType(type);
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (objectType === ObjectType.CITY) {
-            console.log('Submitting City:', cityForm);
-        } else if (objectType === ObjectType.COORDINATES) {
-            console.log('Submitting Coordinates:', coordinatesForm);
-        } else if (objectType === ObjectType.HUMAN) {
-            console.log('Submitting Human:', humanForm);
+        try {
+            if (objectType === ObjectType.CITY) {
+                const cityData = {
+                    name: cityForm.name,
+                    area: cityForm.area,
+                    population: cityForm.population,
+                    establishmentDate: cityForm.establishmentDate,
+                    capital: cityForm.capital,
+                    metersAboveSeaLevel: cityForm.metersAboveSeaLevel,
+                    telephoneCode: cityForm.telephoneCode,
+                    climate: cityForm.climate,
+                    government: cityForm.government,
+                    coordinatesId: cityForm.coordinatesId,
+                    humanId: cityForm.humanId,
+                    token: "your-token-here"  // Add any necessary token if required
+                };
+                await createCity(cityData);
+                console.log('City created successfully');
+            } else if (objectType === ObjectType.COORDINATES) {
+                const coordinatesData = {
+                    x: coordinatesForm.x,
+                    y: coordinatesForm.y,
+                };
+                await createCoordinates(coordinatesData);
+                console.log('Coordinates created successfully');
+            } else if (objectType === ObjectType.HUMAN) {
+                const humanData = {
+                    age: humanForm.age,
+                };
+                await createHuman(humanData);
+                console.log('Human created successfully');
+            }
+            onClose(); // Close the modal after successful submission
+        } catch (error : any) {
+            console.error(error);
+            alert(`Error: ${error.message}`); // Alert the user in case of error
         }
-        onClose(); // Close the modal after submission
     };
 
     return ReactDOM.createPortal(
