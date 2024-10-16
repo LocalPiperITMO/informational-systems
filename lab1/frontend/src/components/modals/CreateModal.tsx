@@ -1,3 +1,4 @@
+// src/components/modals/CreateModal.tsx
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import CreateCityForm from '../forms/create/CreateCityForm';
@@ -7,6 +8,11 @@ import CreateHumanForm from '../forms/create/CreateHumanForm';
 interface CreateModalProps {
     isOpen: boolean;
     onClose: () => void;
+    data: {
+        cities: any[];
+        coordinates: any[];
+        humans: any[];
+    };
 }
 
 enum ObjectType {
@@ -15,7 +21,7 @@ enum ObjectType {
     HUMAN = 'Human',
 }
 
-const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose }) => {
+const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data }) => {
     const [objectType, setObjectType] = useState<ObjectType | null>(ObjectType.CITY);
 
     // Form State for City, Coordinates, and Human

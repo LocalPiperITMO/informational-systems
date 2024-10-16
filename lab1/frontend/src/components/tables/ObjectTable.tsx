@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useTable, Column } from "react-table";
-import CitiesTable, { City } from "./CitiesTable";
-import CoordinatesTable, { Coordinates } from "./CoordinatesTable";
-import HumansTable, { Human } from "./HumansTable";
-import { fetchCitiesData, fetchCoordinatesData, fetchHumansData } from "../../services/dataService";
+// src/components/tables/ObjectTable.tsx
+import React, { useState } from "react";
+import CitiesTable from "./CitiesTable";
+import CoordinatesTable from "./CoordinatesTable";
+import HumansTable from "./HumansTable";
+import { Column, useTable } from "react-table";
 
 interface CommonTableProps<T extends object> {
   data: T[];
@@ -44,64 +44,38 @@ export const CommonTable = <T extends object>({ data, columns }: CommonTableProp
   );
 }
 
-const ObjectTable: React.FC = () => {
-  const [currentTable, setCurrentTable] = useState(0);
-  const [currentName, setCurrentName] = useState(0);
-  const names = ["Cities", "Coordinates", "Humans"];
-  const [data, setData] = useState<{ cities: City[]; coordinates: Coordinates[]; humans: Human[] } | null>(null);
-  const [loading, setLoading] = useState(false);
+interface ObjectTableProps {
+    data: {
+        cities: any[];
+        coordinates: any[];
+        humans: any[];
+    };
+}
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
+const ObjectTable: React.FC<ObjectTableProps> = ({ data }) => {
+    const [currentTable, setCurrentTable] = useState(0);
+    const names = ["Cities", "Coordinates", "Humans"];
 
-      const cities = await fetchCitiesData();
-      const coordinates = await fetchCoordinatesData();
-      const humans = await fetchHumansData();
-      setData({ cities, coordinates, humans });
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const handleNext = () => {
+        setCurrentTable((currentTable + 1) % names.length);
+    };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+    const handlePrevious = () => {
+        setCurrentTable((currentTable - 1 + names.length) % names.length);
+    };
 
-  const handleNext = () => {
-    setCurrentTable((currentTable + 1) % names.length);
-    setCurrentName((currentName + 1) % names.length);
-  };
-
-  const handlePrevious = () => {
-    setCurrentTable((currentTable - 1 + names.length) % names.length);
-    setCurrentName((currentName - 1 + names.length) % names.length);
-  };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  return (
-    <div>
-      <h1>{names[currentName]}</h1>
-      { data ? (
-        <>
-          {currentName === 0 && <CitiesTable data={data.cities} />}
-          {currentName === 1 && <CoordinatesTable data={data.coordinates} />}
-          {currentName === 2 && <HumansTable data={data.humans} />}
-        </>
-      ) : (
-        <div>No data available</div>
-      )}
-      <div>
-        <button onClick={handlePrevious}>◀</button>
-        <button onClick={handleNext}>▶</button>
-      </div>
-    </div>
-  );
+    return (
+        <div>
+            <h1>{names[currentTable]}</h1>
+            {currentTable === 0 && <CitiesTable data={data.cities} />}
+            {currentTable === 1 && <CoordinatesTable data={data.coordinates} />}
+            {currentTable === 2 && <HumansTable data={data.humans} />}
+            <div>
+                <button onClick={handlePrevious}>◀</button>
+                <button onClick={handleNext}>▶</button>
+            </div>
+        </div>
+    );
 };
 
 export default ObjectTable;
