@@ -35,6 +35,8 @@ const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data }) => {
         telephoneCode: 0,
         climate: '',
         government: '',
+        coordinatesId: '',  // New field for selected Coordinates
+        humanId: ''          // New field for selected Human
     });
 
     const [coordinatesForm, setCoordinatesForm] = useState({
@@ -78,7 +80,12 @@ const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data }) => {
 
                 <form onSubmit={handleSubmit}>
                     {objectType === ObjectType.CITY && (
-                        <CreateCityForm cityForm={cityForm} setCityForm={setCityForm} />
+                        <CreateCityForm 
+                            cityForm={cityForm} 
+                            setCityForm={setCityForm} 
+                            coordinates={data.coordinates}  // Pass coordinates
+                            humans={data.humans}            // Pass humans
+                        />
                     )}
 
                     {objectType === ObjectType.COORDINATES && (

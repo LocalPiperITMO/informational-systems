@@ -12,6 +12,8 @@ interface CityFormProps {
         telephoneCode: number;
         climate: string;
         government: string;
+        coordinatesId: string; // New field for selected Coordinates ID
+        humanId: string;       // New field for selected Human ID
     };
     setCityForm: React.Dispatch<React.SetStateAction<{
         name: string;
@@ -23,10 +25,14 @@ interface CityFormProps {
         telephoneCode: number;
         climate: string;
         government: string;
+        coordinatesId: string; 
+        humanId: string;       
     }>>;
+    coordinates: Array<{ id: string; x: number; y: number }>; // Prop for available coordinates
+    humans: Array<{ id: string; age: number }>;             // Prop for available humans
 }
 
-const CreateCityForm: React.FC<CityFormProps> = ({ cityForm, setCityForm }) => {
+const CreateCityForm: React.FC<CityFormProps> = ({ cityForm, setCityForm, coordinates, humans }) => {
     return (
         <>
             <div>
@@ -117,6 +123,35 @@ const CreateCityForm: React.FC<CityFormProps> = ({ cityForm, setCityForm }) => {
                     <option value="NOOCRACY">Noocracy</option>
                     <option value="REPUBLIC">Republic</option>
                     <option value="STRATOCRACY">Stratocracy</option>
+                </select>
+            </div>
+            <div>
+                <label>Coordinates:</label>
+                <select
+                    value={cityForm.coordinatesId}
+                    onChange={(e) => setCityForm({ ...cityForm, coordinatesId: e.target.value })}
+                    required
+                >
+                    <option value="">Select Coordinates</option>
+                    {coordinates.map(coord => (
+                        <option key={coord.id} value={coord.id}>
+                            {`X: ${coord.x}, Y: ${coord.y}`}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            <div>
+                <label>Human:</label>
+                <select
+                    value={cityForm.humanId}
+                    onChange={(e) => setCityForm({ ...cityForm, humanId: e.target.value })}
+                >
+                    <option value="">Select Human (optional)</option>
+                    {humans.map(human => (
+                        <option key={human.id} value={human.id}>
+                            {`Age: ${human.age}`}
+                        </option>
+                    ))}
                 </select>
             </div>
         </>
