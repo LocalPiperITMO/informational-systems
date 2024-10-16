@@ -78,14 +78,20 @@ const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data }) => {
                 console.log('City created successfully');
             } else if (objectType === ObjectType.COORDINATES) {
                 const coordinatesData = {
-                    x: coordinatesForm.x,
-                    y: coordinatesForm.y,
+                    coordinates: {
+                        x: coordinatesForm.x,
+                        y: coordinatesForm.y
+                    },
+                    token: "your-token-here"
                 };
                 await createCoordinates(coordinatesData);
                 console.log('Coordinates created successfully');
             } else if (objectType === ObjectType.HUMAN) {
                 const humanData = {
-                    age: humanForm.age,
+                    human: {
+                        age: humanForm.age
+                    },
+                    token: "your-token-here"
                 };
                 await createHuman(humanData);
                 console.log('Human created successfully');
