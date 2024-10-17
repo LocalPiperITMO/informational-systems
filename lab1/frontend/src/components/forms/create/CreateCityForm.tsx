@@ -146,7 +146,7 @@ const CreateCityForm: React.FC<CityFormProps> = ({ cityForm, setCityForm, coordi
                     <option value="">Select Coordinates</option>
                     {coordinates.map(coord => (
                         <option key={coord.id} value={coord.id}>
-                            {`X: ${coord.x}, Y: ${coord.y}`}
+                            {`ID: ${coord.id}, X: ${coord.x}, Y: ${coord.y}`}
                         </option>
                     ))}
                 </select>
@@ -160,7 +160,7 @@ const CreateCityForm: React.FC<CityFormProps> = ({ cityForm, setCityForm, coordi
                     <option value="">Select Human (optional)</option>
                     {humans.map(human => (
                         <option key={human.id} value={human.id}>
-                            {`Age: ${human.age}`}
+                            {`ID: ${human.id}, Age: ${human.age}`}
                         </option>
                     ))}
                 </select>
