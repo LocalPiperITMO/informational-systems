@@ -30,10 +30,11 @@ const CreateCoordinatesForm: React.FC<CoordinatesFormProps> = ({ coordinatesForm
                 <label>Y:</label>
                 <input
                     type="number"
+                    step={0.00000001}
                     value={coordinatesForm.y}
                     onChange={(e) => setCoordinatesForm({ ...coordinatesForm, y: parseFloat(e.target.value) })}
                     required
-                    min={273}
+                    min={-273}
                     max={273}
                 />
             </div>
