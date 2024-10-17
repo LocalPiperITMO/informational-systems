@@ -58,9 +58,10 @@ const CreateCityForm: React.FC<CityFormProps> = ({ cityForm, setCityForm, coordi
                 <input
                     type="number"
                     value={cityForm.area}
+                    step={0.00000001}
                     onChange={(e) => setCityForm({ ...cityForm, area: parseFloat(e.target.value) })}
                     required
-                    min={0}
+                    min={0.00000001}
                 />
             </div>
             <div>
@@ -70,7 +71,7 @@ const CreateCityForm: React.FC<CityFormProps> = ({ cityForm, setCityForm, coordi
                     value={cityForm.population}
                     onChange={(e) => setCityForm({ ...cityForm, population: parseInt(e.target.value) })}
                     required
-                    min={0}
+                    min={1}
                 />
             </div>
             <div>
@@ -104,6 +105,8 @@ const CreateCityForm: React.FC<CityFormProps> = ({ cityForm, setCityForm, coordi
                     value={cityForm.telephoneCode}
                     onChange={(e) => setCityForm({ ...cityForm, telephoneCode: parseInt(e.target.value) })}
                     required
+                    min={1}
+                    max={100000}
                 />
             </div>
             <div>
@@ -125,9 +128,8 @@ const CreateCityForm: React.FC<CityFormProps> = ({ cityForm, setCityForm, coordi
                 <select
                     value={cityForm.government}
                     onChange={(e) => setCityForm({ ...cityForm, government: e.target.value })}
-                    required
                 >
-                    <option value="">Select Government</option>
+                    <option value="">Select Government (optional)</option>
                     <option value="DICTATORSHIP">Dictatorship</option>
                     <option value="NOOCRACY">Noocracy</option>
                     <option value="REPUBLIC">Republic</option>

@@ -8,7 +8,7 @@ export interface City {
   name: string;
   coordinates: { id: number; x: number; y: number };
   creationDate: string;
-  area: number;
+  area: string;
   population: number;
   establishmentDate: string | null;
   capital: boolean | null;
@@ -34,7 +34,10 @@ const CitiesTable: React.FC<CitiesTableProps> = ({ data }) => {
         accessor: 'creationDate',
         Cell: ({ value }) => value ? dayjs(value).format('YYYY-MM-DD HH:mm:ss') : ''
       },
-      { Header: 'Area', accessor: 'area'},
+      { 
+        Header: 'Area', 
+        accessor: 'area',
+        Cell: ({ value }) => Number(value) },
       { Header: 'Population', accessor: 'population' },
       { 
         Header: 'Establishment Date', 

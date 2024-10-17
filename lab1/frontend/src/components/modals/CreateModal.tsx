@@ -25,8 +25,6 @@ enum ObjectType {
 
 const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data }) => {
     const [objectType, setObjectType] = useState<ObjectType | null>(ObjectType.CITY);
-
-    // Form State for City, Coordinates, and Human
     const [cityForm, setCityForm] = useState({
         name: '',
         area: 0,
@@ -37,8 +35,8 @@ const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data }) => {
         telephoneCode: 0,
         climate: '',
         government: '',
-        coordinatesId: '',  // New field for selected Coordinates
-        humanId: ''          // New field for selected Human
+        coordinatesId: '',
+        humanId: ''
     });
 
     const [coordinatesForm, setCoordinatesForm] = useState({
