@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 export interface City {
   id: number;
   name: string;
-  coordinatesId: number;
+  coordinates: { id: number; x: number; y: number };
   creationDate: string;
   area: number;
   population: number;
@@ -16,7 +16,7 @@ export interface City {
   telephoneCode: number;
   climate: string;
   government: string | null;
-  humanId: number | null;
+  human: { id: number, age: number } | null;
 }
 
 interface CitiesTableProps {
@@ -28,7 +28,7 @@ const CitiesTable: React.FC<CitiesTableProps> = ({ data }) => {
     () => [
       { Header: 'ID', accessor: 'id' },
       { Header: 'Name', accessor: 'name' },
-      { Header: 'Coordinates', accessor: 'coordinatesId' },
+      { Header: 'Coordinates ID', accessor: row => `${row.coordinates.id}` },
       { 
         Header: 'Creation Date', 
         accessor: 'creationDate',
@@ -41,12 +41,16 @@ const CitiesTable: React.FC<CitiesTableProps> = ({ data }) => {
         accessor: 'establishmentDate',
         Cell: ({ value }) => value ? dayjs(value).format('YYYY-MM-DD HH:mm:ss') : ''
       },
-      { Header: 'Capital', accessor: 'capital' },
+      { 
+        Header: 'Capital', 
+        accessor: 'capital',
+        Cell: ({ value }) => value ? 'Yes' : 'No' 
+      },
       { Header: 'MASL', accessor: 'metersAboveSeaLevel' },
       { Header: 'Telephone Code', accessor: 'telephoneCode'},
       { Header: 'Climate', accessor: 'climate' },
       { Header: 'Government', accessor: 'government'},
-      { Header: 'Governor', accessor: 'humanId'}
+      { Header: 'Governor ID', accessor: row => `${row.human? row.human.id : 'Not provided'}`}
     ],
     []
   );
