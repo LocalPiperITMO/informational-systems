@@ -1,5 +1,8 @@
 // src/components/modals/CreateCityForm.tsx
 import React from 'react';
+import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 
 interface CityFormProps {
     cityForm: {
@@ -12,8 +15,8 @@ interface CityFormProps {
         telephoneCode: number;
         climate: string;
         government: string;
-        coordinatesId: string; // New field for selected Coordinates ID
-        humanId: string;       // New field for selected Human ID
+        coordinatesId: string;
+        humanId: string;
     };
     setCityForm: React.Dispatch<React.SetStateAction<{
         name: string;
@@ -33,6 +36,12 @@ interface CityFormProps {
 }
 
 const CreateCityForm: React.FC<CityFormProps> = ({ cityForm, setCityForm, coordinates, humans }) => {
+    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const localDate = new Date(e.target.value);
+        const zonedDate = dayjs(localDate).utc().format();
+        setCityForm({ ...cityForm, establishmentDate: zonedDate });
+    }
+    
     return (
         <>
             <div>
@@ -68,8 +77,8 @@ const CreateCityForm: React.FC<CityFormProps> = ({ cityForm, setCityForm, coordi
                 <label>Establishment Date:</label>
                 <input
                     type="date"
-                    value={cityForm.establishmentDate}
-                    onChange={(e) => setCityForm({ ...cityForm, establishmentDate: e.target.value })}
+                    value={dayjs(cityForm.establishmentDate).format('YYYY-MM-DD')}
+                    onChange={handleDateChange}
                 />
             </div>
             <div>
