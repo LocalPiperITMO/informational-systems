@@ -4,7 +4,8 @@ import { Column } from "react-table";
 
 export interface Human {
   id: number,
-  age: number
+  age: number,
+  owner: string
 }
 
 interface HumansTableProps {
@@ -15,7 +16,8 @@ const HumansTable: React.FC<HumansTableProps> = ({ data }) => {
     const columns : Column<Human>[] = React.useMemo(
       () => [
         { Header: 'ID', accessor: 'id' },
-        { Header: 'Age', accessor: 'age' }
+        { Header: 'Age', accessor: 'age' },
+        { Header: 'Owner', accessor: 'owner'}
       ],
       []
     );

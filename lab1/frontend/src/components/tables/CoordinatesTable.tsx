@@ -5,7 +5,8 @@ import { Column } from "react-table";
 export interface Coordinates {
   id: number,
   x: number,
-  y: string
+  y: string,
+  owner: string;
 }
 
 interface CoordinatesTableProps {
@@ -21,6 +22,7 @@ const CoordinatesTable : React.FC<CoordinatesTableProps> = ({ data }) => {
         accessor: 'y',
         Cell: ({ value }) => Number(value) 
       },
+      { Header: 'Owner', accessor: 'owner'}
     ],
     []
   );

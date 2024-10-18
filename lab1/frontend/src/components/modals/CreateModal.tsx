@@ -78,7 +78,8 @@ const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data }) => {
                     coordinatesId: cityForm.coordinatesId,
                     humanId: cityForm.humanId,
                     modifiable: cityForm.modifiable,
-                    token: localStorage.getItem('token')? localStorage.getItem('token') : "error"
+                    token: localStorage.getItem('token')? localStorage.getItem('token') : "error",
+                    owner: localStorage.getItem('username')? localStorage.getItem('username') : ""
                 };
                 await createCity(cityData);
                 console.log('City created successfully');
@@ -87,7 +88,8 @@ const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data }) => {
                     coordinates: {
                         x: coordinatesForm.x,
                         y: coordinatesForm.y,
-                        modifiable: coordinatesForm.modifiable
+                        modifiable: coordinatesForm.modifiable,
+                        owner: localStorage.getItem('username')? localStorage.getItem('username') : ""
                     },
                     token: localStorage.getItem('token')? localStorage.getItem('token') : "error"
                 };
@@ -97,7 +99,8 @@ const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data }) => {
                 const humanData = {
                     human: {
                         age: humanForm.age,
-                        modifiable: humanForm.modifiable
+                        modifiable: humanForm.modifiable,
+                        owner: localStorage.getItem('username')? localStorage.getItem('username') : ""
                     },
                     token: localStorage.getItem('token')? localStorage.getItem('token') : "error"
                 };

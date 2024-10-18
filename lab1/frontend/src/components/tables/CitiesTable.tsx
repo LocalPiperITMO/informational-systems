@@ -17,6 +17,7 @@ export interface City {
   climate: string;
   government: string | null;
   governor: { id: number, age: number } | null;
+  owner: string;
 }
 
 interface CitiesTableProps {
@@ -53,7 +54,8 @@ const CitiesTable: React.FC<CitiesTableProps> = ({ data }) => {
       { Header: 'Telephone Code', accessor: 'telephoneCode'},
       { Header: 'Climate', accessor: 'climate' },
       { Header: 'Government', accessor: 'government'},
-      { Header: 'Governor ID', accessor: row => `${row.governor? row.governor.id : 'Not provided'}`}
+      { Header: 'Governor ID', accessor: row => `${row.governor? row.governor.id : 'Not provided'}`},
+      { Header: 'Owner', accessor: 'owner'}
     ],
     []
   );
