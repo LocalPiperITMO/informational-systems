@@ -5,6 +5,7 @@ import Header from "../Header";
 import Footer from "../Footer";
 import ObjectTable from "../tables/ObjectTable";
 import CreateModal from "../modals/CreateModal";
+import UpdateModal from "../modals/UpdateModal";
 import { useNavigate } from "react-router-dom";
 import { fetchCitiesData, fetchCoordinatesData, fetchHumansData } from "../../services/dataService";
 
@@ -15,10 +16,10 @@ const Title: React.FC = () => {
     </div>
 }
 
-const Commands: React.FC<{ openCreateModal: () => void, handleLogout: () => void }> = ({ openCreateModal, handleLogout }) => {
+const Commands: React.FC<{ openCreateModal: () => void, openUpdateModal: () => void, handleLogout: () => void }> = ({ openCreateModal, openUpdateModal, handleLogout }) => {
     return <div>
         <button onClick={openCreateModal}>Create</button>
-        <button>Update</button>
+        <button onClick={openUpdateModal}>Update</button>
         <button>Delete</button>
         <button>Request Admin</button>
         <button>Special</button>
@@ -31,8 +32,7 @@ const MainPage: React.FC = () => {
     const navigate = useNavigate();
     const { logout } = useAuth();
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-
-    // State for fetched data
+    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
     const [data, setData] = useState<{ cities: any[], coordinates: any[], humans: any[] } | null>(null);
     const [loading, setLoading] = useState(false);
 
@@ -48,6 +48,14 @@ const MainPage: React.FC = () => {
     const closeCreateModal = () => {
         setIsCreateModalOpen(false);
     };
+
+    const openUpdateModal = () => {
+        setIsUpdateModalOpen(true);
+    }
+
+    const closeUpdateModal = () => {
+        setIsUpdateModalOpen(false);
+    }
 
 
     const fetchData = async () => {
@@ -76,13 +84,13 @@ const MainPage: React.FC = () => {
         <div>
             <Header />
             <Title />
-            <Commands openCreateModal={openCreateModal} handleLogout={handleLogout} />
+            <Commands openCreateModal={openCreateModal} openUpdateModal={openUpdateModal} handleLogout={handleLogout} />
 
-            {/* Pass data to ObjectTable and CreateModal */}
             {data ? (
                 <>
                     <ObjectTable data={data} />
                     <CreateModal isOpen={isCreateModalOpen} onClose={closeCreateModal} data={data} onSuccess={fetchData} />
+                    <UpdateModal isOpen={isUpdateModalOpen} onClose={closeUpdateModal} data={data} onSuccess={fetchData}/>
                 </>
             ) : (
                 <div>No data available</div>
