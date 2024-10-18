@@ -49,7 +49,7 @@ const MainPage: React.FC = () => {
         setIsCreateModalOpen(false);
     };
 
-    // Fetch data from all endpoints
+
     const fetchData = async () => {
         try {
             setLoading(true);
@@ -82,7 +82,7 @@ const MainPage: React.FC = () => {
             {data ? (
                 <>
                     <ObjectTable data={data} />
-                    <CreateModal isOpen={isCreateModalOpen} onClose={closeCreateModal} data={data} />
+                    <CreateModal isOpen={isCreateModalOpen} onClose={closeCreateModal} data={data} onSuccess={fetchData} />
                 </>
             ) : (
                 <div>No data available</div>

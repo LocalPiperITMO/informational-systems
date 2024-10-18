@@ -17,6 +17,7 @@ interface CreateModalProps {
         coordinates: any[];
         humans: any[];
     };
+    onSuccess: () => void;
 }
 
 enum ObjectType {
@@ -25,7 +26,7 @@ enum ObjectType {
     HUMAN = 'Human',
 }
 
-const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data }) => {
+const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data, onSuccess }) => {
     const { logout } = useAuth();
     const navigate = useNavigate();
     const [objectType, setObjectType] = useState<ObjectType | null>(ObjectType.CITY);
@@ -107,6 +108,7 @@ const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data }) => {
                 await createHuman(humanData);
                 console.log('Human created successfully');
             }
+            onSuccess();
             onClose(); // Close the modal after successful submission
         } catch (error : any) {
             if (error.message === "User is unauthorized! Redirecting...") {
