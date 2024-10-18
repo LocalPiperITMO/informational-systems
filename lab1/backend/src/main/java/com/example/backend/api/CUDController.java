@@ -55,7 +55,7 @@ public class CUDController {
         try {
             String username = jwtUtil.extractUsername(token);
             return !(userService.findByUsername(username) == null || !jwtUtil.validateToken(token, username));
-        } catch (io.jsonwebtoken.security.SignatureException e) {
+        } catch (io.jsonwebtoken.security.SignatureException | io.jsonwebtoken.MalformedJwtException e) {
             return false;
         }
     }
