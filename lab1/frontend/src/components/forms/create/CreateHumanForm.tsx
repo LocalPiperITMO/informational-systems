@@ -4,9 +4,11 @@ import React from 'react';
 interface HumanFormProps {
     humanForm: {
         age: number;
+        modifiable: boolean;
     };
     setHumanForm: React.Dispatch<React.SetStateAction<{
         age: number;
+        modifiable: boolean;
     }>>;
 }
 
@@ -21,6 +23,14 @@ const CreateHumanForm: React.FC<HumanFormProps> = ({ humanForm, setHumanForm }) 
                     onChange={(e) => setHumanForm({ ...humanForm, age: parseInt(e.target.value) })}
                     required
                     min={1}
+                />
+            </div>
+            <div>
+                <label>Modifiable?</label>
+                <input
+                    type="checkbox"
+                    checked={humanForm.modifiable}
+                    onChange={(e) => setHumanForm({ ...humanForm, modifiable: e.target.checked })}
                 />
             </div>
         </>

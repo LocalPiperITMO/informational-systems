@@ -40,16 +40,19 @@ const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data }) => {
         climate: '',
         government: '',
         coordinatesId: '',
-        humanId: ''
+        humanId: '',
+        modifiable: false
     });
 
     const [coordinatesForm, setCoordinatesForm] = useState({
         x: 0,
-        y: 0
+        y: 0,
+        modifiable: false
     });
 
     const [humanForm, setHumanForm] = useState({
-        age: 0
+        age: 0,
+        modifiable: false
     });
 
     if (!isOpen) return null;
@@ -74,6 +77,7 @@ const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data }) => {
                     government: cityForm.government,
                     coordinatesId: cityForm.coordinatesId,
                     humanId: cityForm.humanId,
+                    modifiable: cityForm.modifiable,
                     token: localStorage.getItem('token')? localStorage.getItem('token') : "error"
                 };
                 await createCity(cityData);
@@ -82,7 +86,8 @@ const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data }) => {
                 const coordinatesData = {
                     coordinates: {
                         x: coordinatesForm.x,
-                        y: coordinatesForm.y
+                        y: coordinatesForm.y,
+                        modifiable: coordinatesForm.modifiable
                     },
                     token: localStorage.getItem('token')? localStorage.getItem('token') : "error"
                 };
@@ -91,7 +96,8 @@ const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data }) => {
             } else if (objectType === ObjectType.HUMAN) {
                 const humanData = {
                     human: {
-                        age: humanForm.age
+                        age: humanForm.age,
+                        modifiable: humanForm.modifiable
                     },
                     token: localStorage.getItem('token')? localStorage.getItem('token') : "error"
                 };

@@ -5,10 +5,12 @@ interface CoordinatesFormProps {
     coordinatesForm: {
         x: number;
         y: number;
+        modifiable: boolean;
     };
     setCoordinatesForm: React.Dispatch<React.SetStateAction<{
         x: number;
         y: number;
+        modifiable: boolean;
     }>>;
 }
 
@@ -36,6 +38,14 @@ const CreateCoordinatesForm: React.FC<CoordinatesFormProps> = ({ coordinatesForm
                     required
                     min={-273}
                     max={273}
+                />
+            </div>
+            <div>
+                <label>Modifiable?</label>
+                <input
+                    type="checkbox"
+                    checked={coordinatesForm.modifiable}
+                    onChange={(e) => setCoordinatesForm({ ...coordinatesForm, modifiable: e.target.checked })}
                 />
             </div>
         </>

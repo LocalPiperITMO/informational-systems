@@ -17,6 +17,7 @@ interface CityFormProps {
         government: string;
         coordinatesId: string;
         humanId: string;
+        modifiable: boolean;
     };
     setCityForm: React.Dispatch<React.SetStateAction<{
         name: string;
@@ -29,7 +30,8 @@ interface CityFormProps {
         climate: string;
         government: string;
         coordinatesId: string; 
-        humanId: string;       
+        humanId: string;
+        modifiable: boolean;       
     }>>;
     coordinates: Array<{ id: string; x: number; y: number }>; // Prop for available coordinates
     humans: Array<{ id: string; age: number }>;             // Prop for available humans
@@ -164,6 +166,14 @@ const CreateCityForm: React.FC<CityFormProps> = ({ cityForm, setCityForm, coordi
                         </option>
                     ))}
                 </select>
+            </div>
+            <div>
+                <label>Modifiable?</label>
+                <input
+                    type="checkbox"
+                    checked={cityForm.modifiable}
+                    onChange={(e) => setCityForm({ ...cityForm, modifiable: e.target.checked })}
+                />
             </div>
         </>
     );
