@@ -70,6 +70,7 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onClose, data, onSucc
         try {
             if (objectType === ObjectType.CITY) {
                 const cityData = {
+                    id: cityForm.id,
                     name: cityForm.name,
                     area: cityForm.area,
                     population: cityForm.population,
@@ -90,6 +91,7 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onClose, data, onSucc
             } else if (objectType === ObjectType.COORDINATES) {
                 const coordinatesData = {
                     coordinates: {
+                        id: coordinatesForm.id,
                         x: coordinatesForm.x,
                         y: coordinatesForm.y,
                         modifiable: coordinatesForm.modifiable,
@@ -102,6 +104,7 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onClose, data, onSucc
             } else if (objectType === ObjectType.HUMAN) {
                 const humanData = {
                     human: {
+                        id: humanForm.id,
                         age: humanForm.age,
                         modifiable: humanForm.modifiable,
                         owner: localStorage.getItem('username')? localStorage.getItem('username') : ""
@@ -147,11 +150,11 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onClose, data, onSucc
                     )}
 
                     {objectType === ObjectType.COORDINATES && (
-                        <UpdateCoordinatesForm coordinatesForm={coordinatesForm} setCoordinatesForm={setCoordinatesForm} />
+                        <UpdateCoordinatesForm coordinatesForm={coordinatesForm} setCoordinatesForm={setCoordinatesForm} coordinates={data.coordinates}/>
                     )}
 
                     {objectType === ObjectType.HUMAN && (
-                        <UpdateHumanForm humanForm={humanForm} setHumanForm={setHumanForm} />
+                        <UpdateHumanForm humanForm={humanForm} setHumanForm={setHumanForm} humans={data.humans}/>
                     )}
 
                     <button type="submit">Submit</button>

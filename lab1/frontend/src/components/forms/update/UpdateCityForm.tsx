@@ -67,7 +67,7 @@ const UpdateCityForm: React.FC<CityFormProps> = ({ cityForm, setCityForm, coordi
         
         if (selectedCity) {
             setCityForm({
-                ...selectedCity, // Populate form with selected city's data
+                ...selectedCity,
             });
         } else {
             setCityForm({
@@ -245,15 +245,6 @@ const UpdateCityForm: React.FC<CityFormProps> = ({ cityForm, setCityForm, coordi
                         </option>
                     ))}
                 </select>
-            </div>
-            <div>
-                <label>Modifiable?</label>
-                <input
-                    type="checkbox"
-                    checked={cityForm.modifiable}
-                    onChange={(e) => setCityForm({ ...cityForm, modifiable: e.target.checked })}
-                    disabled={isFormDisabled}
-                />
             </div>
         </>
     );

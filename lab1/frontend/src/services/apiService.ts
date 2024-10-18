@@ -72,7 +72,7 @@ export async function updateCity(cityData: any) {
     } else if (response.status === 403){
         throw new Error("User is unauthorized! Redirecting...");
     } else {
-        throw new Error("Failed to create City");
+        throw new Error("Failed to update City");
     }
 }
 
@@ -91,10 +91,9 @@ export async function updateCoordinates(coordinatesData: any) {
     } else if (response.status === 403){
         throw new Error("User is unauthorized! Redirecting...");
     } else {
-        throw new Error("Failed to create Coordinates");
+        throw new Error("Failed to update Coordinates");
     }
 }
-
 export async function updateHuman(humanData: any) {
     const response = await fetch('http://localhost:8080/api/logic/updateHuman', {
         method: 'POST',
@@ -110,6 +109,6 @@ export async function updateHuman(humanData: any) {
     } else if (response.status === 403){
         throw new Error("User is unauthorized! Redirecting...");
     } else {
-        throw new Error("Failed to create Human");
+        throw new Error("Failed to update Human");
     }
 }
