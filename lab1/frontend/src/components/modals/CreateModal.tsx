@@ -70,7 +70,7 @@ const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data }) => {
                     government: cityForm.government,
                     coordinatesId: cityForm.coordinatesId,
                     humanId: cityForm.humanId,
-                    token: "your-token-here"  // Add any necessary token if required
+                    token: localStorage.getItem('token')
                 };
                 await createCity(cityData);
                 console.log('City created successfully');
@@ -80,7 +80,7 @@ const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data }) => {
                         x: coordinatesForm.x,
                         y: coordinatesForm.y
                     },
-                    token: "your-token-here"
+                    token: localStorage.getItem('token')
                 };
                 await createCoordinates(coordinatesData);
                 console.log('Coordinates created successfully');
@@ -89,7 +89,7 @@ const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data }) => {
                     human: {
                         age: humanForm.age
                     },
-                    token: "your-token-here"
+                    token: localStorage.getItem('token')
                 };
                 await createHuman(humanData);
                 console.log('Human created successfully');
