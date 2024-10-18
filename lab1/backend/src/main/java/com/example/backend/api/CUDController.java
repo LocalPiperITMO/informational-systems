@@ -24,6 +24,8 @@ import com.example.backend.model.Human;
 import com.example.backend.service.CityService;
 import com.example.backend.service.CoordinatesService;
 import com.example.backend.service.HumanService;
+import com.example.backend.service.UserService;
+import com.example.backend.utils.JwtUtil;
 import com.example.backend.validation.ClimateValidator;
 import com.example.backend.validation.GovernmentValidator;
 
@@ -43,12 +45,30 @@ public class CUDController {
     @Autowired
     private HumanService humanService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private UserService userService;
+
+    private boolean checkAuth(String token) {
+        try {
+            String username = jwtUtil.extractUsername(token);
+            return !(userService.findByUsername(username) == null || !jwtUtil.validateToken(token, username));
+        } catch (io.jsonwebtoken.security.SignatureException e) {
+            return false;
+        }
+    }
+
     // City Endpoints
     @PostMapping("/createCity")
     public ResponseEntity<List<City>> createCity(
         @Valid 
         @RequestBody CityRequest request) {
         try {
+            if (!checkAuth(request.getToken())) {
+                return ResponseEntity.status(403).body(null);
+            }
             Long coordinatesId = request.getCoordinatesId();
             if (coordinatesId == null) {
                 return ResponseEntity.status(422).body(null);
@@ -80,6 +100,9 @@ public class CUDController {
     public ResponseEntity<List<City>> updateCity(
     @Valid    
     @RequestBody CityRequest request) {
+        if (!checkAuth(request.getToken())) {
+            return ResponseEntity.status(403).body(null);
+        }
         try {
             if (request.getId() == null || cityService.findCityById(request.getId()) == null) return ResponseEntity.status(422).body(null);
             Long coordinatesId = request.getCoordinatesId();
@@ -114,6 +137,9 @@ public class CUDController {
         @Valid
         @RequestBody DeleteRequest request
     ) {
+        if (!checkAuth(request.getToken())) {
+            return ResponseEntity.status(403).body(null);
+        }
         List<City> cities = cityService.deleteCity(request.getId());
         return ResponseEntity.ok(cities);
     }
@@ -121,8 +147,11 @@ public class CUDController {
     // Coordinates Endpoints
     @PostMapping("/createCoordinates")
     public ResponseEntity<List<Coordinates>> createCoordinates(
-    @Valid    
+    @Valid
     @RequestBody CoordinatesRequest request) {
+        if (!checkAuth(request.getToken())) {
+            return ResponseEntity.status(403).body(null);
+        }
         try {
             List<Coordinates> coordinatesList = coordinatesService.createCoordinates(request);
             return ResponseEntity.status(201).body(coordinatesList);
@@ -135,6 +164,9 @@ public class CUDController {
     public ResponseEntity<List<Coordinates>> updateCoordinates(
     @Valid    
     @RequestBody CoordinatesRequest request) {
+        if (!checkAuth(request.getToken())) {
+            return ResponseEntity.status(403).body(null);
+        }
         try {
             List<Coordinates> coordinatesList = coordinatesService.updateCoordinates(request);
             return ResponseEntity.ok(coordinatesList);
@@ -154,6 +186,9 @@ public class CUDController {
     public ResponseEntity<List<Human>> createHuman(
     @Valid    
     @RequestBody HumanRequest request) {
+        if (!checkAuth(request.getToken())) {
+            return ResponseEntity.status(403).body(null);
+        }
         try {
             List<Human> humans = humanService.createHuman(request);
             return ResponseEntity.status(201).body(humans);
@@ -166,6 +201,9 @@ public class CUDController {
     public ResponseEntity<List<Human>> updateHuman(
     @Valid    
     @RequestBody HumanRequest request) {
+        if (!checkAuth(request.getToken())) {
+            return ResponseEntity.status(403).body(null);
+        }
         try {
             List<Human> humans = humanService.updateHuman(request);
             return ResponseEntity.ok(humans);
