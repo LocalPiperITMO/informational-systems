@@ -22,7 +22,7 @@ public class Coordinates {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Auto-generated ID for Coordinates
+    private Long id;
 
     @Column(nullable = false)
     @NotNull
@@ -36,11 +36,14 @@ public class Coordinates {
     @Min(-273)
     private Double y;
 
+    @Column(nullable = false)
+    @NotNull
+    private boolean modifiable;
 
-    // Constructor with parameters
-    public Coordinates(Long x, Double y) {
+    public Coordinates(Long x, Double y, Boolean modifiable) {
         this.x = x;
         this.y = y;
+        this.modifiable = modifiable;
     }
 
 }

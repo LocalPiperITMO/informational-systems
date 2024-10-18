@@ -54,4 +54,5 @@ public class CityRequest {
 
     private String government;
 
+    private Boolean modifiable;
 }

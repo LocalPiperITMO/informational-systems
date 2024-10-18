@@ -21,16 +21,19 @@ public class Human {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Auto-generated ID for Human
+    private Long id;
 
-    @Column(nullable = false) // Cannot be null, age must be greater than 0
+    @Column(nullable = false)
     @NotNull
     @Positive
     private int age;
 
-    public Human(int age) {
-        this.age = age;
-    }
+    @Column(nullable = false)
+    @NotNull
+    private boolean modifiable;
 
-    // Getters and Setters omitted for brevity
+    public Human(int age, Boolean modifiable) {
+        this.age = age;
+        this.modifiable = modifiable;
+    }
 }

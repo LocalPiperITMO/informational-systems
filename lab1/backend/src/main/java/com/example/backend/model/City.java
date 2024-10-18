@@ -13,6 +13,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,23 +30,29 @@ public class City {
    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Auto-generated ID (must be unique and greater than 0)
+    private Long id;
 
     @Column(nullable = false)
-    private String name; // Cannot be null, cannot be empty
+    @NotNull
+    @NotBlank
+    private String name;
 
-    @OneToOne(cascade = CascadeType.ALL) // Assume one coordinate for each city
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "coordinates_id", referencedColumnName = "id")
-    private Coordinates coordinates; // Cannot be null
+    private Coordinates coordinates;
 
     @Column(nullable = false, updatable = false)
-    private ZonedDateTime creationDate; // Cannot be null, automatically generated
+    private ZonedDateTime creationDate;
 
     @Column(nullable = false)
-    private double area; // Must be greater than 0
+    @NotNull
+    @Positive
+    private double area;
 
     @Column(nullable = false)
-    private int population; // Must be greater than 0
+    @NotNull
+    @Positive
+    private int population;
 
     private ZonedDateTime establishmentDate;
 
@@ -51,6 +61,9 @@ public class City {
     private Integer metersAboveSeaLevel;
 
     @Column(nullable = false)
+    @NotNull
+    @Positive
+    @Max(100000)
     private long telephoneCode;
 
     @Enumerated(EnumType.STRING)
@@ -64,8 +77,11 @@ public class City {
     @JoinColumn(name = "governor_id", referencedColumnName = "id")
     private Human governor;
 
+    @Column(nullable = false)
+    @NotNull
+    private boolean modifiable;
 
-    public City(String name, Coordinates coordinates, Double area, Integer population, ZonedDateTime establishmentDate, Boolean capital, Integer metersAboveSeaLevel, Long long1, Climate climate, Government government, Human governor) {
+    public City(String name, Coordinates coordinates, Double area, Integer population, ZonedDateTime establishmentDate, Boolean capital, Integer metersAboveSeaLevel, Long telephoneCode, Climate climate, Government government, Human governor, Boolean modifiable) {
         this.name = name;
         this.coordinates = coordinates;
         this.creationDate = ZonedDateTime.now();
@@ -73,9 +89,11 @@ public class City {
         this.population = population;
         this.establishmentDate = establishmentDate;
         this.capital = capital;
+        this.telephoneCode = telephoneCode;
         this.metersAboveSeaLevel = metersAboveSeaLevel;
         this.climate = climate;
         this.government = government;
         this.governor = governor;
+        this.modifiable = modifiable;
     }
 }
