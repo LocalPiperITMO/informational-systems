@@ -6,6 +6,8 @@ import CreateCityForm from '../forms/create/CreateCityForm';
 import CreateCoordinatesForm from '../forms/create/CreateCoordinatesForm';
 import CreateHumanForm from '../forms/create/CreateHumanForm';
 import { createCity, createCoordinates, createHuman } from '../../services/apiService'; // Import the new service
+import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 interface CreateModalProps {
     isOpen: boolean;
@@ -24,6 +26,8 @@ enum ObjectType {
 }
 
 const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data }) => {
+    const { logout } = useAuth();
+    const navigate = useNavigate();
     const [objectType, setObjectType] = useState<ObjectType | null>(ObjectType.CITY);
     const [cityForm, setCityForm] = useState({
         name: '',
@@ -96,6 +100,10 @@ const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data }) => {
             }
             onClose(); // Close the modal after successful submission
         } catch (error : any) {
+            if (error.message === "User is unauthorized! Redirecting...") {
+                logout();
+                navigate("/auth");
+            }
             console.error(error);
             alert(`Error: ${error.message}`); // Alert the user in case of error
         }

@@ -12,6 +12,8 @@ export async function createCity(cityData: any) {
     if (response.ok) {
         const data = await response.json();
         return data;  // Return the response data as needed
+    } else if (response.status === 403){
+        throw new Error("User is unauthorized! Redirecting...");
     } else {
         throw new Error("Failed to create City");
     }
@@ -29,6 +31,8 @@ export async function createCoordinates(coordinatesData: any) {
     if (response.ok) {
         const data = await response.json();
         return data;  // Return the response data as needed
+    } else if (response.status === 403){
+        throw new Error("User is unauthorized! Redirecting...");
     } else {
         throw new Error("Failed to create Coordinates");
     }
@@ -46,6 +50,8 @@ export async function createHuman(humanData: any) {
     if (response.ok) {
         const data = await response.json();
         return data;  // Return the response data as needed
+    } else if (response.status === 403){
+        throw new Error("User is unauthorized! Redirecting...");
     } else {
         throw new Error("Failed to create Human");
     }
