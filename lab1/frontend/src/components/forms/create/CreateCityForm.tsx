@@ -33,8 +33,8 @@ interface CityFormProps {
         humanId: string;
         modifiable: boolean;       
     }>>;
-    coordinates: Array<{ id: string; x: number; y: number }>; // Prop for available coordinates
-    humans: Array<{ id: string; age: number }>;             // Prop for available humans
+    coordinates: Array<{ id: string; x: number; y: number, owner: string }>; // Prop for available coordinates
+    humans: Array<{ id: string; age: number, owner: string }>;             // Prop for available humans
 }
 
 const CreateCityForm: React.FC<CityFormProps> = ({ cityForm, setCityForm, coordinates, humans }) => {
@@ -146,7 +146,9 @@ const CreateCityForm: React.FC<CityFormProps> = ({ cityForm, setCityForm, coordi
                     required
                 >
                     <option value="">Select Coordinates</option>
-                    {coordinates.map(coord => (
+                    {coordinates
+                    .filter(coord => coord.owner === localStorage.getItem('username'))
+                    .map(coord => (
                         <option key={coord.id} value={coord.id}>
                             {`ID: ${coord.id}, X: ${coord.x}, Y: ${coord.y}`}
                         </option>
@@ -160,7 +162,9 @@ const CreateCityForm: React.FC<CityFormProps> = ({ cityForm, setCityForm, coordi
                     onChange={(e) => setCityForm({ ...cityForm, humanId: e.target.value })}
                 >
                     <option value="">Select Human (optional)</option>
-                    {humans.map(human => (
+                    {humans
+                    .filter(human => human.owner === localStorage.getItem('username'))
+                    .map(human => (
                         <option key={human.id} value={human.id}>
                             {`ID: ${human.id}, Age: ${human.age}`}
                         </option>
