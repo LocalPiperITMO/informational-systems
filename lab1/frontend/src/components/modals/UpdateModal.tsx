@@ -31,6 +31,7 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onClose, data, onSucc
     const navigate = useNavigate();
     const [objectType, setObjectType] = useState<ObjectType | null>(ObjectType.CITY);
     const [cityForm, setCityForm] = useState({
+        id: 0,
         name: '',
         area: 0,
         population: 0,
@@ -46,12 +47,14 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onClose, data, onSucc
     });
 
     const [coordinatesForm, setCoordinatesForm] = useState({
+        id: 0,
         x: 0,
         y: 0,
         modifiable: false
     });
 
     const [humanForm, setHumanForm] = useState({
+        id: 0,
         age: 0,
         modifiable: false
     });
@@ -139,6 +142,7 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onClose, data, onSucc
                             setCityForm={setCityForm} 
                             coordinates={data.coordinates}  // Pass coordinates
                             humans={data.humans}            // Pass humans
+                            cities={data.cities}
                         />
                     )}
 
