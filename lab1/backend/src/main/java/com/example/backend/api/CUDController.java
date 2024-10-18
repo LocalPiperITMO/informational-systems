@@ -88,7 +88,7 @@ public class CUDController {
             Climate climate = ClimateValidator.validateClimate(request.getClimate());
             Government government = GovernmentValidator.validateGovernment(request.getGovernment());
             if (climate == null) return ResponseEntity.status(422).body(null);            
-            City city = new City(request.getName(), coords, request.getArea(), request.getPopulation(), request.getEstablishmentDate(), request.getCapital(), request.getMetersAboveSeaLevel(), request.getTelephoneCode(), climate, government, governor, request.getModifiable());
+            City city = new City(request.getName(), coords, request.getArea(), request.getPopulation(), request.getEstablishmentDate(), request.getCapital(), request.getMetersAboveSeaLevel(), request.getTelephoneCode(), climate, government, governor, request.getModifiable(), jwtUtil.extractUsername(request.getToken()));
             List<City> cities = cityService.createCity(city);
             return ResponseEntity.status(201).body(cities);
         } catch (IllegalArgumentException e) {
@@ -124,7 +124,7 @@ public class CUDController {
             Climate climate = ClimateValidator.validateClimate(request.getClimate());
             Government government = GovernmentValidator.validateGovernment(request.getGovernment());
             if (climate == null) return ResponseEntity.status(422).body(null);            
-            City city = new City(request.getName(), coords, request.getArea(), request.getPopulation(), request.getEstablishmentDate(), request.getCapital(), request.getMetersAboveSeaLevel(), request.getTelephoneCode(), climate, government, governor, request.getModifiable());
+            City city = new City(request.getName(), coords, request.getArea(), request.getPopulation(), request.getEstablishmentDate(), request.getCapital(), request.getMetersAboveSeaLevel(), request.getTelephoneCode(), climate, government, governor, request.getModifiable(),  jwtUtil.extractUsername(request.getToken()));
             List<City> cities = cityService.updateCity(city, request.getId());
             return ResponseEntity.ok(cities);
         } catch (IllegalArgumentException e) {

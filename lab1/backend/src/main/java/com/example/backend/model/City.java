@@ -81,7 +81,9 @@ public class City {
     @NotNull
     private boolean modifiable;
 
-    public City(String name, Coordinates coordinates, Double area, Integer population, ZonedDateTime establishmentDate, Boolean capital, Integer metersAboveSeaLevel, Long telephoneCode, Climate climate, Government government, Human governor, Boolean modifiable) {
+    private String owner;
+
+    public City(String name, Coordinates coordinates, Double area, Integer population, ZonedDateTime establishmentDate, Boolean capital, Integer metersAboveSeaLevel, Long telephoneCode, Climate climate, Government government, Human governor, Boolean modifiable, String owner) {
         this.name = name;
         this.coordinates = coordinates;
         this.creationDate = ZonedDateTime.now();
@@ -95,5 +97,6 @@ public class City {
         this.government = government;
         this.governor = governor;
         this.modifiable = modifiable;
+        this.owner = owner;
     }
 }

@@ -32,8 +32,11 @@ public class Human {
     @NotNull
     private boolean modifiable;
 
-    public Human(int age, Boolean modifiable) {
+    private String owner;
+
+    public Human(int age, Boolean modifiable, String owner) {
         this.age = age;
         this.modifiable = modifiable;
+        this.owner = owner;
     }
 }

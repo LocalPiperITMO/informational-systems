@@ -40,10 +40,13 @@ public class Coordinates {
     @NotNull
     private boolean modifiable;
 
-    public Coordinates(Long x, Double y, Boolean modifiable) {
+    private String owner;
+
+    public Coordinates(Long x, Double y, Boolean modifiable, String owner) {
         this.x = x;
         this.y = y;
         this.modifiable = modifiable;
+        this.owner = owner;
     }
 
 }
