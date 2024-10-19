@@ -5,7 +5,8 @@ import { Column } from "react-table";
 export interface Human {
   id: number,
   age: number,
-  owner: string
+  owner: string,
+  modifiable: boolean
 }
 
 interface HumansTableProps {

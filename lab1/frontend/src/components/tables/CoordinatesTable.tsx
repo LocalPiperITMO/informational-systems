@@ -7,6 +7,7 @@ export interface Coordinates {
   x: number,
   y: string,
   owner: string;
+  modifiable: boolean
 }
 
 interface CoordinatesTableProps {

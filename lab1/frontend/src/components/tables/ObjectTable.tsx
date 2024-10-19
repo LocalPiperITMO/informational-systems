@@ -1,6 +1,6 @@
 // src/components/tables/ObjectTable.tsx
 import React, { useState } from "react";
-import { Column, useTable, useSortBy, useGlobalFilter } from "react-table";
+import { Column, useTable, useSortBy, useGlobalFilter, TableInstance } from "react-table";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../styles/ObjectTable.css';
 import CitiesTable from "./CitiesTable";
@@ -20,7 +20,7 @@ export const CommonTable = <T extends object>({ data, columns }: CommonTableProp
     rows,
     prepareRow,
     setGlobalFilter,
-  } = useTable(
+  }: TableInstance<T> = useTable<T>(
     { columns, data },
     useGlobalFilter,
     useSortBy
@@ -57,7 +57,7 @@ export const CommonTable = <T extends object>({ data, columns }: CommonTableProp
           {rows.map(row => {
             prepareRow(row);
             return (
-              <tr {...row.getRowProps()} className={!row.original.modifiable ? 'non-modifiable' : ''}>
+              <tr {...row.getRowProps()}>
                 {row.cells.map(cell => (
                   <td {...cell.getCellProps()}>
                     {cell.render('Cell')}
