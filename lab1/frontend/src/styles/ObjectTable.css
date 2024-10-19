@@ -1,0 +1,22 @@
+/* src/components/tables/ObjectTable.css */
+
+.table-responsive {
+    max-height: 400px; /* Set desired fixed height */
+    overflow-y: auto; /* Make table body scrollable */
+  }
+  
+  .non-modifiable {
+    background-color: #f8d7da; /* Light red for non-modifiable rows */
+  }
+  
+  .button-group {
+    position: relative; /* Keep buttons in place */
+    margin-top: 10px;
+  }
+  
+  .table th, .table td {
+    text-align: center; /* Center the text */
+  }
+  
+  /* You can customize further as needed */
+  

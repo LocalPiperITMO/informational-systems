@@ -1,3 +1,4 @@
+// src/components/tables/CitiesTable.tsx
 import React from "react";
 import { CommonTable } from "./ObjectTable";
 import { Column } from "react-table";
@@ -18,6 +19,7 @@ export interface City {
   government: string | null;
   governor: { id: number, age: number } | null;
   owner: string;
+  modifiable: boolean;
 }
 
 interface CitiesTableProps {
@@ -38,7 +40,8 @@ const CitiesTable: React.FC<CitiesTableProps> = ({ data }) => {
       { 
         Header: 'Area', 
         accessor: 'area',
-        Cell: ({ value }) => Number(value) },
+        Cell: ({ value }) => Number(value) 
+      },
       { Header: 'Population', accessor: 'population' },
       { 
         Header: 'Establishment Date', 
@@ -51,11 +54,11 @@ const CitiesTable: React.FC<CitiesTableProps> = ({ data }) => {
         Cell: ({ value }) => value ? 'Yes' : 'No' 
       },
       { Header: 'MASL', accessor: 'metersAboveSeaLevel' },
-      { Header: 'Telephone Code', accessor: 'telephoneCode'},
+      { Header: 'Telephone Code', accessor: 'telephoneCode' },
       { Header: 'Climate', accessor: 'climate' },
-      { Header: 'Government', accessor: 'government'},
-      { Header: 'Governor ID', accessor: row => `${row.governor? row.governor.id : 'Not provided'}`},
-      { Header: 'Owner', accessor: 'owner'}
+      { Header: 'Government', accessor: 'government' },
+      { Header: 'Governor ID', accessor: row => `${row.governor ? row.governor.id : 'Not provided'}` },
+      { Header: 'Owner', accessor: 'owner' }
     ],
     []
   );

@@ -1,9 +1,11 @@
 // src/components/tables/ObjectTable.tsx
 import React, { useState } from "react";
+import { Column, useTable, useSortBy, useGlobalFilter } from "react-table";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../../styles/ObjectTable.css';
 import CitiesTable from "./CitiesTable";
 import CoordinatesTable from "./CoordinatesTable";
 import HumansTable from "./HumansTable";
-import { Column, useTable } from "react-table";
 
 interface CommonTableProps<T extends object> {
   data: T[];
@@ -11,36 +13,62 @@ interface CommonTableProps<T extends object> {
 }
 
 export const CommonTable = <T extends object>({ data, columns }: CommonTableProps<T>) => {
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data });
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+    setGlobalFilter,
+  } = useTable(
+    { columns, data },
+    useGlobalFilter,
+    useSortBy
+  );
 
   return (
-    <table {...getTableProps()}>
-      <thead>
-        {headerGroups.map(headerGroup => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map(column => (
-              <th {...column.getHeaderProps()}>
-                {column.render('Header')}
-              </th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody {...getTableBodyProps()}>
-        {rows.map(row => {
-          prepareRow(row);
-          return (
-            <tr {...row.getRowProps()}>
-              {row.cells.map(cell => (
-                <td {...cell.getCellProps()}>
-                  {cell.render('Cell')}
-                </td>
+    <div className="table-responsive">
+      <input
+        type="text"
+        onChange={e => setGlobalFilter(e.target.value)}
+        placeholder="Search..."
+        className="form-control mb-3"
+      />
+      <table {...getTableProps()} className="table table-striped table-bordered">
+        <thead>
+          {headerGroups.map(headerGroup => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map(column => (
+                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                  {column.render('Header')}
+                  <span>
+                    {column.isSorted
+                      ? column.isSortedDesc
+                        ? ' 🔽'
+                        : ' 🔼'
+                      : ''}
+                  </span>
+                </th>
               ))}
             </tr>
-          );
-        })}
-      </tbody>
-    </table>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {rows.map(row => {
+            prepareRow(row);
+            return (
+              <tr {...row.getRowProps()} className={!row.original.modifiable ? 'non-modifiable' : ''}>
+                {row.cells.map(cell => (
+                  <td {...cell.getCellProps()}>
+                    {cell.render('Cell')}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
@@ -70,9 +98,9 @@ const ObjectTable: React.FC<ObjectTableProps> = ({ data }) => {
             {currentTable === 0 && <CitiesTable data={data.cities} />}
             {currentTable === 1 && <CoordinatesTable data={data.coordinates} />}
             {currentTable === 2 && <HumansTable data={data.humans} />}
-            <div>
-                <button onClick={handlePrevious}>◀</button>
-                <button onClick={handleNext}>▶</button>
+            <div className="button-group">
+                <button className="btn btn-primary" onClick={handlePrevious}>◀</button>
+                <button className="btn btn-primary" onClick={handleNext}>▶</button>
             </div>
         </div>
     );
