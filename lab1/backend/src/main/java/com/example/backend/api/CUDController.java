@@ -105,6 +105,8 @@ public class CUDController {
         }
         try {
             if (request.getId() == null || cityService.findCityById(request.getId()) == null) return ResponseEntity.status(422).body(null);
+            if (!cityService.findCityById(request.getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken()))) return ResponseEntity.status(400).body(null);
+            if (!cityService.findCityById(request.getId()).isModifiable()) return ResponseEntity.status(400).body(null);
             Long coordinatesId = request.getCoordinatesId();
             if (coordinatesId == null) {
                 return ResponseEntity.status(422).body(null);
@@ -168,6 +170,9 @@ public class CUDController {
             return ResponseEntity.status(403).body(null);
         }
         try {
+            if (request.getCoordinates().getId() == null || coordinatesService.findCoordinatesById(request.getCoordinates().getId()) == null) return ResponseEntity.status(422).body(null);
+            if (!coordinatesService.findCoordinatesById(request.getCoordinates().getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken()))) return ResponseEntity.status(400).body(null);
+            if (!coordinatesService.findCoordinatesById(request.getCoordinates().getId()).isModifiable()) return ResponseEntity.status(400).body(null);
             List<Coordinates> coordinatesList = coordinatesService.updateCoordinates(request);
             return ResponseEntity.ok(coordinatesList);
         } catch (IllegalArgumentException e) {
@@ -205,6 +210,9 @@ public class CUDController {
             return ResponseEntity.status(403).body(null);
         }
         try {
+            if (request.getHuman().getId() == null || humanService.findHumanById(request.getHuman().getId()) == null) return ResponseEntity.status(422).body(null);
+            if (!humanService.findHumanById(request.getHuman().getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken()))) return ResponseEntity.status(400).body(null);
+            if (!humanService.findHumanById(request.getHuman().getId()).isModifiable()) return ResponseEntity.status(400).body(null);
             List<Human> humans = humanService.updateHuman(request);
             return ResponseEntity.ok(humans);
         } catch (IllegalArgumentException e) {
