@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.backend.model.City;
+import com.example.backend.model.Coordinates;
+import com.example.backend.model.Human;
 import com.example.backend.repo.CityRepository;
 import com.example.backend.service.CityService;
 
@@ -55,6 +57,22 @@ public class CityServiceImpl implements CityService{
     public List<City> deleteCity(Long cityId) {
         cityRepository.deleteById(cityId);
         return cityRepository.findAll();
+    }
+
+    @Override
+    public void deleteAllCitiesByCoordinates(Coordinates coordinates) {
+        List<City> cities = cityRepository.findByCoordinates(coordinates);
+        for (City city : cities) {
+            cityRepository.delete(city);
+        }
+    }
+    
+    @Override
+    public void deleteAllCitiesByGovernor(Human governor) {
+        List<City> cities = cityRepository.findByGovernor(governor);
+        for (City city : cities) {
+            cityRepository.delete(city);
+        }
     }
     
 }

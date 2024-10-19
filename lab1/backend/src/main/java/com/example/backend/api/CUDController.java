@@ -187,6 +187,7 @@ public class CUDController {
         @RequestBody DeleteRequest request) {
         if (request.getId() == null || coordinatesService.findCoordinatesById(request.getId()) == null) return ResponseEntity.status(422).body(null);
         if (!coordinatesService.findCoordinatesById(request.getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken()))) return ResponseEntity.status(400).body(null);
+        cityService.deleteAllCitiesByCoordinates(coordinatesService.findCoordinatesById(request.getId()));
         List<Coordinates> coordinatesList = coordinatesService.deleteCoordinates(request.getId());
         return ResponseEntity.ok(coordinatesList);
     }
@@ -231,6 +232,7 @@ public class CUDController {
         @RequestBody DeleteRequest request) {
         if (request.getId() == null || humanService.findHumanById(request.getId()) == null) return ResponseEntity.status(422).body(null);
         if (!humanService.findHumanById(request.getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken()))) return ResponseEntity.status(400).body(null);
+        cityService.deleteAllCitiesByGovernor(humanService.findHumanById(request.getId()));
         List<Human> humans = humanService.deleteHuman(request.getId());
         return ResponseEntity.ok(humans);
     }
