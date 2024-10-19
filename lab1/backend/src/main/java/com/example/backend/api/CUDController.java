@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -142,6 +141,8 @@ public class CUDController {
         if (!checkAuth(request.getToken())) {
             return ResponseEntity.status(403).body(null);
         }
+        if (request.getId() == null || cityService.findCityById(request.getId()) == null) return ResponseEntity.status(422).body(null);
+        if (!cityService.findCityById(request.getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken()))) return ResponseEntity.status(400).body(null);
         List<City> cities = cityService.deleteCity(request.getId());
         return ResponseEntity.ok(cities);
     }
@@ -181,8 +182,12 @@ public class CUDController {
     }
 
     @DeleteMapping("/deleteCoordinates")
-    public ResponseEntity<List<Coordinates>> deleteCoordinates(@PathVariable Long id) {
-        List<Coordinates> coordinatesList = coordinatesService.deleteCoordinates(id);
+    public ResponseEntity<List<Coordinates>> deleteCoordinates(
+        @Valid
+        @RequestBody DeleteRequest request) {
+        if (request.getId() == null || coordinatesService.findCoordinatesById(request.getId()) == null) return ResponseEntity.status(422).body(null);
+        if (!coordinatesService.findCoordinatesById(request.getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken()))) return ResponseEntity.status(400).body(null);
+        List<Coordinates> coordinatesList = coordinatesService.deleteCoordinates(request.getId());
         return ResponseEntity.ok(coordinatesList);
     }
 
@@ -221,8 +226,12 @@ public class CUDController {
     }
 
     @DeleteMapping("/deleteHuman")
-    public ResponseEntity<List<Human>> deleteHuman(@PathVariable Long id) {
-        List<Human> humans = humanService.deleteHuman(id);
+    public ResponseEntity<List<Human>> deleteHuman(
+        @Valid
+        @RequestBody DeleteRequest request) {
+        if (request.getId() == null || humanService.findHumanById(request.getId()) == null) return ResponseEntity.status(422).body(null);
+        if (!humanService.findHumanById(request.getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken()))) return ResponseEntity.status(400).body(null);
+        List<Human> humans = humanService.deleteHuman(request.getId());
         return ResponseEntity.ok(humans);
     }
 }
