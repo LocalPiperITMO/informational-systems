@@ -58,7 +58,7 @@ public class SpecOps {
         if (newCities.isEmpty()) return newCities;
         City minCity = newCities.get(0);
         for (City city : cities) {
-            if (city.getPopulation() < minCity.getPopulation()) {
+            if (city.getPopulation() < minCity.getPopulation() && city.isModifiable() && city.getOwner().equals(minCity.getOwner())) {
                 minCity = city;
             }
         }
@@ -70,18 +70,27 @@ public class SpecOps {
         return newCities;
     }
 
-    public List<City> moveFromCapital(List<City> cities, City capital) {
+    public List<City> moveFromCapital(List<City> cities, Long val) {
         List<City> result = new ArrayList<>();
         if (cities.size() <= 1) return result;
+        City capital = null;
+        for (City city : cities) {
+            if (Objects.equals(city.getId(), val)) {
+                capital = city;
+                break;
+            }
+        }
+        if (capital == null) return result;
         int population = capital.getPopulation() / 2;
         capital.setPopulation(capital.getPopulation() - population);
         result.add(capital);
         PriorityQueue<City> pq = new PriorityQueue<>(cities.size(), new CityComparator());
         for (City city : cities) {
-            if (!Objects.equals(city.getId(), capital.getId())) {
+            if (!Objects.equals(city.getId(), capital.getId()) && city.isModifiable() && city.getOwner().equals(capital.getOwner())) {
                 pq.add(city);
             }
         }
+        if (pq.isEmpty()) return new ArrayList<>();
         if (pq.size() == 1) {
             result.add(pq.poll());
             result.get(1).setPopulation(result.get(1).getPopulation() + population);

@@ -1,7 +1,5 @@
 package com.example.backend.dto.request;
 
-import com.example.backend.model.City;
-
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,5 +19,5 @@ public class SpecRequest {
     
     private Long spec4;
 
-    private City spec5;
+    private Long spec5;
 }

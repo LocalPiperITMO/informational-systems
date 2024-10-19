@@ -90,7 +90,10 @@ public class SpecOpsController {
     @Valid    
     @RequestBody SpecRequest request) {
         if (!checkAuth(request.getToken())) return ResponseEntity.status(403).body(null);
-        if (request.getSpec4() == null) return ResponseEntity.status(422).body(null);
+        if (request.getSpec4() == null 
+        || cityService.findCityById(request.getSpec4()) == null
+        || !cityService.findCityById(request.getSpec4()).getOwner().equals(jwtUtil.extractUsername(request.getToken()))
+        || !cityService.findCityById(request.getSpec4()).isModifiable()) return ResponseEntity.status(422).body(null);
         List<City> cities = cityService.findAllCities();
         List<City> result = specOps.moveToMinPopulation(cities, request.getSpec4());
         SpecResponse response = new SpecResponse();
@@ -101,11 +104,17 @@ public class SpecOpsController {
     }
     
     @PostMapping("/5")
+    @SuppressWarnings("StringEquality")
     public ResponseEntity<SpecResponse> spec5(
     @Valid    
     @RequestBody SpecRequest request) {
         if (!checkAuth(request.getToken())) return ResponseEntity.status(403).body(null);
-        if (request.getSpec5() == null || !request.getSpec5().isCapital()) return ResponseEntity.status(422).body(null);
+        if (request.getSpec5() == null
+        || request.getSpec5() == null
+        || cityService.findCityById(request.getSpec5()) == null
+        || !cityService.findCityById(request.getSpec5()).getOwner().equals(jwtUtil.extractUsername(request.getToken()))
+        || !cityService.findCityById(request.getSpec5()).isModifiable()
+        || !cityService.findCityById(request.getSpec5()).isCapital()) return ResponseEntity.status(422).body(null);
         List<City> cities = cityService.findAllCities();
         List<City> result = specOps.moveFromCapital(cities, request.getSpec5());
         SpecResponse response = new SpecResponse();
