@@ -9,6 +9,7 @@ import UpdateModal from "../modals/UpdateModal";
 import { useNavigate } from "react-router-dom";
 import { fetchCitiesData, fetchCoordinatesData, fetchHumansData } from "../../services/dataService";
 import DeleteModal from "../modals/DeleteModal";
+import SpecOpsModal from "../modals/SpecOpsModal";
 
 const Title: React.FC = () => {
     const { username } = useAuth();
@@ -17,13 +18,13 @@ const Title: React.FC = () => {
     </div>
 }
 
-const Commands: React.FC<{ openCreateModal: () => void, openUpdateModal: () => void, openDeleteModal: () => void, handleLogout: () => void }> = ({ openCreateModal, openUpdateModal, openDeleteModal, handleLogout }) => {
+const Commands: React.FC<{ openCreateModal: () => void, openUpdateModal: () => void, openDeleteModal: () => void, openSpecOpsModal: () => void, handleLogout: () => void }> = ({ openCreateModal, openUpdateModal, openDeleteModal, openSpecOpsModal, handleLogout }) => {
     return <div>
         <button onClick={openCreateModal}>Create</button>
         <button onClick={openUpdateModal}>Update</button>
         <button onClick={openDeleteModal}>Delete</button>
         <button>Request Admin</button>
-        <button>Special</button>
+        <button onClick={openSpecOpsModal}>Special</button>
         <button>Visualize</button>
         <button onClick={handleLogout}>Logout</button>
     </div>
@@ -35,6 +36,7 @@ const MainPage: React.FC = () => {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isSpecOpsModalOpen, setIsSpecOpsModalOpen] = useState(false);
     const [data, setData] = useState<{ cities: any[], coordinates: any[], humans: any[] } | null>(null);
     const [loading, setLoading] = useState(false);
 
@@ -67,6 +69,13 @@ const MainPage: React.FC = () => {
         setIsDeleteModalOpen(false);
     }
 
+    const openSpecOpsModal = () => {
+        setIsSpecOpsModalOpen(true);
+    }
+
+    const closeSpecOpsModal = () => {
+        setIsSpecOpsModalOpen(false);
+    }
 
     const fetchData = async () => {
         try {
@@ -94,7 +103,7 @@ const MainPage: React.FC = () => {
         <div>
             <Header />
             <Title />
-            <Commands openCreateModal={openCreateModal} openUpdateModal={openUpdateModal} openDeleteModal={openDeleteModal} handleLogout={handleLogout} />
+            <Commands openCreateModal={openCreateModal} openUpdateModal={openUpdateModal} openDeleteModal={openDeleteModal} openSpecOpsModal={openSpecOpsModal} handleLogout={handleLogout} />
 
             {data ? (
                 <>
@@ -102,6 +111,7 @@ const MainPage: React.FC = () => {
                     <CreateModal isOpen={isCreateModalOpen} onClose={closeCreateModal} data={data} onSuccess={fetchData} />
                     <UpdateModal isOpen={isUpdateModalOpen} onClose={closeUpdateModal} data={data} onSuccess={fetchData} />
                     <DeleteModal isOpen={isDeleteModalOpen} onClose={closeDeleteModal} data={data} onSuccess={fetchData} />
+                    <SpecOpsModal isOpen={isSpecOpsModalOpen} onClose={closeSpecOpsModal} data={data} onSuccess={fetchData} />
                 </>
             ) : (
                 <div>No data available</div>
