@@ -1,7 +1,5 @@
 package com.example.backend.service.impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,8 +45,8 @@ public class UserServiceImpl implements UserService {
     public boolean isAdmin(String username) {
         User user = userRepository.findByUsername(username);
         if (user == null) return false;
-        List<Admin> admins = adminRepository.findByUser(user);
-        return !admins.isEmpty();
+        Admin admin = adminRepository.findByUser(user);
+        return admin != null;
     }
 
 
