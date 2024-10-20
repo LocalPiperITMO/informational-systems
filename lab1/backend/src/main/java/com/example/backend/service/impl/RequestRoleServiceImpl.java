@@ -32,5 +32,10 @@ public class RequestRoleServiceImpl implements RequestRoleService{
     public RequestRole findRequest(User user) {
         return requestRoleRepository.findByUser(user);
     }
+
+    @Override
+    public List<RequestRole> getAllRequests() {
+        return requestRoleRepository.findAll();
+    }
     
 }

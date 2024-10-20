@@ -9,4 +9,5 @@ public interface RequestRoleService {
     List<RequestRole> addNewRequest(RequestRole request);
     List<RequestRole> deleteRequest(RequestRole request);
     RequestRole findRequest(User user);
+    List<RequestRole> getAllRequests();
 }

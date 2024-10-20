@@ -1,5 +1,7 @@
 package com.example.backend.api;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.dto.request.TokenRequest;
+import com.example.backend.dto.response.RoleRequestsResponse;
 import com.example.backend.model.RequestRole;
 import com.example.backend.model.User;
 import com.example.backend.service.AdminService;
@@ -57,6 +60,23 @@ public class AdminController {
             requestRoleService.addNewRequest(requestRole);
         }
         return ResponseEntity.ok("Request added successfully");
+    }
+    
+    @PostMapping("/fetchRequests")
+    public ResponseEntity<RoleRequestsResponse> getRequests(
+    @Valid    
+    @RequestBody TokenRequest request) {
+        if (!checkAuth(request.getToken())) return ResponseEntity.status(403).body(null);
+        if (userService.findByUsername(jwtUtil.extractUsername(request.getToken())) == null || 
+        adminService.findByUser(
+            userService.findByUsername(
+                jwtUtil.extractUsername(
+                    request.getToken()))) == null) {
+                        return ResponseEntity.status(422).body(null);
+        }
+        List<RequestRole> requests = requestRoleService.getAllRequests();
+
+        return ResponseEntity.ok(new RoleRequestsResponse(requests));
     }
     
 }
