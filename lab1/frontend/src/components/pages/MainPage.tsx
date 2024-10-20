@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchCitiesData, fetchCoordinatesData, fetchHumansData } from "../../services/dataService";
 import DeleteModal from "../modals/DeleteModal";
 import SpecOpsModal from "../modals/SpecOpsModal";
+import { sendAdminRequest } from "../../services/adminService";
 
 const Title: React.FC = () => {
     const { username } = useAuth();
@@ -18,12 +19,12 @@ const Title: React.FC = () => {
     </div>
 }
 
-const Commands: React.FC<{ openCreateModal: () => void, openUpdateModal: () => void, openDeleteModal: () => void, openSpecOpsModal: () => void, handleLogout: () => void }> = ({ openCreateModal, openUpdateModal, openDeleteModal, openSpecOpsModal, handleLogout }) => {
+const Commands: React.FC<{ openCreateModal: () => void, openUpdateModal: () => void, openDeleteModal: () => void, handleSendRequest: () => void, openSpecOpsModal: () => void, isRequestAdminDisabled: boolean, handleLogout: () => void }> = ({ openCreateModal, openUpdateModal, openDeleteModal, handleSendRequest, openSpecOpsModal, isRequestAdminDisabled, handleLogout }) => {
     return <div>
         <button onClick={openCreateModal}>Create</button>
         <button onClick={openUpdateModal}>Update</button>
         <button onClick={openDeleteModal}>Delete</button>
-        <button>Request Admin</button>
+        <button onClick={handleSendRequest} disabled={isRequestAdminDisabled}>Request Admin</button>
         <button onClick={openSpecOpsModal}>Special</button>
         <button>Visualize</button>
         <button onClick={handleLogout}>Logout</button>
@@ -36,6 +37,7 @@ const MainPage: React.FC = () => {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isRequestAdminDisabled, setIsRequestAdminDisabled] = useState(false);
     const [isSpecOpsModalOpen, setIsSpecOpsModalOpen] = useState(false);
     const [data, setData] = useState<{ cities: any[], coordinates: any[], humans: any[] } | null>(null);
     const [loading, setLoading] = useState(false);
@@ -77,6 +79,15 @@ const MainPage: React.FC = () => {
         setIsSpecOpsModalOpen(false);
     }
 
+    const handleSendRequest= () => {
+        try {
+            sendAdminRequest({ token : localStorage.getItem('token')});
+            setIsRequestAdminDisabled(true)
+        } catch (error) {
+            console.error("Error requesting for admin: ", error);
+        }
+        
+    }
     const fetchData = async () => {
         try {
             setLoading(true);
@@ -103,7 +114,7 @@ const MainPage: React.FC = () => {
         <div>
             <Header />
             <Title />
-            <Commands openCreateModal={openCreateModal} openUpdateModal={openUpdateModal} openDeleteModal={openDeleteModal} openSpecOpsModal={openSpecOpsModal} handleLogout={handleLogout} />
+            <Commands openCreateModal={openCreateModal} openUpdateModal={openUpdateModal} openDeleteModal={openDeleteModal} handleSendRequest={handleSendRequest} openSpecOpsModal={openSpecOpsModal} isRequestAdminDisabled={isRequestAdminDisabled} handleLogout={handleLogout} />
 
             {data ? (
                 <>

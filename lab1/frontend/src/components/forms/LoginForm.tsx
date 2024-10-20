@@ -14,7 +14,7 @@ const LoginForm : React.FC = () => {
             const { username: returnedUsername, admin, token } = await loginUser(username, password);
             
             login(returnedUsername, admin, token);
-            navigate('/main');
+            navigate((admin)? '/admin' : '/main');
         } catch (error) {
             console.error("login failed", error);
         }
