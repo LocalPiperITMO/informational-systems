@@ -1,13 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { fetchAdminRequests, submitAdminDecisions } from '../../services/adminService';
+import { fetchRoleRequests, submitAdminDecisions } from '../../services/adminService'; // Assume you have these functions
 import { useAuth } from '../../context/AuthContext';
 
-interface AdminRequest {
+interface User {
     id: number;
     username: string;
-    requestDate: string;
-    status: 'pending' | 'approved' | 'rejected';
+    email: string;
+}
+
+interface RequestRole {
+    id: number;
+    user: User;
+    creationDate: string;
+}
+
+interface RoleRequestsResponse {
+    requests: RequestRole[];
 }
 
 interface CheckRequestsModalProps {
@@ -17,20 +26,20 @@ interface CheckRequestsModalProps {
 
 const CheckRequestsModal: React.FC<CheckRequestsModalProps> = ({ isOpen, onClose }) => {
     const { logout } = useAuth();
-    const [requests, setRequests] = useState<AdminRequest[]>([]);
+    const [requests, setRequests] = useState<RequestRole[]>([]);
     const [decisions, setDecisions] = useState<{ [id: number]: 'approved' | 'rejected' }>({});
     const [loading, setLoading] = useState(false);
 
     const fetchRequests = async () => {
         setLoading(true);
         try {
-            const response = await fetchAdminRequests({ token: localStorage.getItem('token') });  // Fetch requests from backend
-            setRequests(response);  // Update state with fetched requests
+            const response: RoleRequestsResponse = await fetchRoleRequests({ token: localStorage.getItem('token')});  // Fetch requests from backend
+            setRequests(response.requests);  // Update state with fetched requests
         } catch (error: any) {
             if (error.message === "User is unauthorized! Redirecting...") {
                 logout();
             }
-            console.error("Error fetching admin requests:", error);
+            console.error("Error fetching role requests:", error);
         } finally {
             setLoading(false);
         }
@@ -78,8 +87,8 @@ const CheckRequestsModal: React.FC<CheckRequestsModalProps> = ({ isOpen, onClose
                                 {requests.map(request => (
                                     <tr key={request.id}>
                                         <td>{request.id}</td>
-                                        <td>{request.username}</td>
-                                        <td>{request.requestDate}</td>
+                                        <td>{request.user.username}</td>
+                                        <td>{new Date(request.creationDate).toLocaleString()}</td>
                                         <td>
                                             <label>
                                                 <input

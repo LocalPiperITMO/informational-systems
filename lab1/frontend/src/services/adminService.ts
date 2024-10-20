@@ -17,8 +17,8 @@ export async function sendAdminRequest(data : any) {
     }
 }
 
-export async function fetchAdminRequests(data: any) {
-    const response = await fetch('http://localhost:8080/api/admin/requestAdmin', {
+export async function fetchRoleRequests(data: any) {
+    const response = await fetch('http://localhost:8080/api/admin/fetchRequests', {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
