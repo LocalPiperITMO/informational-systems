@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.dto.request.RoleApprovalRequest;
 import com.example.backend.dto.request.TokenRequest;
+import com.example.backend.dto.response.MessageResponse;
 import com.example.backend.dto.response.RoleRequestsResponse;
 import com.example.backend.model.RequestRole;
 import com.example.backend.model.User;
@@ -54,14 +55,14 @@ public class AdminController {
     public ResponseEntity<Object> requestAdmin(
     @Valid
     @RequestBody TokenRequest request) {
-        if (!checkAuth(request.getToken())) return ResponseEntity.status(403).body("Access denied!");
+        if (!checkAuth(request.getToken())) return ResponseEntity.status(403).body(new MessageResponse("Access denied!"));
         User user = userService.findByUsername(jwtUtil.extractUsername(request.getToken()));
-        if (adminService.findByUser(user) != null) return ResponseEntity.status(422).body("User is already admin");
+        if (adminService.findByUser(user) != null) return ResponseEntity.status(422).body(new MessageResponse("User is already admin"));
         if (requestRoleService.findRequest(user) == null) {
             RequestRole requestRole = new RequestRole(user);
             requestRoleService.addNewRequest(requestRole);
         }
-        return ResponseEntity.ok("Request added successfully");
+        return ResponseEntity.ok(new MessageResponse("Request added successfully"));
     }
     
     @PostMapping("/fetchRequests")
@@ -101,7 +102,7 @@ public class AdminController {
             }
             requestRoleService.deleteRequest(requestRoleService.findRequest(user));
         }
-        return ResponseEntity.ok("Requests processed");
+        return ResponseEntity.ok(new MessageResponse("Requests processed"));
     }
     
     

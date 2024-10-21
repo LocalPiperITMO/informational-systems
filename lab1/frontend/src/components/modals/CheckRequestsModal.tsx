@@ -62,19 +62,25 @@ const CheckRequestsModal: React.FC<CheckRequestsModalProps> = ({ isOpen, onClose
             username,
             status: decisions[username],
         }));
-
+    
         const roleApprovalRequest = {
             token,   // Token must be sent with the request
             verdicts // List of verdicts
         };
-
+    
         try {
             await submitAdminDecisions(roleApprovalRequest);  // Submit decisions to backend
-            await fetchRequests();  // Refetch requests after submission
+    
+            // Close the modal immediately after successful submission
+            onClose();
+    
+            // Optionally refetch requests, you can remove this if not needed after closing the modal
+            await fetchRequests();
         } catch (error: any) {
             console.error("Error submitting decisions:", error);
         }
     };
+    
 
     if (!isOpen) return null;
 
