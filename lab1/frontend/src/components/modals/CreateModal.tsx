@@ -8,6 +8,7 @@ import CreateHumanForm from '../forms/create/CreateHumanForm';
 import { createCity, createCoordinates, createHuman } from '../../services/apiService'; // Import the new service
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import '../../styles/CreateModal.css'; // Import the new CSS file
 
 interface CreateModalProps {
     isOpen: boolean;
@@ -110,7 +111,7 @@ const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data, onSucc
             }
             onSuccess();
             onClose(); // Close the modal after successful submission
-        } catch (error : any) {
+        } catch (error: any) {
             if (error.message === "User is unauthorized! Redirecting...") {
                 logout();
                 navigate("/auth");
@@ -121,12 +122,12 @@ const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data, onSucc
     };
 
     return ReactDOM.createPortal(
-        <div style={styles.overlay}>
-            <div style={styles.modal}>
+        <div className="modal-overlay">
+            <div className="modal-container">
                 <h2>Create New {objectType}</h2>
 
                 {/* Object Type Switcher */}
-                <div style={styles.switcher}>
+                <div className="object-type-switcher">
                     <button onClick={() => handleObjectTypeChange(ObjectType.CITY)}>City</button>
                     <button onClick={() => handleObjectTypeChange(ObjectType.COORDINATES)}>Coordinates</button>
                     <button onClick={() => handleObjectTypeChange(ObjectType.HUMAN)}>Human</button>
@@ -150,39 +151,15 @@ const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, data, onSucc
                         <CreateHumanForm humanForm={humanForm} setHumanForm={setHumanForm} />
                     )}
 
-                    <button type="submit">Submit</button>
-                    <button type="button" onClick={onClose}>Cancel</button>
+                    <div className="button-container">
+                        <button type="submit" className="submit-button">Submit</button>
+                        <button type="button" className="cancel-button" onClick={onClose}>Cancel</button>
+                    </div>
                 </form>
             </div>
         </div>,
         document.getElementById('modal-root') as HTMLElement
     );
-};
-
-const styles = {
-    overlay: {
-        position: 'fixed' as 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    modal: {
-        background: '#fff',
-        padding: '20px',
-        borderRadius: '8px',
-        width: '400px',
-        maxWidth: '100%',
-    },
-    switcher: {
-        marginBottom: '20px',
-        display: 'flex',
-        justifyContent: 'space-around',
-    }
 };
 
 export default CreateModal;
