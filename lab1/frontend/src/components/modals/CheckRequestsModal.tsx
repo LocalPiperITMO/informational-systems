@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { fetchRoleRequests, submitAdminDecisions } from '../../services/adminService'; // Assume you have these functions
+import { fetchRoleRequests, submitAdminDecisions } from '../../services/adminService';  // API service
 import { useAuth } from '../../context/AuthContext';
 
 interface User {
@@ -27,13 +27,14 @@ interface CheckRequestsModalProps {
 const CheckRequestsModal: React.FC<CheckRequestsModalProps> = ({ isOpen, onClose }) => {
     const { logout } = useAuth();
     const [requests, setRequests] = useState<RequestRole[]>([]);
-    const [decisions, setDecisions] = useState<{ [id: number]: 'approved' | 'rejected' }>({});
+    const [decisions, setDecisions] = useState<{ [username: string]: 'approved' | 'rejected' }>({});
     const [loading, setLoading] = useState(false);
 
     const fetchRequests = async () => {
         setLoading(true);
         try {
-            const response: RoleRequestsResponse = await fetchRoleRequests({ token: localStorage.getItem('token')});  // Fetch requests from backend
+            const token = localStorage.getItem('token');  // Retrieve the token from localStorage
+            const response: RoleRequestsResponse = await fetchRoleRequests({ token });  // Fetch requests from backend
             setRequests(response.requests);  // Update state with fetched requests
         } catch (error: any) {
             if (error.message === "User is unauthorized! Redirecting...") {
@@ -51,13 +52,24 @@ const CheckRequestsModal: React.FC<CheckRequestsModalProps> = ({ isOpen, onClose
         }
     }, [isOpen]);
 
-    const handleDecisionChange = (id: number, decision: 'approved' | 'rejected') => {
-        setDecisions({ ...decisions, [id]: decision });
+    const handleDecisionChange = (username: string, decision: 'approved' | 'rejected') => {
+        setDecisions({ ...decisions, [username]: decision });
     };
 
     const handleSubmit = async () => {
+        const token = localStorage.getItem('token');
+        const verdicts = Object.keys(decisions).map(username => ({
+            username,
+            status: decisions[username],
+        }));
+
+        const roleApprovalRequest = {
+            token,   // Token must be sent with the request
+            verdicts // List of verdicts
+        };
+
         try {
-            await submitAdminDecisions(decisions);  // Submit decisions to backend
+            await submitAdminDecisions(roleApprovalRequest);  // Submit decisions to backend
             await fetchRequests();  // Refetch requests after submission
         } catch (error: any) {
             console.error("Error submitting decisions:", error);
@@ -93,20 +105,20 @@ const CheckRequestsModal: React.FC<CheckRequestsModalProps> = ({ isOpen, onClose
                                             <label>
                                                 <input
                                                     type="radio"
-                                                    name={`decision-${request.id}`}
+                                                    name={`decision-${request.user.username}`}
                                                     value="approved"
-                                                    checked={decisions[request.id] === 'approved'}
-                                                    onChange={() => handleDecisionChange(request.id, 'approved')}
+                                                    checked={decisions[request.user.username] === 'approved'}
+                                                    onChange={() => handleDecisionChange(request.user.username, 'approved')}
                                                 />
                                                 Approve
                                             </label>
                                             <label>
                                                 <input
                                                     type="radio"
-                                                    name={`decision-${request.id}`}
+                                                    name={`decision-${request.user.username}`}
                                                     value="rejected"
-                                                    checked={decisions[request.id] === 'rejected'}
-                                                    onChange={() => handleDecisionChange(request.id, 'rejected')}
+                                                    checked={decisions[request.user.username] === 'rejected'}
+                                                    onChange={() => handleDecisionChange(request.user.username, 'rejected')}
                                                 />
                                                 Reject
                                             </label>

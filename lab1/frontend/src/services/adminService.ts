@@ -37,7 +37,7 @@ export async function fetchRoleRequests(data: any) {
 }
 
 export async function submitAdminDecisions(data: any) {
-    const response = await fetch('http://localhost:8080/api/admin/requestAdmin', {
+    const response = await fetch('http://localhost:8080/api/admin/applyRoles', {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
