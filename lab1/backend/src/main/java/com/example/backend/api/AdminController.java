@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.backend.dto.request.RoleApprovalRequest;
 import com.example.backend.dto.request.TokenRequest;
 import com.example.backend.dto.response.RoleRequestsResponse;
 import com.example.backend.model.RequestRole;
@@ -18,6 +19,7 @@ import com.example.backend.service.AdminService;
 import com.example.backend.service.RequestRoleService;
 import com.example.backend.service.UserService;
 import com.example.backend.utils.JwtUtil;
+import com.example.backend.utils.Verdict;
 
 import jakarta.validation.Valid;
 
@@ -78,5 +80,29 @@ public class AdminController {
 
         return ResponseEntity.ok(new RoleRequestsResponse(requests));
     }
+
+    @PostMapping("/applyRoles")
+    public ResponseEntity<Object> processRequests(
+        @Valid
+        @RequestBody RoleApprovalRequest request) {
+        if (!checkAuth(request.getToken())) return ResponseEntity.status(403).body(null);
+        if (userService.findByUsername(jwtUtil.extractUsername(request.getToken())) == null || 
+        adminService.findByUser(
+            userService.findByUsername(
+                jwtUtil.extractUsername(
+                    request.getToken()))) == null) {
+                        return ResponseEntity.status(422).body(null);
+                    }
+        for (Verdict v : request.getVerdicts()) {
+            User user = userService.findByUsername(v.getUsername());
+            if (user == null || adminService.findByUser(user) != null) continue;
+            if ("approved".equals(v.getStatus())) {
+                userService.changeUserRoleToAdmin(v.getUsername());
+            }
+            requestRoleService.deleteRequest(requestRoleService.findRequest(user));
+        }
+        return ResponseEntity.ok("Requests processed");
+    }
+    
     
 }
