@@ -38,31 +38,38 @@ export const CommonTable = <T extends object>({ data, columns }: CommonTableProp
         <thead>
           {headerGroups.map(headerGroup => (
             <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                  {column.render('Header')}
-                  <span>
-                    {column.isSorted
-                      ? column.isSortedDesc
-                        ? ' 🔽'
-                        : ' 🔼'
-                      : ''}
-                  </span>
-                </th>
-              ))}
+              {headerGroup.headers.map(column => {
+                const { key, ...rest } = column.getHeaderProps(column.getSortByToggleProps());
+                return (
+                  <th key={key} {...rest}>
+                    {column.render('Header')}
+                    <span>
+                      {column.isSorted
+                        ? column.isSortedDesc
+                          ? ' 🔽'
+                          : ' 🔼'
+                        : ''}
+                    </span>
+                  </th>
+                );
+              })}
             </tr>
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
           {rows.map(row => {
             prepareRow(row);
+            const { key, ...rest } = row.getRowProps(); // Destructure key here
             return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map(cell => (
-                  <td {...cell.getCellProps()}>
-                    {cell.render('Cell')}
-                  </td>
-                ))}
+              <tr key={key} {...rest}>
+                {row.cells.map(cell => {
+                  const { key, ...cellProps } = cell.getCellProps(); // Destructure key here too
+                  return (
+                    <td key={key} {...cellProps}>
+                      {cell.render('Cell')}
+                    </td>
+                  );
+                })}
               </tr>
             );
           })}
@@ -70,7 +77,8 @@ export const CommonTable = <T extends object>({ data, columns }: CommonTableProp
       </table>
     </div>
   );
-}
+};
+
 
 interface ObjectTableProps {
     data: {
