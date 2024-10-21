@@ -1,4 +1,4 @@
-// src/components/modals/CreateModal.tsx
+// src/components/modals/UpdateModal.tsx
 
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
@@ -8,6 +8,7 @@ import UpdateHumanForm from '../forms/update/UpdateHumanForm';
 import { updateCity, updateCoordinates, updateHuman } from '../../services/apiService';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import '../../styles/UpdateModal.css'; // Importing the CSS for styling
 
 interface UpdateModalProps {
     isOpen: boolean;
@@ -83,8 +84,8 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onClose, data, onSucc
                     coordinatesId: cityForm.coordinatesId,
                     humanId: cityForm.humanId,
                     modifiable: cityForm.modifiable,
-                    token: localStorage.getItem('token')? localStorage.getItem('token') : "error",
-                    owner: localStorage.getItem('username')? localStorage.getItem('username') : ""
+                    token: localStorage.getItem('token') || "error",
+                    owner: localStorage.getItem('username') || ""
                 };
                 await updateCity(cityData);
                 console.log('City updated successfully');
@@ -95,9 +96,9 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onClose, data, onSucc
                         x: coordinatesForm.x,
                         y: coordinatesForm.y,
                         modifiable: coordinatesForm.modifiable,
-                        owner: localStorage.getItem('username')? localStorage.getItem('username') : ""
+                        owner: localStorage.getItem('username') || ""
                     },
-                    token: localStorage.getItem('token')? localStorage.getItem('token') : "error"
+                    token: localStorage.getItem('token') || "error"
                 };
                 await updateCoordinates(coordinatesData);
                 console.log('Coordinates updated successfully');
@@ -107,16 +108,16 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onClose, data, onSucc
                         id: humanForm.id,
                         age: humanForm.age,
                         modifiable: humanForm.modifiable,
-                        owner: localStorage.getItem('username')? localStorage.getItem('username') : ""
+                        owner: localStorage.getItem('username') || ""
                     },
-                    token: localStorage.getItem('token')? localStorage.getItem('token') : "error"
+                    token: localStorage.getItem('token') || "error"
                 };
                 await updateHuman(humanData);
                 console.log('Human updated successfully');
             }
             onSuccess();
             onClose(); // Close the modal after successful submission
-        } catch (error : any) {
+        } catch (error: any) {
             if (error.message === "User is unauthorized! Redirecting...") {
                 logout();
                 navigate("/auth");
@@ -127,15 +128,15 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onClose, data, onSucc
     };
 
     return ReactDOM.createPortal(
-        <div style={styles.overlay}>
-            <div style={styles.modal}>
+        <div className="modal-overlay">
+            <div className="modal-container">
                 <h2>Update {objectType}</h2>
 
                 {/* Object Type Switcher */}
-                <div style={styles.switcher}>
-                    <button onClick={() => handleObjectTypeChange(ObjectType.CITY)}>City</button>
-                    <button onClick={() => handleObjectTypeChange(ObjectType.COORDINATES)}>Coordinates</button>
-                    <button onClick={() => handleObjectTypeChange(ObjectType.HUMAN)}>Human</button>
+                <div className="object-type-switcher">
+                    <button className="switch-button" onClick={() => handleObjectTypeChange(ObjectType.CITY)}>City</button>
+                    <button className="switch-button" onClick={() => handleObjectTypeChange(ObjectType.COORDINATES)}>Coordinates</button>
+                    <button className="switch-button" onClick={() => handleObjectTypeChange(ObjectType.HUMAN)}>Human</button>
                 </div>
 
                 <form onSubmit={handleSubmit}>
@@ -150,46 +151,30 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onClose, data, onSucc
                     )}
 
                     {objectType === ObjectType.COORDINATES && (
-                        <UpdateCoordinatesForm coordinatesForm={coordinatesForm} setCoordinatesForm={setCoordinatesForm} coordinates={data.coordinates}/>
+                        <UpdateCoordinatesForm 
+                            coordinatesForm={coordinatesForm} 
+                            setCoordinatesForm={setCoordinatesForm} 
+                            coordinates={data.coordinates}
+                        />
                     )}
 
                     {objectType === ObjectType.HUMAN && (
-                        <UpdateHumanForm humanForm={humanForm} setHumanForm={setHumanForm} humans={data.humans}/>
+                        <UpdateHumanForm 
+                            humanForm={humanForm} 
+                            setHumanForm={setHumanForm} 
+                            humans={data.humans}
+                        />
                     )}
 
-                    <button type="submit">Submit</button>
-                    <button type="button" onClick={onClose}>Cancel</button>
+                    <div className="button-container">
+                        <button type="submit" className="submit-button">Submit</button>
+                        <button type="button" className="cancel-button" onClick={onClose}>Cancel</button>
+                    </div>
                 </form>
             </div>
         </div>,
         document.getElementById('modal-root') as HTMLElement
     );
-};
-
-const styles = {
-    overlay: {
-        position: 'fixed' as 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    modal: {
-        background: '#fff',
-        padding: '20px',
-        borderRadius: '8px',
-        width: '400px',
-        maxWidth: '100%',
-    },
-    switcher: {
-        marginBottom: '20px',
-        display: 'flex',
-        justifyContent: 'space-around',
-    }
 };
 
 export default UpdateModal;
