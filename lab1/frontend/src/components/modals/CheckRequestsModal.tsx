@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { fetchRoleRequests, submitAdminDecisions } from '../../services/adminService';  // API service
+import { fetchRoleRequests, submitAdminDecisions } from '../../services/adminService'; // API service
 import { useAuth } from '../../context/AuthContext';
+import { Button, Spinner, Table } from 'react-bootstrap';
 
 interface User {
     id: number;
@@ -33,9 +34,9 @@ const CheckRequestsModal: React.FC<CheckRequestsModalProps> = ({ isOpen, onClose
     const fetchRequests = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');  // Retrieve the token from localStorage
-            const response: RoleRequestsResponse = await fetchRoleRequests({ token });  // Fetch requests from backend
-            setRequests(response.requests);  // Update state with fetched requests
+            const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+            const response: RoleRequestsResponse = await fetchRoleRequests({ token }); // Fetch requests from backend
+            setRequests(response.requests); // Update state with fetched requests
         } catch (error: any) {
             if (error.message === "User is unauthorized! Redirecting...") {
                 logout();
@@ -62,25 +63,24 @@ const CheckRequestsModal: React.FC<CheckRequestsModalProps> = ({ isOpen, onClose
             username,
             status: decisions[username],
         }));
-    
+
         const roleApprovalRequest = {
-            token,   // Token must be sent with the request
+            token, // Token must be sent with the request
             verdicts // List of verdicts
         };
-    
+
         try {
-            await submitAdminDecisions(roleApprovalRequest);  // Submit decisions to backend
-    
+            await submitAdminDecisions(roleApprovalRequest); // Submit decisions to backend
+
             // Close the modal immediately after successful submission
             onClose();
-    
+
             // Optionally refetch requests, you can remove this if not needed after closing the modal
             await fetchRequests();
         } catch (error: any) {
             console.error("Error submitting decisions:", error);
         }
     };
-    
 
     if (!isOpen) return null;
 
@@ -89,10 +89,13 @@ const CheckRequestsModal: React.FC<CheckRequestsModalProps> = ({ isOpen, onClose
             <div style={styles.modal}>
                 <h2>Adminship Requests</h2>
                 {loading ? (
-                    <div>Loading...</div>
+                    <div className="text-center">
+                        <Spinner animation="border" role="status" />
+                        <span className="ml-2">Loading...</span>
+                    </div>
                 ) : (
                     <div>
-                        <table className="table table-striped">
+                        <Table striped bordered hover>
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -132,9 +135,11 @@ const CheckRequestsModal: React.FC<CheckRequestsModalProps> = ({ isOpen, onClose
                                     </tr>
                                 ))}
                             </tbody>
-                        </table>
-                        <button onClick={handleSubmit}>Submit Decisions</button>
-                        <button onClick={onClose}>Close</button>
+                        </Table>
+                        <div className="d-flex justify-content-between">
+                            <Button variant="success" onClick={handleSubmit}>Submit Decisions</Button>
+                            <Button variant="secondary" onClick={onClose}>Close</Button>
+                        </div>
                     </div>
                 )}
             </div>

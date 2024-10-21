@@ -1,4 +1,5 @@
-// src/components/pages/MainPage.tsx
+// src/components/pages/AdminPage.tsx
+
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import Header from "../Header";
@@ -11,24 +12,35 @@ import { fetchCitiesData, fetchCoordinatesData, fetchHumansData } from "../../se
 import DeleteModal from "../modals/DeleteModal";
 import SpecOpsModal from "../modals/SpecOpsModal";
 import CheckRequestsModal from "../modals/CheckRequestsModal";
+import { Button } from "react-bootstrap";
 
 const Title: React.FC = () => {
     const { username } = useAuth();
-    return <div>
-        <h1>Welcome to Admin Panel, { username ? username : 'Unauthorized User' }</h1>
-    </div>
+    return (
+        <div className="text-center my-4">
+            <h1>Welcome to Admin Panel, {username ? username : 'Unauthorized User'}</h1>
+        </div>
+    );
 }
 
-const Commands: React.FC<{ openCreateModal: () => void, openUpdateModal: () => void, openDeleteModal: () => void, openSpecOpsModal: () => void, openCheckRequestsModal: () => void, handleLogout: () => void }> = ({ openCreateModal, openUpdateModal, openDeleteModal, openSpecOpsModal, openCheckRequestsModal, handleLogout }) => {
-    return <div>
-        <button onClick={openCreateModal}>Create</button>
-        <button onClick={openUpdateModal}>Update</button>
-        <button onClick={openDeleteModal}>Delete</button>
-        <button onClick={openCheckRequestsModal}>Check Requests</button>
-        <button onClick={openSpecOpsModal}>Special</button>
-        <button>Visualize</button>
-        <button onClick={handleLogout}>Logout</button>
-    </div>
+const Commands: React.FC<{
+    openCreateModal: () => void;
+    openUpdateModal: () => void;
+    openDeleteModal: () => void;
+    openSpecOpsModal: () => void;
+    openCheckRequestsModal: () => void;
+    handleLogout: () => void;
+}> = ({ openCreateModal, openUpdateModal, openDeleteModal, openSpecOpsModal, openCheckRequestsModal, handleLogout }) => {
+    return (
+        <div className="d-flex justify-content-around my-4">
+            <Button variant="primary" onClick={openCreateModal}>Create</Button>
+            <Button variant="warning" onClick={openUpdateModal}>Update</Button>
+            <Button variant="danger" onClick={openDeleteModal}>Delete</Button>
+            <Button variant="info" onClick={openCheckRequestsModal}>Check Requests</Button>
+            <Button variant="success" onClick={openSpecOpsModal}>Special</Button>
+            <Button variant="secondary" onClick={handleLogout}>Logout</Button>
+        </div>
+    );
 }
 
 const AdminPage: React.FC = () => {
@@ -47,46 +59,17 @@ const AdminPage: React.FC = () => {
         navigate('/auth');
     };
 
-    const openCreateModal = () => {
-        setIsCreateModalOpen(true);
-    };
+    const openCreateModal = () => setIsCreateModalOpen(true);
+    const closeCreateModal = () => setIsCreateModalOpen(false);
+    const openUpdateModal = () => setIsUpdateModalOpen(true);
+    const closeUpdateModal = () => setIsUpdateModalOpen(false);
+    const openDeleteModal = () => setIsDeleteModalOpen(true);
+    const closeDeleteModal = () => setIsDeleteModalOpen(false);
+    const openSpecOpsModal = () => setIsSpecOpsModalOpen(true);
+    const closeSpecOpsModal = () => setIsSpecOpsModalOpen(false);
+    const openCheckRequestsModal = () => setIsCheckRequestsModalOpen(true);
+    const closeCheckRequestsModal = () => setIsCheckRequestsModalOpen(false);
 
-    const closeCreateModal = () => {
-        setIsCreateModalOpen(false);
-    };
-
-    const openUpdateModal = () => {
-        setIsUpdateModalOpen(true);
-    }
-
-    const closeUpdateModal = () => {
-        setIsUpdateModalOpen(false);
-    }
-
-    const openDeleteModal = () => {
-        setIsDeleteModalOpen(true);
-    }
-
-    const closeDeleteModal = () => {
-        setIsDeleteModalOpen(false);
-    }
-
-    const openSpecOpsModal = () => {
-        setIsSpecOpsModalOpen(true);
-    }
-
-    const closeSpecOpsModal = () => {
-        setIsSpecOpsModalOpen(false);
-    }
-
-    const openCheckRequestsModal = () => {
-        setIsCheckRequestsModalOpen(true);
-    }
-
-    const closeCheckRequestsModal = () => {
-        setIsCheckRequestsModalOpen(false);
-    }
-    
     const fetchData = async () => {
         try {
             setLoading(true);
@@ -106,14 +89,21 @@ const AdminPage: React.FC = () => {
     }, []);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div className="text-center my-4">Loading...</div>;
     }
 
     return (
         <div>
             <Header />
             <Title />
-            <Commands openCreateModal={openCreateModal} openUpdateModal={openUpdateModal} openDeleteModal={openDeleteModal} openSpecOpsModal={openSpecOpsModal} openCheckRequestsModal={openCheckRequestsModal} handleLogout={handleLogout} />
+            <Commands
+                openCreateModal={openCreateModal}
+                openUpdateModal={openUpdateModal}
+                openDeleteModal={openDeleteModal}
+                openSpecOpsModal={openSpecOpsModal}
+                openCheckRequestsModal={openCheckRequestsModal}
+                handleLogout={handleLogout}
+            />
 
             {data ? (
                 <>
@@ -125,7 +115,7 @@ const AdminPage: React.FC = () => {
                     <CheckRequestsModal isOpen={isCheckRequestsModalOpen} onClose={closeCheckRequestsModal} />
                 </>
             ) : (
-                <div>No data available</div>
+                <div className="text-center my-4">No data available</div>
             )}
 
             <Footer />

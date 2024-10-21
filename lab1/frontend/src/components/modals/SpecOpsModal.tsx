@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { calculateTelephoneSum, countMetersAbove, getUniqueMASLValues, relocateCityPopulation, relocateCapitalPopulation } from '../../services/specOpsService';
+import '../../styles/CreateModal.css'; // Importing the CSS for styling
 
 interface SpecOpsModalProps {
     isOpen: boolean;
@@ -94,11 +95,11 @@ const SpecOpsModal: React.FC<SpecOpsModalProps> = ({ isOpen, onClose, data, onSu
     };
 
     return ReactDOM.createPortal(
-        <div style={styles.overlay}>
-            <div style={styles.modal}>
+        <div className="modal-overlay"> {/* Using modal overlay class */}
+            <div className="modal-container"> {/* Using modal container class */}
                 <h2>Special Operations</h2>
 
-                <div style={styles.forms}>
+                <div className="forms"> {/* Using forms class */}
                     {/* Operation 1 */}
                     <div>
                         <button onClick={handleCalculateTelephoneSum}>Calculate Sum of Telephone Codes</button>
@@ -152,7 +153,7 @@ const SpecOpsModal: React.FC<SpecOpsModalProps> = ({ isOpen, onClose, data, onSu
                 </div>
 
                 {/* Result Window */}
-                <div style={styles.resultWindow}>
+                <div className="result-window"> {/* Using result window class */}
                     {typeof result === 'number' && <p>Result: {result}</p>}
                     {uniqueMASLValues.length > 0 && (
                         <table className="table">
@@ -172,45 +173,11 @@ const SpecOpsModal: React.FC<SpecOpsModalProps> = ({ isOpen, onClose, data, onSu
                     )}
                 </div>
 
-                <button onClick={onClose}>Close</button>
+                <button onClick={onClose} className="cancel-button">Close</button> {/* Using cancel button class */}
             </div>
         </div>,
         document.getElementById('modal-root') as HTMLElement
     );
-};
-
-const styles = {
-    overlay: {
-        position: 'fixed' as 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    modal: {
-        background: '#fff',
-        padding: '20px',
-        borderRadius: '8px',
-        width: '500px',
-        maxWidth: '100%',
-    },
-    forms: {
-        display: 'flex',
-        flexDirection: 'column' as 'column',
-        gap: '10px',
-        marginBottom: '20px',
-    },
-    resultWindow: {
-        marginTop: '20px',
-        padding: '10px',
-        border: '1px solid #ccc',
-        borderRadius: '5px',
-        background: '#f9f9f9',
-    },
 };
 
 export default SpecOpsModal;
