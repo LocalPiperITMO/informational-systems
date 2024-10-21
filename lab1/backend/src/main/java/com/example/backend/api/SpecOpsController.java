@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.backend.dto.request.SpecRequest;
 import com.example.backend.dto.response.SpecResponse;
 import com.example.backend.model.City;
+import com.example.backend.service.AdminService;
 import com.example.backend.service.CityService;
 import com.example.backend.service.UserService;
 import com.example.backend.utils.JwtUtil;
@@ -34,6 +35,9 @@ public class SpecOpsController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AdminService adminService;
 
     @Autowired
     private SpecOps specOps;
@@ -92,7 +96,7 @@ public class SpecOpsController {
         if (!checkAuth(request.getToken())) return ResponseEntity.status(403).body(null);
         if (request.getSpec4() == null 
         || cityService.findCityById(request.getSpec4()) == null
-        || !cityService.findCityById(request.getSpec4()).getOwner().equals(jwtUtil.extractUsername(request.getToken()))
+        || (!cityService.findCityById(request.getSpec4()).getOwner().equals(jwtUtil.extractUsername(request.getToken())) && adminService.findByUser(userService.findByUsername(jwtUtil.extractUsername(request.getToken()))) == null)
         || !cityService.findCityById(request.getSpec4()).isModifiable()) return ResponseEntity.status(422).body(null);
         List<City> cities = cityService.findAllCities();
         List<City> result = specOps.moveToMinPopulation(cities, request.getSpec4());
@@ -112,7 +116,7 @@ public class SpecOpsController {
         if (request.getSpec5() == null
         || request.getSpec5() == null
         || cityService.findCityById(request.getSpec5()) == null
-        || !cityService.findCityById(request.getSpec5()).getOwner().equals(jwtUtil.extractUsername(request.getToken()))
+        || (!cityService.findCityById(request.getSpec5()).getOwner().equals(jwtUtil.extractUsername(request.getToken())) && adminService.findByUser(userService.findByUsername(jwtUtil.extractUsername(request.getToken()))) == null)
         || !cityService.findCityById(request.getSpec5()).isModifiable()
         || !cityService.findCityById(request.getSpec5()).isCapital()) return ResponseEntity.status(422).body(null);
         List<City> cities = cityService.findAllCities();
