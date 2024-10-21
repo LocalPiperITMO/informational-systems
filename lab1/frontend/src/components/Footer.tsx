@@ -8,16 +8,16 @@ const Footer: React.FC = () => {
             <Container>
                 <Row className="align-items-center">
                     <Col className="text-start">
-                        <p>Email: your.email@example.com</p>
+                        <p>Email: artsor53@gmail.com</p>
                     </Col>
                     <Col className="text-center">
                         <p>
-                            GitHub: <a href="https://github.com/yourusername">yourusername</a>
+                            GitHub: <a href="https://github.com/LocalPiper">LocalPiper</a>
                         </p>
                     </Col>
                     <Col className="text-end">
                         <p>
-                            Telegram: <a href="https://t.me/yourusername">@yourusername</a>
+                            Telegram: <a href="https://t.me/localpiper">@localpiper</a>
                         </p>
                     </Col>
                 </Row>

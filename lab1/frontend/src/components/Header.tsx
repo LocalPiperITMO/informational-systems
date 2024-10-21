@@ -8,13 +8,13 @@ const Header: React.FC = () => {
             <Container>
                 <Row className="align-items-center">
                     <Col className="text-start">
-                        <h1>Lab Name</h1>
+                        <h1>Informational Systems</h1>
                     </Col>
                     <Col className="text-center">
-                        <h2>Your Name</h2>
+                        <h2>Lab1</h2>
                     </Col>
                     <Col className="text-end">
-                        <h3>Lab Variant</h3>
+                        <h3>Variant 12086</h3>
                     </Col>
                 </Row>
             </Container>
