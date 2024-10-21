@@ -1,22 +1,16 @@
-/* src/components/tables/ObjectTable.css */
+/* src/styles/ObjectTable.css */
 
 .table-responsive {
-    max-height: 400px; /* Set desired fixed height */
-    overflow-y: auto; /* Make table body scrollable */
-  }
-  
-  .non-modifiable {
-    background-color: #f8d7da; /* Light red for non-modifiable rows */
-  }
-  
-  .button-group {
-    position: relative; /* Keep buttons in place */
-    margin-top: 10px;
-  }
-  
-  .table th, .table td {
-    text-align: center; /* Center the text */
-  }
-  
-  /* You can customize further as needed */
-  
+  max-height: 400px; /* Set a fixed height */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.table {
+  margin-bottom: 0; /* Prevent margin at the bottom of the table */
+}
+
+.table th, .table td {
+  text-align: center; /* Center the text */
+}
+
+/* No need for fixed-buttons class anymore since we're handling position differently */

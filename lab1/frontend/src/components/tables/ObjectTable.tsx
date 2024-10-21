@@ -101,14 +101,19 @@ const ObjectTable: React.FC<ObjectTableProps> = ({ data }) => {
     };
 
     return (
-        <div>
+        <div className="d-flex flex-column" style={{ height: '100%' }}>
             <h1 className="text-center my-4">{names[currentTable]}</h1>
-            {currentTable === 0 && <CitiesTable data={data.cities} />}
-            {currentTable === 1 && <CoordinatesTable data={data.coordinates} />}
-            {currentTable === 2 && <HumansTable data={data.humans} />}
-            <div className="d-flex justify-content-between">
-                <button onClick={handlePrevious} className="btn btn-secondary" disabled={currentTable === 0}>Previous</button>
-                <button onClick={handleNext} className="btn btn-secondary" disabled={currentTable === names.length - 1}>Next</button>
+            <div style={{ flex: '1', overflow: 'auto' }}>
+                {currentTable === 0 && <CitiesTable data={data.cities} />}
+                {currentTable === 1 && <CoordinatesTable data={data.coordinates} />}
+                {currentTable === 2 && <HumansTable data={data.humans} />}
+            </div>
+            {/* Spacer to prevent overlap with the footer */}
+            <div style={{ height: '60px' }} /> {/* Adjust height as needed */}
+            {/* Buttons above the footer */}
+            <div className="d-flex justify-content-between my-4">
+                <button className="btn btn-secondary" onClick={handlePrevious}>Previous</button>
+                <button className="btn btn-secondary" onClick={handleNext}>Next</button>
             </div>
         </div>
     );
