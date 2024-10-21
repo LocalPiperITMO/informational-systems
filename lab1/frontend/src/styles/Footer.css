@@ -1,0 +1,16 @@
+/* Footer.css */
+
+.footer {
+    background-color: var(--header-footer-bg-color);
+    padding: 20px 0;
+    position: fixed;  /* Fixed positioning */
+    bottom: 0;        /* Align to bottom */
+    width: 100%;      /* Full width */
+    z-index: 1000;    /* Ensure it stays above other content */
+}
+
+.footer p {
+    margin: 0;
+    line-height: 1.2; /* Adjust line height for spacing */
+    color: #333;      /* Dark gray color for better visibility */
+}
