@@ -126,7 +126,7 @@ const SpecOpsModal: React.FC<SpecOpsModalProps> = ({ isOpen, onClose, data, onSu
                         <select onChange={e => setSelectedCity(Number(e.target.value))}>
                             <option value={''}>Select City</option>
                             {data.cities
-                                .filter(city => city.owner === localStorage.getItem('username') && city.modifiable)
+                                .filter(city => (city.owner === localStorage.getItem('username') || localStorage.getItem('admin') === 'true') && city.modifiable)
                                 .map(city => (
                                     <option key={city.id} value={city.id}>
                                         ID: {city.id}, Name: {city.name}
@@ -141,7 +141,7 @@ const SpecOpsModal: React.FC<SpecOpsModalProps> = ({ isOpen, onClose, data, onSu
                         <select onChange={e => setSelectedCapital(Number(e.target.value))}>
                             <option value={''}>Select Capital City</option>
                             {data.cities
-                                .filter(city => city.owner === localStorage.getItem('username') && city.capital && city.modifiable)
+                                .filter(city => (city.owner === localStorage.getItem('username') || localStorage.getItem('admin') === 'true') && city.capital && city.modifiable)
                                 .map(city => (
                                     <option key={city.id} value={city.id}>
                                         ID: {city.id}, Name: {city.name}
