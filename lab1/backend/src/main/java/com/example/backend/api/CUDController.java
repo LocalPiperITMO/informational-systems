@@ -20,6 +20,7 @@ import com.example.backend.model.Climate;
 import com.example.backend.model.Coordinates;
 import com.example.backend.model.Government;
 import com.example.backend.model.Human;
+import com.example.backend.service.AdminService;
 import com.example.backend.service.CityService;
 import com.example.backend.service.CoordinatesService;
 import com.example.backend.service.HumanService;
@@ -49,6 +50,9 @@ public class CUDController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AdminService adminService;
 
     private boolean checkAuth(String token) {
         try {
@@ -104,7 +108,7 @@ public class CUDController {
         }
         try {
             if (request.getId() == null || cityService.findCityById(request.getId()) == null) return ResponseEntity.status(422).body(null);
-            if (!cityService.findCityById(request.getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken()))) return ResponseEntity.status(400).body(null);
+            if (!cityService.findCityById(request.getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken())) && adminService.findByUser(userService.findByUsername(jwtUtil.extractUsername(request.getToken()))) == null) return ResponseEntity.status(400).body(null);
             if (!cityService.findCityById(request.getId()).isModifiable()) return ResponseEntity.status(400).body(null);
             Long coordinatesId = request.getCoordinatesId();
             if (coordinatesId == null) {
@@ -142,7 +146,7 @@ public class CUDController {
             return ResponseEntity.status(403).body(null);
         }
         if (request.getId() == null || cityService.findCityById(request.getId()) == null) return ResponseEntity.status(422).body(null);
-        if (!cityService.findCityById(request.getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken()))) return ResponseEntity.status(400).body(null);
+        if (!cityService.findCityById(request.getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken())) && adminService.findByUser(userService.findByUsername(jwtUtil.extractUsername(request.getToken()))) == null) return ResponseEntity.status(400).body(null);
         List<City> cities = cityService.deleteCity(request.getId());
         return ResponseEntity.ok(cities);
     }
@@ -172,7 +176,7 @@ public class CUDController {
         }
         try {
             if (request.getCoordinates().getId() == null || coordinatesService.findCoordinatesById(request.getCoordinates().getId()) == null) return ResponseEntity.status(422).body(null);
-            if (!coordinatesService.findCoordinatesById(request.getCoordinates().getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken()))) return ResponseEntity.status(400).body(null);
+            if (!coordinatesService.findCoordinatesById(request.getCoordinates().getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken())) && adminService.findByUser(userService.findByUsername(jwtUtil.extractUsername(request.getToken()))) == null) return ResponseEntity.status(400).body(null);
             if (!coordinatesService.findCoordinatesById(request.getCoordinates().getId()).isModifiable()) return ResponseEntity.status(400).body(null);
             List<Coordinates> coordinatesList = coordinatesService.updateCoordinates(request);
             return ResponseEntity.ok(coordinatesList);
@@ -186,7 +190,7 @@ public class CUDController {
         @Valid
         @RequestBody DeleteRequest request) {
         if (request.getId() == null || coordinatesService.findCoordinatesById(request.getId()) == null) return ResponseEntity.status(422).body(null);
-        if (!coordinatesService.findCoordinatesById(request.getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken()))) return ResponseEntity.status(400).body(null);
+        if (!coordinatesService.findCoordinatesById(request.getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken())) && adminService.findByUser(userService.findByUsername(jwtUtil.extractUsername(request.getToken()))) == null) return ResponseEntity.status(400).body(null);
         cityService.deleteAllCitiesByCoordinates(coordinatesService.findCoordinatesById(request.getId()));
         List<Coordinates> coordinatesList = coordinatesService.deleteCoordinates(request.getId());
         return ResponseEntity.ok(coordinatesList);
@@ -217,7 +221,7 @@ public class CUDController {
         }
         try {
             if (request.getHuman().getId() == null || humanService.findHumanById(request.getHuman().getId()) == null) return ResponseEntity.status(422).body(null);
-            if (!humanService.findHumanById(request.getHuman().getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken()))) return ResponseEntity.status(400).body(null);
+            if (!humanService.findHumanById(request.getHuman().getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken())) && adminService.findByUser(userService.findByUsername(jwtUtil.extractUsername(request.getToken()))) == null) return ResponseEntity.status(400).body(null);
             if (!humanService.findHumanById(request.getHuman().getId()).isModifiable()) return ResponseEntity.status(400).body(null);
             List<Human> humans = humanService.updateHuman(request);
             return ResponseEntity.ok(humans);
@@ -231,7 +235,7 @@ public class CUDController {
         @Valid
         @RequestBody DeleteRequest request) {
         if (request.getId() == null || humanService.findHumanById(request.getId()) == null) return ResponseEntity.status(422).body(null);
-        if (!humanService.findHumanById(request.getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken()))) return ResponseEntity.status(400).body(null);
+        if (!humanService.findHumanById(request.getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken())) && adminService.findByUser(userService.findByUsername(jwtUtil.extractUsername(request.getToken()))) == null) return ResponseEntity.status(400).body(null);
         cityService.deleteAllCitiesByGovernor(humanService.findHumanById(request.getId()));
         List<Human> humans = humanService.deleteHuman(request.getId());
         return ResponseEntity.ok(humans);
