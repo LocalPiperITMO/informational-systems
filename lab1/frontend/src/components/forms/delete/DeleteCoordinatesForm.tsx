@@ -23,7 +23,7 @@ const DeleteCoordinatesForm: React.FC<CoordinatesFormProps> = ({ coordinatesForm
                 >
                     <option value="">Select Coordinates ID</option>
                     {coordinates
-                    .filter(coord => coord.owner === localStorage.getItem('username'))
+                    .filter(coord => coord.owner === localStorage.getItem('username') || localStorage.getItem('admin') === 'true')
                     .map(coord => (
                         <option key={coord.id} value={coord.id}>
                             {`ID: ${coord.id}`}

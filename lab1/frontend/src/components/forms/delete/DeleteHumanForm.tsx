@@ -23,7 +23,7 @@ const DeleteHumanForm: React.FC<HumanFormProps> = ({ humanForm, setHumanForm, hu
                 >
                     <option value="">Select Human ID</option>
                     {humans
-                    .filter(human => human.owner === localStorage.getItem('username'))
+                    .filter(human => human.owner === localStorage.getItem('username') || localStorage.getItem('admin') === 'true')
                     .map(human => (
                         <option key={human.id} value={human.id}>
                             {`ID: ${human.id}`}

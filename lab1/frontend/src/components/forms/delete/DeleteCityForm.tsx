@@ -29,7 +29,7 @@ const DeleteCityForm: React.FC<CityFormProps> = ({ cityForm, setCityForm, cities
                 >
                     <option value="">Select ID</option>
                     {cities
-                    .filter(city => city.owner === localStorage.getItem('username'))
+                    .filter(city => city.owner === localStorage.getItem('username') || localStorage.getItem('admin') === 'true')
                     .map(city => (
                         <option key={city.id} value={city.id}>
                             {`ID: ${city.id}`}

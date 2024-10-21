@@ -101,7 +101,7 @@ const UpdateCityForm: React.FC<CityFormProps> = ({ cityForm, setCityForm, coordi
                 >
                     <option value="">Select ID</option>
                     {cities
-                    .filter(city => city.owner === localStorage.getItem('username'))
+                    .filter(city => city.owner === localStorage.getItem('username') || localStorage.getItem('admin') === 'true')
                     .filter(city => city.modifiable)
                     .map(city => (
                         <option key={city.id} value={city.id}>
@@ -221,7 +221,7 @@ const UpdateCityForm: React.FC<CityFormProps> = ({ cityForm, setCityForm, coordi
                 >
                     <option value="">Select Coordinates</option>
                     {coordinates
-                    .filter(coord => coord.owner === localStorage.getItem('username'))
+                    .filter(coord => coord.owner === localStorage.getItem('username') || localStorage.getItem('admin') === 'true')
                     .map(coord => (
                         <option key={coord.id} value={coord.id}>
                             {`ID: ${coord.id}, X: ${coord.x}, Y: ${coord.y}`}
@@ -238,7 +238,7 @@ const UpdateCityForm: React.FC<CityFormProps> = ({ cityForm, setCityForm, coordi
                 >
                     <option value="">Select Human (optional)</option>
                     {humans
-                    .filter(human => human.owner === localStorage.getItem('username'))
+                    .filter(human => human.owner === localStorage.getItem('username') || localStorage.getItem('admin') === 'true')
                     .map(human => (
                         <option key={human.id} value={human.id}>
                             {`ID: ${human.id}, Age: ${human.age}`}
