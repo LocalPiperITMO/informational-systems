@@ -1,4 +1,4 @@
-// src/components/modals/CreateModal.tsx
+// src/components/modals/DeleteModal.tsx
 
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
@@ -8,6 +8,7 @@ import DeleteHumanForm from '../forms/delete/DeleteHumanForm';
 import { deleteCity, deleteCoordinates, deleteHuman } from '../../services/apiService';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import '../../styles/CreateModal.css'; // Importing the CSS for styling
 
 interface DeleteModalProps {
     isOpen: boolean;
@@ -54,28 +55,28 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ isOpen, onClose, data, onSucc
             if (objectType === ObjectType.CITY) {
                 const cityData = {
                     id: cityForm.id,
-                    token: localStorage.getItem('token')? localStorage.getItem('token') : "error"
+                    token: localStorage.getItem('token') || "error"
                 };
                 await deleteCity(cityData);
                 console.log('City deleted successfully');
             } else if (objectType === ObjectType.COORDINATES) {
                 const coordinatesData = {
                     id: coordinatesForm.id,
-                    token: localStorage.getItem('token')? localStorage.getItem('token') : "error"
+                    token: localStorage.getItem('token') || "error"
                 };
                 await deleteCoordinates(coordinatesData);
                 console.log('Coordinates deleted successfully');
             } else if (objectType === ObjectType.HUMAN) {
                 const humanData = {
                     id: humanForm.id,
-                    token: localStorage.getItem('token')? localStorage.getItem('token') : "error"
+                    token: localStorage.getItem('token') || "error"
                 };
                 await deleteHuman(humanData);
                 console.log('Human deleted successfully');
             }
             onSuccess();
             onClose(); // Close the modal after successful submission
-        } catch (error : any) {
+        } catch (error: any) {
             if (error.message === "User is unauthorized! Redirecting...") {
                 logout();
                 navigate("/auth");
@@ -86,12 +87,12 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ isOpen, onClose, data, onSucc
     };
 
     return ReactDOM.createPortal(
-        <div style={styles.overlay}>
-            <div style={styles.modal}>
+        <div className="modal-overlay"> {/* Using modal overlay class */}
+            <div className="modal-container"> {/* Using modal container class */}
                 <h2>Delete {objectType}</h2>
 
                 {/* Object Type Switcher */}
-                <div style={styles.switcher}>
+                <div className="object-type-switcher"> {/* Using object type switcher class */}
                     <button onClick={() => handleObjectTypeChange(ObjectType.CITY)}>City</button>
                     <button onClick={() => handleObjectTypeChange(ObjectType.COORDINATES)}>Coordinates</button>
                     <button onClick={() => handleObjectTypeChange(ObjectType.HUMAN)}>Human</button>
@@ -107,46 +108,30 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ isOpen, onClose, data, onSucc
                     )}
 
                     {objectType === ObjectType.COORDINATES && (
-                        <DeleteCoordinatesForm coordinatesForm={coordinatesForm} setCoordinatesForm={setCoordinatesForm} coordinates={data.coordinates}/>
+                        <DeleteCoordinatesForm 
+                            coordinatesForm={coordinatesForm} 
+                            setCoordinatesForm={setCoordinatesForm} 
+                            coordinates={data.coordinates}
+                        />
                     )}
 
                     {objectType === ObjectType.HUMAN && (
-                        <DeleteHumanForm humanForm={humanForm} setHumanForm={setHumanForm} humans={data.humans}/>
+                        <DeleteHumanForm 
+                            humanForm={humanForm} 
+                            setHumanForm={setHumanForm} 
+                            humans={data.humans}
+                        />
                     )}
 
-                    <button type="submit">Submit</button>
-                    <button type="button" onClick={onClose}>Cancel</button>
+                    <div className="button-container"> {/* Using button container class */}
+                        <button type="submit" className="submit-button">Submit</button> {/* Using submit button class */}
+                        <button type="button" className="cancel-button" onClick={onClose}>Cancel</button> {/* Using cancel button class */}
+                    </div>
                 </form>
             </div>
         </div>,
         document.getElementById('modal-root') as HTMLElement
     );
-};
-
-const styles = {
-    overlay: {
-        position: 'fixed' as 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    modal: {
-        background: '#fff',
-        padding: '20px',
-        borderRadius: '8px',
-        width: '400px',
-        maxWidth: '100%',
-    },
-    switcher: {
-        marginBottom: '20px',
-        display: 'flex',
-        justifyContent: 'space-around',
-    }
 };
 
 export default DeleteModal;
