@@ -1,4 +1,5 @@
 // src/components/tables/ObjectTable.tsx
+
 import React, { useState } from "react";
 import { Column, useTable, useSortBy, useGlobalFilter, TableInstance } from "react-table";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -34,7 +35,7 @@ export const CommonTable = <T extends object>({ data, columns }: CommonTableProp
         placeholder="Search..."
         className="form-control mb-3"
       />
-      <table {...getTableProps()} className="table table-striped table-bordered">
+      <table {...getTableProps()} className="table table-striped table-bordered table-hover">
         <thead>
           {headerGroups.map(headerGroup => (
             <tr {...headerGroup.getHeaderGroupProps()}>
@@ -59,11 +60,11 @@ export const CommonTable = <T extends object>({ data, columns }: CommonTableProp
         <tbody {...getTableBodyProps()}>
           {rows.map(row => {
             prepareRow(row);
-            const { key, ...rest } = row.getRowProps(); // Destructure key here
+            const { key, ...rest } = row.getRowProps();
             return (
               <tr key={key} {...rest}>
                 {row.cells.map(cell => {
-                  const { key, ...cellProps } = cell.getCellProps(); // Destructure key here too
+                  const { key, ...cellProps } = cell.getCellProps();
                   return (
                     <td key={key} {...cellProps}>
                       {cell.render('Cell')}
@@ -78,7 +79,6 @@ export const CommonTable = <T extends object>({ data, columns }: CommonTableProp
     </div>
   );
 };
-
 
 interface ObjectTableProps {
     data: {
@@ -102,13 +102,13 @@ const ObjectTable: React.FC<ObjectTableProps> = ({ data }) => {
 
     return (
         <div>
-            <h1>{names[currentTable]}</h1>
+            <h1 className="text-center my-4">{names[currentTable]}</h1>
             {currentTable === 0 && <CitiesTable data={data.cities} />}
             {currentTable === 1 && <CoordinatesTable data={data.coordinates} />}
             {currentTable === 2 && <HumansTable data={data.humans} />}
-            <div className="button-group">
-                <button className="btn btn-primary" onClick={handlePrevious}>◀</button>
-                <button className="btn btn-primary" onClick={handleNext}>▶</button>
+            <div className="d-flex justify-content-between">
+                <button onClick={handlePrevious} className="btn btn-secondary" disabled={currentTable === 0}>Previous</button>
+                <button onClick={handleNext} className="btn btn-secondary" disabled={currentTable === names.length - 1}>Next</button>
             </div>
         </div>
     );
