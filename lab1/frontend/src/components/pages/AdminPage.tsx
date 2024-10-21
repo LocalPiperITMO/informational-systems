@@ -18,7 +18,7 @@ const Title: React.FC = () => {
     const { username } = useAuth();
     return (
         <div className="text-center my-4">
-            <h1>Welcome to Admin Panel, {username ? username : 'Unauthorized User'}</h1>
+            <h1>Welcome to Admin Panel, {username ? username : 'Unauthorized User. Get out now.'}</h1>
         </div>
     );
 }
@@ -33,11 +33,11 @@ const Commands: React.FC<{
 }> = ({ openCreateModal, openUpdateModal, openDeleteModal, openSpecOpsModal, openCheckRequestsModal, handleLogout }) => {
     return (
         <div className="d-flex justify-content-around my-4">
-            <Button variant="primary" onClick={openCreateModal}>Create</Button>
-            <Button variant="warning" onClick={openUpdateModal}>Update</Button>
-            <Button variant="danger" onClick={openDeleteModal}>Delete</Button>
-            <Button variant="info" onClick={openCheckRequestsModal}>Check Requests</Button>
-            <Button variant="success" onClick={openSpecOpsModal}>Special</Button>
+            <Button variant="primary" onClick={openCreateModal} disabled={localStorage.getItem('admin') !== 'true'}>Create</Button>
+            <Button variant="warning" onClick={openUpdateModal} disabled={localStorage.getItem('admin') !== 'true'}>Update</Button>
+            <Button variant="danger" onClick={openDeleteModal} disabled={localStorage.getItem('admin') !== 'true'}>Delete</Button>
+            <Button variant="info" onClick={openCheckRequestsModal} disabled={localStorage.getItem('admin') !== 'true'}>Check Requests</Button>
+            <Button variant="success" onClick={openSpecOpsModal} disabled={localStorage.getItem('admin') !== 'true'}>Special</Button>
             <Button variant="secondary" onClick={handleLogout}>Logout</Button>
         </div>
     );
