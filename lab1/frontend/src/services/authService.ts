@@ -35,7 +35,11 @@ export async function loginUser(username: string, password: string): Promise<{ u
       return { username : data.username, admin: data.admin, token: data.token };
     } else {
       const data = await response.json()
-      toast.error("Register failed! Reason: " + data.message)
+      if (data.hasOwnProperty('message')) {
+        toast.error("Register failed! Reason: " + data.message)
+      } else {
+        toast.error("Register failed! Reason: Password length minimum 6 chars")
+      }
       throw new Error('Register failed');
     }
   }

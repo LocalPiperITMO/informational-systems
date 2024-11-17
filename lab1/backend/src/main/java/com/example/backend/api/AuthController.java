@@ -18,6 +18,8 @@ import com.example.backend.service.UserService;
 import com.example.backend.utils.JwtUtil;
 import com.example.backend.utils.PasswordHasher;
 
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -31,7 +33,8 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<AuthResponse> login(
+        @RequestBody AuthRequest authRequest) {
         System.out.println("Login attempt - Username: " + authRequest.getUsername());
         User user = userService.findByUsername(authRequest.getUsername());
         if (user != null) {
@@ -46,7 +49,9 @@ public class AuthController {
 
      
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> postMethodName(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<AuthResponse> postMethodName(
+    @Valid    
+    @RequestBody AuthRequest authRequest) {
         System.out.println("Registration attempt - Username: " + authRequest.getUsername());
         User user = userService.findByUsername(authRequest.getUsername());
         if (user == null) {
