@@ -37,7 +37,7 @@ public class City {
     @NotBlank
     private String name;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "coordinates_id", referencedColumnName = "id")
     private Coordinates coordinates;
 
@@ -73,7 +73,7 @@ public class City {
     @Enumerated(EnumType.STRING)
     private Government government;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "governor_id", referencedColumnName = "id")
     private Human governor;
 
