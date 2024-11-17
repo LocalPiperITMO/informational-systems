@@ -11,7 +11,6 @@ export async function loginUser(username: string, password: string): Promise<{ u
     if (response.ok) {
       const data = await response.json();
       toast.success("Welcome back, " + data.username + "!")
-      // Assuming the response contains the user's data and a token
       return { username: data.username, admin: data.admin, token: data.token };
     } else {
       const data = await response.json();

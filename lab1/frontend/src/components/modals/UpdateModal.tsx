@@ -123,7 +123,6 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onClose, data, onSucc
                 navigate("/auth");
             }
             console.error(error);
-            alert(`Error: ${error.message}`); // Alert the user in case of error
         }
     };
 

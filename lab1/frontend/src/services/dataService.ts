@@ -1,4 +1,3 @@
-
 export async function fetchCitiesData() {
     const response = await fetch('http://localhost:8080/api/data/cities', {
       method: 'POST',

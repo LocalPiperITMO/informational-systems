@@ -30,14 +30,12 @@ const SpecOpsModal: React.FC<SpecOpsModalProps> = ({ isOpen, onClose, data, onSu
 
     if (!isOpen) return null;
 
-    // Handle API errors and unauthorized access
     const handleError = (error: any) => {
         if (error.message === "User is unauthorized! Redirecting...") {
             logout();
             navigate("/auth");
         }
         console.error(error);
-        alert(`Error: ${error.message}`);
     };
 
     // Operation 1: Calculate the sum of all telephoneCodes (spec1)

@@ -1,4 +1,5 @@
 // src/services/apiService.ts
+import { toast } from "react-toastify";
 
 export async function createCity(cityData: any) {
     const response = await fetch('http://localhost:8080/api/logic/createCity', {
@@ -11,10 +12,13 @@ export async function createCity(cityData: any) {
 
     if (response.ok) {
         const data = await response.json();
-        return data;  // Return the response data as needed
+        toast.success("Successfully created City")
+        return data;
     } else if (response.status === 403){
+        toast.warning("User is unauthorized! Redirecting...")
         throw new Error("User is unauthorized! Redirecting...");
     } else {
+        toast.error("Failed to create City")
         throw new Error("Failed to create City");
     }
 }
@@ -30,10 +34,13 @@ export async function createCoordinates(coordinatesData: any) {
 
     if (response.ok) {
         const data = await response.json();
+        toast.success("Successfully created Coordinates")
         return data;  // Return the response data as needed
     } else if (response.status === 403){
+        toast.warning("User is unauthorized! Redirecting...")
         throw new Error("User is unauthorized! Redirecting...");
     } else {
+        toast.error("Failed to create Coordinates")
         throw new Error("Failed to create Coordinates");
     }
 }
@@ -49,10 +56,13 @@ export async function createHuman(humanData: any) {
 
     if (response.ok) {
         const data = await response.json();
+        toast.success("Successfully created Human")
         return data;  // Return the response data as needed
     } else if (response.status === 403){
+        toast.warning("User is unauthorized! Redirecting...")
         throw new Error("User is unauthorized! Redirecting...");
     } else {
+        toast.error("Failed to create Human")
         throw new Error("Failed to create Human");
     }
 }
@@ -68,10 +78,13 @@ export async function updateCity(cityData: any) {
 
     if (response.ok) {
         const data = await response.json();
+        toast.success("Successfully updated City")
         return data;  // Return the response data as needed
     } else if (response.status === 403){
+        toast.warning("User is unauthorized! Redirecting...")
         throw new Error("User is unauthorized! Redirecting...");
     } else {
+        toast.error("Failed to update City")
         throw new Error("Failed to update City");
     }
 }
@@ -87,10 +100,13 @@ export async function updateCoordinates(coordinatesData: any) {
 
     if (response.ok) {
         const data = await response.json();
+        toast.success("Successfully updated Coordinates")
         return data;  // Return the response data as needed
     } else if (response.status === 403){
+        toast.warning("User is unauthorized! Redirecting...")
         throw new Error("User is unauthorized! Redirecting...");
     } else {
+        toast.error("Failed to update Coordinates")
         throw new Error("Failed to update Coordinates");
     }
 }
@@ -105,10 +121,13 @@ export async function updateHuman(humanData: any) {
 
     if (response.ok) {
         const data = await response.json();
+        toast.success("Successfully updated Human")
         return data;  // Return the response data as needed
     } else if (response.status === 403){
+        toast.warning("User is unauthorized! Redirecting...")
         throw new Error("User is unauthorized! Redirecting...");
     } else {
+        toast.error("Failed to update Human")
         throw new Error("Failed to update Human");
     }
 }
@@ -124,10 +143,13 @@ export async function deleteCity(cityData: any) {
 
     if (response.ok) {
         const data = await response.json();
+        toast.success("Successfully deleted City")
         return data;  // Return the response data as needed
     } else if (response.status === 403){
+        toast.warning("User is unauthorized! Redirecting...")
         throw new Error("User is unauthorized! Redirecting...");
     } else {
+        toast.error("Failed to delete City")
         throw new Error("Failed to delete City");
     }
 }
@@ -143,8 +165,10 @@ export async function deleteCoordinates(coordinatesData: any) {
 
     if (response.ok) {
         const data = await response.json();
+        toast.success("Successfully deleted Coordinates")
         return data;  // Return the response data as needed
     } else if (response.status === 403){
+        toast.warning("User is unauthorized! Redirecting...")
         throw new Error("User is unauthorized! Redirecting...");
     } else {
         throw new Error("Failed to delete Coordinates");
@@ -161,8 +185,10 @@ export async function deleteHuman(humanData: any) {
 
     if (response.ok) {
         const data = await response.json();
+        toast.success("Successfully deleted Human")
         return data;  // Return the response data as needed
     } else if (response.status === 403){
+        toast.warning("User is unauthorized! Redirecting...")
         throw new Error("User is unauthorized! Redirecting...");
     } else {
         throw new Error("Failed to delete Human");

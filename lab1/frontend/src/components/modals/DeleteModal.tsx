@@ -75,14 +75,13 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ isOpen, onClose, data, onSucc
                 console.log('Human deleted successfully');
             }
             onSuccess();
-            onClose(); // Close the modal after successful submission
+            onClose();
         } catch (error: any) {
             if (error.message === "User is unauthorized! Redirecting...") {
                 logout();
                 navigate("/auth");
             }
             console.error(error);
-            alert(`Error: ${error.message}`); // Alert the user in case of error
         }
     };
 
