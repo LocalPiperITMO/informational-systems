@@ -5,9 +5,12 @@ import AuthPage from './components/pages/AuthPage';
 import MainPage from './components/pages/MainPage';
 import { AuthProvider } from './context/AuthContext';
 import AdminPage from './components/pages/AdminPage';
+import {  ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const App: React.FC = () => {
   return (
+    <div>
     <AuthProvider>
       <BrowserRouter>
       <Routes>
@@ -18,6 +21,8 @@ const App: React.FC = () => {
       </Routes>
     </BrowserRouter>
     </AuthProvider>
+    <ToastContainer/>
+    </div>
   );
 };
 
