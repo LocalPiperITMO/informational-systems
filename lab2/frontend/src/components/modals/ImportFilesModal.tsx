@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
+import { useDropzone } from 'react-dropzone';
 import '../../styles/ImportFileModal.css';
 
 interface ImportFilesModalProps {
@@ -11,52 +12,28 @@ interface ImportFilesModalProps {
 }
 
 const ImportFilesModal: React.FC<ImportFilesModalProps> = ({ isOpen, onClose, onSuccess }) => {
-    const [dragActive, setDragActive] = useState(false);
     const [files, setFiles] = useState<File[]>([]);
     const [error, setError] = useState<string | null>(null);
 
-    if (!isOpen) return null;
+    // useDropzone must always be called regardless of isOpen
+    const handleDrop = (acceptedFiles: File[], rejectedFiles: any) => {
+        const tomlFiles = acceptedFiles.filter(file => file.name.endsWith('.toml'));
 
-    const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
-        event.preventDefault();
-        event.stopPropagation();
-        setDragActive(true);
-    };
-
-    const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
-        event.preventDefault();
-        event.stopPropagation();
-        setDragActive(false);
-    };
-
-    const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
-        event.preventDefault();
-        event.stopPropagation();
-        setDragActive(false);
-
-        if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
-            const droppedFiles = Array.from(event.dataTransfer.files);
-            validateAndSetFiles(droppedFiles);
-        }
-    };
-
-    const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files) {
-            const selectedFiles = Array.from(event.target.files);
-            validateAndSetFiles(selectedFiles);
-        }
-    };
-
-    const validateAndSetFiles = (incomingFiles: File[]) => {
-        const tomlFiles = incomingFiles.filter(file => file.name.endsWith('.toml'));
-
-        if (tomlFiles.length === 0) {
-            setError('Please upload only TOML files.');
+        if (rejectedFiles.length > 0 || tomlFiles.length === 0) {
+            setError('Please upload only valid TOML files.');
         } else {
-            setFiles(tomlFiles);
+            setFiles([...files, ...tomlFiles]);
             setError(null);
         }
     };
+
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+        accept: { 'application/toml': ['.toml'] },
+        onDrop: handleDrop,
+        multiple: true,
+    });
+
+    if (!isOpen) return null; // This is fine since hooks have already been initialized.
 
     const handleSubmit = async () => {
         if (files.length === 0) {
@@ -67,10 +44,10 @@ const ImportFilesModal: React.FC<ImportFilesModalProps> = ({ isOpen, onClose, on
         setError(null);
 
         try {
-            // Simulating a file upload service
+            // Simulate file upload
             await Promise.all(
                 files.map(file =>
-                    new Promise<void>((resolve) =>
+                    new Promise<void>(resolve =>
                         setTimeout(() => {
                             console.log(`Uploaded: ${file.name}`);
                             resolve();
@@ -93,23 +70,11 @@ const ImportFilesModal: React.FC<ImportFilesModalProps> = ({ isOpen, onClose, on
                 <h2>Import TOML Files</h2>
 
                 <div
-                    className={`drag-drop-zone ${dragActive ? 'active' : ''}`}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
+                    {...getRootProps()}
+                    className={`drag-drop-zone ${isDragActive ? 'active' : ''}`}
                 >
-                    <p>Drag and drop TOML files here, or click to upload</p>
-                    <input
-                        type="file"
-                        accept=".toml"
-                        multiple
-                        onChange={handleFileInputChange}
-                        style={{ display: 'none' }}
-                        id="fileInput"
-                    />
-                    <label htmlFor="fileInput" className="upload-button">
-                        Browse Files
-                    </label>
+                    <input {...getInputProps()} />
+                    <p>{isDragActive ? 'Drop the files here...' : 'Drag and drop TOML files here, or click to browse'}</p>
                 </div>
 
                 {files.length > 0 && (

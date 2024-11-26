@@ -1,52 +1,60 @@
+/* src/styles/ImportFileModal.css */
+
 .drag-drop-zone {
     border: 2px dashed #ccc;
+    border-radius: 8px;
     padding: 20px;
     text-align: center;
     cursor: pointer;
-    margin-bottom: 20px;
-    transition: border-color 0.2s ease;
+    transition: border-color 0.3s ease;
 }
 
 .drag-drop-zone.active {
     border-color: #007bff;
-    background-color: #f0f8ff;
+    background-color: #f8f9fa;
 }
 
 .file-list {
-    margin: 10px 0;
+    margin-top: 20px;
+    text-align: left;
+}
+
+.file-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.file-list li {
+    margin-bottom: 5px;
+    font-size: 14px;
 }
 
 .error-message {
     color: red;
-    margin: 10px 0;
+    font-size: 14px;
+    margin-top: 10px;
 }
 
 .actions {
+    margin-top: 20px;
     display: flex;
     justify-content: space-between;
-    margin-top: 20px;
 }
 
 .submit-button {
-    background-color: #28a745;
-    color: white;
+    background-color: #007bff;
+    color: #fff;
     border: none;
-    padding: 10px 15px;
+    padding: 10px 20px;
+    border-radius: 5px;
     cursor: pointer;
-}
-
-.submit-button:hover {
-    background-color: #218838;
 }
 
 .cancel-button {
-    background-color: #dc3545;
-    color: white;
+    background-color: #6c757d;
+    color: #fff;
     border: none;
-    padding: 10px 15px;
+    padding: 10px 20px;
+    border-radius: 5px;
     cursor: pointer;
-}
-
-.cancel-button:hover {
-    background-color: #c82333;
 }
