@@ -2,6 +2,7 @@ package com.example.backend.service;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -134,14 +135,19 @@ public class FileProcessingService {
         throw new IllegalArgumentException("Invalid constructor for inner Human object!");
     }
 
-    public void processFiles(List<MultipartFile> files, String username) {
+    public List<String> processFiles(List<MultipartFile> files, String username) {
+        List<String> results = new ArrayList<>();
         for (MultipartFile file : files) {
             try {
                 List<CreateQuery> queries = parseToml(file);
                 executeQueries(queries, username);
-            } catch (IOException e) {
-                e.printStackTrace();
+                results.add("[SUCCESS] File processed sucessfully.");
+            } catch (IOException | IllegalArgumentException e) {
+                results.add("[ERROR] Failed to process file: " + e.getMessage());
+            } catch (Exception e) {
+                results.add("[ERROR] Unexpected error: " + e.getMessage());
             }
         }
+        return results;
     }
 }

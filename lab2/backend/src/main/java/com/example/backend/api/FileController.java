@@ -1,5 +1,7 @@
 package com.example.backend.api;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -42,7 +44,7 @@ public class FileController {
     @PostMapping("/executeScript")
     public ResponseEntity<Object> executeScript(@RequestBody FileRequest request) {
         if (!checkAuth(request.getToken())) return ResponseEntity.status(403).body(new MessageResponse("Access denied!"));
-        fileProcessingService.processFiles(request.getFiles(), jwtUtil.extractUsername(request.getToken()));
+        List<String> results = fileProcessingService.processFiles(request.getFiles(), jwtUtil.extractUsername(request.getToken()));
         return ResponseEntity.ok(new MessageResponse("Files processed successfully"));
     }
     
