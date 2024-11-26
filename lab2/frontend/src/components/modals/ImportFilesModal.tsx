@@ -1,30 +1,28 @@
-// src/components/modals/ImportFilesModal.tsx
-
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useDropzone } from 'react-dropzone';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import '../../styles/ImportFileModal.css';
 
 interface ImportFilesModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSuccess: () => void; // Notify the parent component of successful submission
+    onSuccess: () => void;
 }
 
 const ImportFilesModal: React.FC<ImportFilesModalProps> = ({ isOpen, onClose, onSuccess }) => {
     const [files, setFiles] = useState<File[]>([]);
     const [error, setError] = useState<string | null>(null);
 
-    // useDropzone must always be called regardless of isOpen
-    const handleDrop = (acceptedFiles: File[], rejectedFiles: any) => {
+    const handleDrop = (acceptedFiles: File[]) => {
         const tomlFiles = acceptedFiles.filter(file => file.name.endsWith('.toml'));
-
-        if (rejectedFiles.length > 0 || tomlFiles.length === 0) {
+        if (tomlFiles.length === 0) {
             setError('Please upload only valid TOML files.');
-        } else {
-            setFiles([...files, ...tomlFiles]);
-            setError(null);
+            return;
         }
+
+        setFiles(prevFiles => [...prevFiles, ...tomlFiles]);
+        setError(null);
     };
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -33,7 +31,19 @@ const ImportFilesModal: React.FC<ImportFilesModalProps> = ({ isOpen, onClose, on
         multiple: true,
     });
 
-    if (!isOpen) return null; // This is fine since hooks have already been initialized.
+    const handleDelete = (index: number) => {
+        setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+    };
+
+    const handleDragEnd = (result: DropResult) => {
+        if (!result.destination) return;
+
+        const reorderedFiles = Array.from(files);
+        const [removed] = reorderedFiles.splice(result.source.index, 1);
+        reorderedFiles.splice(result.destination.index, 0, removed);
+
+        setFiles(reorderedFiles);
+    };
 
     const handleSubmit = async () => {
         if (files.length === 0) {
@@ -44,7 +54,6 @@ const ImportFilesModal: React.FC<ImportFilesModalProps> = ({ isOpen, onClose, on
         setError(null);
 
         try {
-            // Simulate file upload
             await Promise.all(
                 files.map(file =>
                     new Promise<void>(resolve =>
@@ -56,13 +65,15 @@ const ImportFilesModal: React.FC<ImportFilesModalProps> = ({ isOpen, onClose, on
                 )
             );
             setFiles([]);
-            onSuccess(); // Notify the parent about the success
+            onSuccess();
             onClose();
         } catch (err) {
             setError('Failed to upload files. Please try again.');
             console.error(err);
         }
     };
+
+    if (!isOpen) return null;
 
     return ReactDOM.createPortal(
         <div className="modal-overlay">
@@ -78,14 +89,43 @@ const ImportFilesModal: React.FC<ImportFilesModalProps> = ({ isOpen, onClose, on
                 </div>
 
                 {files.length > 0 && (
-                    <div className="file-list">
-                        <h4>Files to upload:</h4>
-                        <ul>
-                            {files.map((file, index) => (
-                                <li key={index}>{file.name}</li>
-                            ))}
-                        </ul>
-                    </div>
+                    <DragDropContext onDragEnd={handleDragEnd}>
+                        <Droppable droppableId="fileQueue">
+                            {(provided) => (
+                                <ul
+                                    className="file-list"
+                                    {...provided.droppableProps}
+                                    ref={provided.innerRef}
+                                >
+                                    {files.map((file, index) => (
+                                        <Draggable
+                                            key={file.name + index}
+                                            draggableId={file.name + index}
+                                            index={index}
+                                        >
+                                            {(provided) => (
+                                                <li
+                                                    ref={provided.innerRef}
+                                                    {...provided.draggableProps}
+                                                    {...provided.dragHandleProps}
+                                                    className="file-item"
+                                                >
+                                                    <span>{index + 1}. {file.name}</span>
+                                                    <button
+                                                        className="delete-button"
+                                                        onClick={() => handleDelete(index)}
+                                                    >
+                                                        ✖
+                                                    </button>
+                                                </li>
+                                            )}
+                                        </Draggable>
+                                    ))}
+                                    {provided.placeholder}
+                                </ul>
+                            )}
+                        </Droppable>
+                    </DragDropContext>
                 )}
 
                 {error && <p className="error-message">{error}</p>}

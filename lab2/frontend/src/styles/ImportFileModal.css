@@ -1,60 +1,33 @@
-/* src/styles/ImportFileModal.css */
-
-.drag-drop-zone {
-    border: 2px dashed #ccc;
-    border-radius: 8px;
-    padding: 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.3s ease;
-}
-
-.drag-drop-zone.active {
-    border-color: #007bff;
-    background-color: #f8f9fa;
-}
-
 .file-list {
-    margin-top: 20px;
-    text-align: left;
-}
-
-.file-list ul {
-    list-style: none;
+    list-style-type: none;
     padding: 0;
+    margin: 16px 0;
 }
 
-.file-list li {
-    margin-bottom: 5px;
-    font-size: 14px;
-}
-
-.error-message {
-    color: red;
-    font-size: 14px;
-    margin-top: 10px;
-}
-
-.actions {
-    margin-top: 20px;
+.file-item {
     display: flex;
+    align-items: center;
     justify-content: space-between;
+    padding: 8px 16px;
+    margin-bottom: 8px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: grab;
 }
 
-.submit-button {
-    background-color: #007bff;
-    color: #fff;
+.file-item:active {
+    cursor: grabbing;
+}
+
+.delete-button {
+    background: none;
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
+    color: red;
+    font-size: 1rem;
     cursor: pointer;
 }
 
-.cancel-button {
-    background-color: #6c757d;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
+.delete-button:hover {
+    color: darkred;
 }
