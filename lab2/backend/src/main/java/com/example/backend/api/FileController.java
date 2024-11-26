@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,7 +42,7 @@ public class FileController {
 
     // GUESS WHO'S BACK, BACK AGAIN
     @PostMapping("/executeScript")
-    public ResponseEntity<Object> executeScript(@RequestBody FileRequest request) {
+    public ResponseEntity<Object> executeScript(@ModelAttribute FileRequest request) {
         if (!checkAuth(request.getToken())) return ResponseEntity.status(403).body(new MessageResponse("Access denied!"));
         List<String> results = fileProcessingService.processFiles(request.getFiles(), jwtUtil.extractUsername(request.getToken()));
         return ResponseEntity.ok(results);

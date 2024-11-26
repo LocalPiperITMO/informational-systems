@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useDropzone } from 'react-dropzone';
 import '../../styles/ImportFileModal.css';
+import { importFiles } from '../../services/fileService';
 
 interface ImportFilesModalProps {
     isOpen: boolean;
@@ -57,25 +58,19 @@ const ImportFilesModal: React.FC<ImportFilesModalProps> = ({ isOpen, onClose, on
         setDraggingIndex(null);
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
         if (files.length === 0) {
             setError('No files selected for submission.');
             return;
         }
-
         setError(null);
-
         try {
-            await Promise.all(
-                files.map(file =>
-                    new Promise<void>(resolve =>
-                        setTimeout(() => {
-                            console.log(`Uploaded: ${file.name}`);
-                            resolve();
-                        }, 1000)
-                    )
-                )
-            );
+            const data = {
+                token: localStorage.getItem('token'),
+                files: files
+            };
+            await importFiles(data);
             setFiles([]);
             onSuccess();
             onClose();

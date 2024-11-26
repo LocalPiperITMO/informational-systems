@@ -12,7 +12,7 @@ import { fetchCitiesData, fetchCoordinatesData, fetchHumansData } from "../../se
 import DeleteModal from "../modals/DeleteModal";
 import SpecOpsModal from "../modals/SpecOpsModal";
 import { sendAdminRequest } from "../../services/adminService";
-import { Container, Row, Col, Button, Spinner } from "react-bootstrap";
+import { Container, Button, Spinner } from "react-bootstrap";
 import ImportFilesModal from "../modals/ImportFilesModal";
 
 const Title: React.FC = () => {
