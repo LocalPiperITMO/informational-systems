@@ -31,7 +31,7 @@ public class CityServiceImpl implements CityService{
     @Override
     public List<City> createCity(City city) {
         cityRepository.save(city);
-        return cityRepository.findAll(); // Return all cities after creating
+        return cityRepository.findAll();
     }
 
     @Override

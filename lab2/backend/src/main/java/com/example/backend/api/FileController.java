@@ -42,7 +42,7 @@ public class FileController {
     @PostMapping("/executeScript")
     public ResponseEntity<Object> executeScript(@RequestBody FileRequest request) {
         if (!checkAuth(request.getToken())) return ResponseEntity.status(403).body(new MessageResponse("Access denied!"));
-        fileProcessingService.processFiles(request.getFiles());
+        fileProcessingService.processFiles(request.getFiles(), jwtUtil.extractUsername(request.getToken()));
         return ResponseEntity.ok(new MessageResponse("Files processed successfully"));
     }
     
