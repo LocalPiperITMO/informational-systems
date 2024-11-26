@@ -61,7 +61,7 @@ public class FileProcessingService {
         }
     }
 
-    private void buildHuman(Map<String, Object> data, String owner) {
+    private Human buildHuman(Map<String, Object> data, String owner) {
         Integer age = (Integer)data.get("age");
         Boolean isModifiable = (Boolean)data.get("isModifiable");
         Human human = new Human(age, isModifiable, owner);
@@ -69,7 +69,7 @@ public class FileProcessingService {
         // humanService.createHuman(human);
     }
 
-    private void buildCoordinates(Map<String, Object> data, String owner) {
+    private Coordinates buildCoordinates(Map<String, Object> data, String owner) {
         Long x = (Long)data.get("x");
         Double y = (Double)data.get("y");
         Boolean isModifiable = (Boolean)data.get("isModifiable");
@@ -78,9 +78,9 @@ public class FileProcessingService {
         // coordinatesService.createCoordinates(coordinates);
     }
 
-    private void buildCity(Map<String, Object> data, String owner) {
-        // TODO: try fetching Coordinates
-        // TODO: try fetching Human
+    private City buildCity(Map<String, Object> data, String owner) {
+        Coordinates coordinates = fetchCoordinates(data.get("coordinates"), owner);
+        Human governor = fetchHuman(data.get("governor"), owner);
         String name = (String)data.get("name");
         Double area = (Double)data.get("area");
         Integer population = (Integer)data.get("population");
@@ -91,8 +91,47 @@ public class FileProcessingService {
         Climate climate = (Climate)data.get("climate");
         Government government = (Government)data.get("government");
         Boolean isModifiable = (Boolean)data.get("isModifiable");
-        City city = new City(name, null, area, population, establishmentDate, capital, MASL, telephoneCode, climate, government, null, isModifiable, owner);
-        cityService.createCity(city);
+        City city = new City(name, coordinates, area, population, establishmentDate, capital, MASL, telephoneCode, climate, government, governor, isModifiable, owner);
+        // TODO: fix invalid return type
+        return cityService.createCity(city);
+    }
+
+    private Coordinates fetchCoordinates(Object data, String owner) {
+        if (data instanceof Long id) {
+            // trying to fetch existing Coordinates object
+            Coordinates coordinates = coordinatesService.findCoordinatesById(id);
+            if (!coordinates.getOwner().equals(owner)) {
+                throw new IllegalArgumentException("Attempt to map City to foreign Coordinates object!");
+            }
+            return coordinates;
+        } else if (data instanceof Map<?, ?> cMap) {
+            // constructing new Coordinates object
+            @SuppressWarnings("unchecked")
+            Map<String, Object> coordinatesMap = (Map<String, Object>) cMap;
+            Coordinates coordinates = buildCoordinates(coordinatesMap, owner);
+            return coordinates;
+        }
+        throw new IllegalArgumentException("Invalid constructor for inner Coordinates object!");
+    }
+
+    private Human fetchHuman(Object data, String owner) {
+        // governor field is optional
+        if (data == null) return null;
+        if (data instanceof Long id) {
+            // trying to fetch existing Human object
+            Human human = humanService.findHumanById(id);
+            if (!human.getOwner().equals(owner)) {
+                throw new IllegalArgumentException("Attempt to map City to foreign Human object!");
+            }
+            return human;
+        } else if (data instanceof Map<?, ?> hMap) {
+            // constructing new Coordinates object
+            @SuppressWarnings("unchecked")
+            Map<String, Object> humanMap = (Map<String, Object>) hMap;
+            Human human = buildHuman(humanMap, owner);
+            return human;
+        }
+        throw new IllegalArgumentException("Invalid constructor for inner Human object!");
     }
 
     public void processFiles(List<MultipartFile> files, String username) {
