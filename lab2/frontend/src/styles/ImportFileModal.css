@@ -31,3 +31,31 @@
 .delete-button:hover {
     color: darkred;
 }
+
+.drag-drop-zone {
+    border: 2px dashed #aaa;
+    border-radius: 8px;
+    padding: 50px;
+    text-align: center;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    min-height: 200px; /* Increased minimum height */
+    margin-bottom: 20px; /* Spacing below the dropzone */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9f9f9; /* Light background */
+}
+
+.drag-drop-zone.active {
+    background-color: #e1e1e1; /* Change color when file is dragged over */
+    border-color: #007bff;
+}
+
+.drag-drop-zone p {
+    font-size: 18px; /* Slightly larger text */
+    color: #333;
+}
+
+.drag-drop-zone input {
+    display: none;
+}
