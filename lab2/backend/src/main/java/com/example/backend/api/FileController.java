@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.example.backend.dto.request.FileRequest;
 import com.example.backend.dto.response.MessageResponse;
+import com.example.backend.service.FileProcessingService;
 import com.example.backend.service.UserService;
 import com.example.backend.utils.JwtUtil;
 
@@ -26,6 +26,9 @@ public class FileController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private FileProcessingService fileProcessingService;
+
     private boolean checkAuth(String token) {
         try {
             String username = jwtUtil.extractUsername(token);
@@ -39,9 +42,7 @@ public class FileController {
     @PostMapping("/executeScript")
     public ResponseEntity<Object> executeScript(@RequestBody FileRequest request) {
         if (!checkAuth(request.getToken())) return ResponseEntity.status(403).body(new MessageResponse("Access denied!"));
-        for (MultipartFile file : request.getFiles()) {
-            // TODO: file logic
-        }
+        fileProcessingService.processFiles(request.getFiles());
         return ResponseEntity.ok(new MessageResponse("Files processed successfully"));
     }
     

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.6</version>
+        <version>3.4.0</version>
         <relativePath/>
     </parent>
     <groupId>com.example</groupId>
@@ -85,6 +85,11 @@
 			<groupId>me.paulschwarz</groupId>
 			<artifactId>spring-dotenv</artifactId>
 			<version>4.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-toml</artifactId>
+			<version>[2.18,)</version>
 		</dependency>
 		
 	</dependencies>
