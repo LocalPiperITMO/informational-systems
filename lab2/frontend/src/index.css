@@ -1,0 +1,19 @@
+/* index.css or App.css */
+
+/* General reset */
+* {
+    box-sizing: border-box;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    padding-top: 80px;  /* Adjust for fixed header height */
+    padding-bottom: 60px; /* Adjust for fixed footer height */
+}
+
+/* Optional: Make sure content is readable */
+main {
+    background-color: #f8f9fa; /* Light background for contrast */
+    min-height: calc(100vh - 140px); /* Adjust based on header and footer height */
+}
