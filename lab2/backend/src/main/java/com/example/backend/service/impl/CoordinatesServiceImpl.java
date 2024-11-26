@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.backend.dto.request.CoordinatesRequest;
 import com.example.backend.model.Coordinates;
 import com.example.backend.repo.CoordinatesRepository;
 import com.example.backend.service.CoordinatesService;
@@ -27,23 +26,23 @@ public class CoordinatesServiceImpl implements CoordinatesService {
     }
 
     @Override
-    public List<Coordinates> createCoordinates(CoordinatesRequest request) {
-        Coordinates coordinates = request.getCoordinates();
+    public Coordinates createCoordinates(Coordinates coordinates) {
         coordinatesRepository.save(coordinates);
-        return coordinatesRepository.findAll(); // Return all coordinates after creation
+        return coordinates;
     }
 
     @Override
-    public List<Coordinates> updateCoordinates(CoordinatesRequest request) {
-        Coordinates coordinates = request.getCoordinates();
-        coordinatesRepository.save(coordinates);
-        return coordinatesRepository.findAll(); // Return all coordinates after updating
+    public Coordinates updateCoordinates(Coordinates newCoordinates, Long id) {
+        Coordinates oldCoordinates = findCoordinatesById(id);
+        oldCoordinates.setX(newCoordinates.getX());
+        oldCoordinates.setY(newCoordinates.getY());
+        coordinatesRepository.save(oldCoordinates);
+        return oldCoordinates;
     }
 
     @Override
-    public List<Coordinates> deleteCoordinates(Long coordinatesId) {
+    public void deleteCoordinates(Long coordinatesId) {
         coordinatesRepository.deleteById(coordinatesId);
-        return coordinatesRepository.findAll(); // Return all coordinates after deletion
     }
     
 }

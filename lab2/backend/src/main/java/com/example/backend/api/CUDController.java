@@ -160,8 +160,8 @@ public class CUDController {
             return ResponseEntity.status(403).body(null);
         }
         try {
-            List<Coordinates> coordinatesList = coordinatesService.createCoordinates(request);
-            return ResponseEntity.status(201).body(coordinatesList);
+            coordinatesService.createCoordinates(request.getCoordinates());
+            return ResponseEntity.status(201).body(coordinatesService.findAllCoordinates());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(null);
         }
@@ -178,8 +178,8 @@ public class CUDController {
             if (request.getCoordinates().getId() == null || coordinatesService.findCoordinatesById(request.getCoordinates().getId()) == null) return ResponseEntity.status(422).body(null);
             if (!coordinatesService.findCoordinatesById(request.getCoordinates().getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken())) && adminService.findByUser(userService.findByUsername(jwtUtil.extractUsername(request.getToken()))) == null) return ResponseEntity.status(400).body(null);
             if (!coordinatesService.findCoordinatesById(request.getCoordinates().getId()).isModifiable()) return ResponseEntity.status(400).body(null);
-            List<Coordinates> coordinatesList = coordinatesService.updateCoordinates(request);
-            return ResponseEntity.ok(coordinatesList);
+            coordinatesService.updateCoordinates(request.getCoordinates(), request.getCoordinates().getId());
+            return ResponseEntity.ok(coordinatesService.findAllCoordinates());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(null);
         }
@@ -192,8 +192,8 @@ public class CUDController {
         if (request.getId() == null || coordinatesService.findCoordinatesById(request.getId()) == null) return ResponseEntity.status(422).body(null);
         if (!coordinatesService.findCoordinatesById(request.getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken())) && adminService.findByUser(userService.findByUsername(jwtUtil.extractUsername(request.getToken()))) == null) return ResponseEntity.status(400).body(null);
         cityService.deleteAllCitiesByCoordinates(coordinatesService.findCoordinatesById(request.getId()));
-        List<Coordinates> coordinatesList = coordinatesService.deleteCoordinates(request.getId());
-        return ResponseEntity.ok(coordinatesList);
+        coordinatesService.deleteCoordinates(request.getId());
+        return ResponseEntity.ok(coordinatesService.findAllCoordinates());
     }
 
     // Human Endpoints

@@ -74,8 +74,7 @@ public class FileProcessingService {
         Double y = (Double)data.get("y");
         Boolean isModifiable = (Boolean)data.get("isModifiable");
         Coordinates coordinates = new Coordinates(x, y, isModifiable, owner);
-        // TODO: agressive refactoring
-        // coordinatesService.createCoordinates(coordinates);
+        return coordinatesService.createCoordinates(coordinates);
     }
 
     private City buildCity(Map<String, Object> data, String owner) {
