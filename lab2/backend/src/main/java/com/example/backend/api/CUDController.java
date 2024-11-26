@@ -205,8 +205,8 @@ public class CUDController {
             return ResponseEntity.status(403).body(null);
         }
         try {
-            List<Human> humans = humanService.createHuman(request);
-            return ResponseEntity.status(201).body(humans);
+            humanService.createHuman(request.getHuman());
+            return ResponseEntity.status(201).body(humanService.findAllHumans());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(null);
         }
@@ -223,8 +223,8 @@ public class CUDController {
             if (request.getHuman().getId() == null || humanService.findHumanById(request.getHuman().getId()) == null) return ResponseEntity.status(422).body(null);
             if (!humanService.findHumanById(request.getHuman().getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken())) && adminService.findByUser(userService.findByUsername(jwtUtil.extractUsername(request.getToken()))) == null) return ResponseEntity.status(400).body(null);
             if (!humanService.findHumanById(request.getHuman().getId()).isModifiable()) return ResponseEntity.status(400).body(null);
-            List<Human> humans = humanService.updateHuman(request);
-            return ResponseEntity.ok(humans);
+            humanService.updateHuman(request.getHuman(), request.getHuman().getId());
+            return ResponseEntity.ok(humanService.findAllHumans());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(null);
         }
@@ -237,7 +237,7 @@ public class CUDController {
         if (request.getId() == null || humanService.findHumanById(request.getId()) == null) return ResponseEntity.status(422).body(null);
         if (!humanService.findHumanById(request.getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken())) && adminService.findByUser(userService.findByUsername(jwtUtil.extractUsername(request.getToken()))) == null) return ResponseEntity.status(400).body(null);
         cityService.deleteAllCitiesByGovernor(humanService.findHumanById(request.getId()));
-        List<Human> humans = humanService.deleteHuman(request.getId());
-        return ResponseEntity.ok(humans);
+        humanService.deleteHuman(request.getId());
+        return ResponseEntity.ok(humanService.findAllHumans());
     }
 }

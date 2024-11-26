@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.backend.dto.request.HumanRequest;
 import com.example.backend.model.Human;
 import com.example.backend.repo.HumanRepository;
 import com.example.backend.service.HumanService;
@@ -27,23 +26,22 @@ public class HumanServiceImpl implements HumanService{
     }
 
     @Override
-    public List<Human> createHuman(HumanRequest request) {
-        Human human = request.getHuman();
+    public Human createHuman(Human human) {
         humanRepository.save(human);
-        return humanRepository.findAll(); // Return all humans after creation
+        return human;
     }
 
     @Override
-    public List<Human> updateHuman(HumanRequest request) {
-        Human human = request.getHuman();
-        humanRepository.save(human);
-        return humanRepository.findAll(); // Return all humans after updating
+    public Human updateHuman(Human newHuman, Long humanId) {
+        Human oldHuman = findHumanById(humanId);
+        oldHuman.setAge(newHuman.getAge());
+        humanRepository.save(oldHuman);
+        return oldHuman;
     }
 
     @Override
-    public List<Human> deleteHuman(Long humanId) {
+    public void deleteHuman(Long humanId) {
         humanRepository.deleteById(humanId);
-        return humanRepository.findAll(); // Return all humans after deletion
     }
     
 }

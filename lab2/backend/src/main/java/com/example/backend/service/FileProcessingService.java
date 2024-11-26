@@ -66,8 +66,7 @@ public class FileProcessingService {
         Integer age = (Integer)data.get("age");
         Boolean isModifiable = (Boolean)data.get("isModifiable");
         Human human = new Human(age, isModifiable, owner);
-        // TODO: agressive refactoring
-        // humanService.createHuman(human);
+        return humanService.createHuman(human);
     }
 
     private Coordinates buildCoordinates(Map<String, Object> data, String owner) {
@@ -93,7 +92,6 @@ public class FileProcessingService {
         Government government = (Government)data.get("government");
         Boolean isModifiable = (Boolean)data.get("isModifiable");
         City city = new City(name, coordinates, area, population, establishmentDate, capital, MASL, telephoneCode, climate, government, governor, isModifiable, owner);
-        // TODO: fix invalid return type
         return cityService.createCity(city);
     }
 
