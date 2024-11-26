@@ -13,6 +13,7 @@ import DeleteModal from "../modals/DeleteModal";
 import SpecOpsModal from "../modals/SpecOpsModal";
 import { sendAdminRequest } from "../../services/adminService";
 import { Container, Row, Col, Button, Spinner } from "react-bootstrap";
+import ImportFilesModal from "../modals/ImportFilesModal";
 
 const Title: React.FC = () => {
     const { username } = useAuth();
@@ -29,9 +30,10 @@ const Commands: React.FC<{
     openDeleteModal: () => void;
     handleSendRequest: () => void;
     openSpecOpsModal: () => void;
+    openImportFilesModal: () => void;
     isRequestAdminDisabled: boolean;
     handleLogout: () => void;
-}> = ({ openCreateModal, openUpdateModal, openDeleteModal, handleSendRequest, openSpecOpsModal, isRequestAdminDisabled, handleLogout }) => {
+}> = ({ openCreateModal, openUpdateModal, openDeleteModal, handleSendRequest, openSpecOpsModal, openImportFilesModal, isRequestAdminDisabled, handleLogout }) => {
     return (
         <div className="d-flex justify-content-around my-4">
             <Button variant="primary" onClick={openCreateModal}>Create</Button>
@@ -39,6 +41,7 @@ const Commands: React.FC<{
             <Button variant="danger" onClick={openDeleteModal}>Delete</Button>
             <Button variant="info" onClick={handleSendRequest} disabled={isRequestAdminDisabled}>Request Admin</Button>
             <Button variant="success" onClick={openSpecOpsModal}>Special</Button>
+            <Button variant="dark" onClick={openImportFilesModal}>Import Files</Button>
             <Button variant="secondary" onClick={handleLogout}>Logout</Button>
         </div>
     );
@@ -52,6 +55,7 @@ const MainPage: React.FC = () => {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isRequestAdminDisabled, setIsRequestAdminDisabled] = useState(false);
     const [isSpecOpsModalOpen, setIsSpecOpsModalOpen] = useState(false);
+    const [isImportFilesModalOpen, setIsImportFilesModalOpen] = useState(false);
     const [data, setData] = useState<{ cities: any[], coordinates: any[], humans: any[] } | null>(null);
     const [loading, setLoading] = useState(false);
 
@@ -68,6 +72,8 @@ const MainPage: React.FC = () => {
     const closeDeleteModal = () => setIsDeleteModalOpen(false);
     const openSpecOpsModal = () => setIsSpecOpsModalOpen(true);
     const closeSpecOpsModal = () => setIsSpecOpsModalOpen(false);
+    const openImportFilesModal = () => setIsImportFilesModalOpen(true);
+    const closeImportFilesModal = () => setIsImportFilesModalOpen(false);
 
     const handleSendRequest = () => {
         try {
@@ -115,6 +121,7 @@ const MainPage: React.FC = () => {
                 openDeleteModal={openDeleteModal}
                 handleSendRequest={handleSendRequest}
                 openSpecOpsModal={openSpecOpsModal}
+                openImportFilesModal={openImportFilesModal}
                 isRequestAdminDisabled={isRequestAdminDisabled}
                 handleLogout={handleLogout}
             />
@@ -129,6 +136,7 @@ const MainPage: React.FC = () => {
             <UpdateModal isOpen={isUpdateModalOpen} onClose={closeUpdateModal} data={data} onSuccess={fetchData} />
             <DeleteModal isOpen={isDeleteModalOpen} onClose={closeDeleteModal} data={data} onSuccess={fetchData} />
             <SpecOpsModal isOpen={isSpecOpsModalOpen} onClose={closeSpecOpsModal} data={data} onSuccess={fetchData} />
+            <ImportFilesModal isOpen={isImportFilesModalOpen} onClose={closeImportFilesModal} onSuccess={fetchData} />
             <Footer />
         </Container>
     );

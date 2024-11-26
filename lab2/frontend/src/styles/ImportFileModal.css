@@ -1,0 +1,52 @@
+.drag-drop-zone {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: border-color 0.2s ease;
+}
+
+.drag-drop-zone.active {
+    border-color: #007bff;
+    background-color: #f0f8ff;
+}
+
+.file-list {
+    margin: 10px 0;
+}
+
+.error-message {
+    color: red;
+    margin: 10px 0;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.submit-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+.submit-button:hover {
+    background-color: #218838;
+}
+
+.cancel-button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+.cancel-button:hover {
+    background-color: #c82333;
+}
