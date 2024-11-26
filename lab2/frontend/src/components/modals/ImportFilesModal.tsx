@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useDropzone } from 'react-dropzone';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import '../../styles/ImportFileModal.css';
 
 interface ImportFilesModalProps {
@@ -12,6 +11,7 @@ interface ImportFilesModalProps {
 
 const ImportFilesModal: React.FC<ImportFilesModalProps> = ({ isOpen, onClose, onSuccess }) => {
     const [files, setFiles] = useState<File[]>([]);
+    const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
     const [error, setError] = useState<string | null>(null);
 
     const handleDrop = (acceptedFiles: File[]) => {
@@ -35,14 +35,26 @@ const ImportFilesModal: React.FC<ImportFilesModalProps> = ({ isOpen, onClose, on
         setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
     };
 
-    const handleDragEnd = (result: DropResult) => {
-        if (!result.destination) return;
+    // Handling drag events
+    const handleDragStart = (index: number) => {
+        setDraggingIndex(index);
+    };
 
-        const reorderedFiles = Array.from(files);
-        const [removed] = reorderedFiles.splice(result.source.index, 1);
-        reorderedFiles.splice(result.destination.index, 0, removed);
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+    };
 
-        setFiles(reorderedFiles);
+    const handleDropFile = (e: React.DragEvent, targetIndex: number) => {
+        e.preventDefault();
+
+        if (draggingIndex === null) return;
+
+        const updatedFiles = [...files];
+        const [draggedFile] = updatedFiles.splice(draggingIndex, 1);
+        updatedFiles.splice(targetIndex, 0, draggedFile);
+
+        setFiles(updatedFiles);
+        setDraggingIndex(null);
     };
 
     const handleSubmit = async () => {
@@ -89,43 +101,26 @@ const ImportFilesModal: React.FC<ImportFilesModalProps> = ({ isOpen, onClose, on
                 </div>
 
                 {files.length > 0 && (
-                    <DragDropContext onDragEnd={handleDragEnd}>
-                        <Droppable droppableId="fileQueue">
-                            {(provided) => (
-                                <ul
-                                    className="file-list"
-                                    {...provided.droppableProps}
-                                    ref={provided.innerRef}
+                    <ul className="file-list">
+                        {files.map((file, index) => (
+                            <li
+                                key={file.name + index}
+                                className="file-item"
+                                draggable
+                                onDragStart={() => handleDragStart(index)}
+                                onDragOver={handleDragOver}
+                                onDrop={(e) => handleDropFile(e, index)}
+                            >
+                                <span>{index + 1}. {file.name}</span>
+                                <button
+                                    className="delete-button"
+                                    onClick={() => handleDelete(index)}
                                 >
-                                    {files.map((file, index) => (
-                                        <Draggable
-                                            key={file.name + index}
-                                            draggableId={file.name + index}
-                                            index={index}
-                                        >
-                                            {(provided) => (
-                                                <li
-                                                    ref={provided.innerRef}
-                                                    {...provided.draggableProps}
-                                                    {...provided.dragHandleProps}
-                                                    className="file-item"
-                                                >
-                                                    <span>{index + 1}. {file.name}</span>
-                                                    <button
-                                                        className="delete-button"
-                                                        onClick={() => handleDelete(index)}
-                                                    >
-                                                        ✖
-                                                    </button>
-                                                </li>
-                                            )}
-                                        </Draggable>
-                                    ))}
-                                    {provided.placeholder}
-                                </ul>
-                            )}
-                        </Droppable>
-                    </DragDropContext>
+                                    ✖
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
                 )}
 
                 {error && <p className="error-message">{error}</p>}
