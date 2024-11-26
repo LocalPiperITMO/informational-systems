@@ -92,8 +92,8 @@ public class CUDController {
             Government government = GovernmentValidator.validateGovernment(request.getGovernment());
             if (climate == null) return ResponseEntity.status(422).body(null);            
             City city = new City(request.getName(), coords, request.getArea(), request.getPopulation(), request.getEstablishmentDate(), request.getCapital(), request.getMetersAboveSeaLevel(), request.getTelephoneCode(), climate, government, governor, request.getModifiable(), jwtUtil.extractUsername(request.getToken()));
-            List<City> cities = cityService.createCity(city);
-            return ResponseEntity.status(201).body(cities);
+            cityService.createCity(city);
+            return ResponseEntity.status(201).body(cityService.findAllCities());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(null);
         }
@@ -130,8 +130,8 @@ public class CUDController {
             Government government = GovernmentValidator.validateGovernment(request.getGovernment());
             if (climate == null) return ResponseEntity.status(422).body(null);            
             City city = new City(request.getName(), coords, request.getArea(), request.getPopulation(), request.getEstablishmentDate(), request.getCapital(), request.getMetersAboveSeaLevel(), request.getTelephoneCode(), climate, government, governor, request.getModifiable(),  jwtUtil.extractUsername(request.getToken()));
-            List<City> cities = cityService.updateCity(city, request.getId());
-            return ResponseEntity.ok(cities);
+            cityService.updateCity(city, request.getId());
+            return ResponseEntity.ok(cityService.findAllCities());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(null);
         }
@@ -147,8 +147,8 @@ public class CUDController {
         }
         if (request.getId() == null || cityService.findCityById(request.getId()) == null) return ResponseEntity.status(422).body(null);
         if (!cityService.findCityById(request.getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken())) && adminService.findByUser(userService.findByUsername(jwtUtil.extractUsername(request.getToken()))) == null) return ResponseEntity.status(400).body(null);
-        List<City> cities = cityService.deleteCity(request.getId());
-        return ResponseEntity.ok(cities);
+        cityService.deleteCity(request.getId());
+        return ResponseEntity.ok(cityService.findAllCities());
     }
 
     // Coordinates Endpoints

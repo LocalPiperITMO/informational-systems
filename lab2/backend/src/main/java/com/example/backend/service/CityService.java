@@ -10,9 +10,9 @@ public interface CityService {
     List<City> findAllCities();
     City findCityById(Long cityId);
 
-    List<City> createCity(City city);
-    List<City> updateCity(City city, Long cityId);
-    List<City> deleteCity(Long cityId);
+    City createCity(City city);
+    City updateCity(City city, Long cityId);
+    void deleteCity(Long cityId);
     
     void deleteAllCitiesByCoordinates(Coordinates coordinates);
     void deleteAllCitiesByGovernor(Human governor);

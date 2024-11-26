@@ -29,13 +29,13 @@ public class CityServiceImpl implements CityService{
     }
 
     @Override
-    public List<City> createCity(City city) {
+    public City createCity(City city) {
         cityRepository.save(city);
-        return cityRepository.findAll();
+        return city;
     }
 
     @Override
-    public List<City> updateCity(City newCity, Long cityId) {
+    public City updateCity(City newCity, Long cityId) {
         City oldCity = findCityById(cityId);
         oldCity.setName(newCity.getName());
         oldCity.setCoordinates(newCity.getCoordinates());
@@ -50,13 +50,12 @@ public class CityServiceImpl implements CityService{
         oldCity.setGovernment(newCity.getGovernment());
         oldCity.setGovernor(newCity.getGovernor());
         cityRepository.save(oldCity);
-        return cityRepository.findAll();
+        return oldCity;
     }
 
     @Override
-    public List<City> deleteCity(Long cityId) {
+    public void deleteCity(Long cityId) {
         cityRepository.deleteById(cityId);
-        return cityRepository.findAll();
     }
 
     @Override
