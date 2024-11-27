@@ -34,21 +34,32 @@ public class FileProcessingService {
     @Autowired
     private CityService cityService;
 
+    @SuppressWarnings("unchecked")
     private List<CreateQuery> parseToml(MultipartFile file) throws IOException {
         String tomlContent = new String(file.getBytes());
-    
         ObjectMapper tomlMapper = new TomlMapper();
-        Map<String, List<Map<String, Object>>> root = tomlMapper.readValue(tomlContent, new TypeReference<>() {});
+        Map<String, Object> root = tomlMapper.readValue(tomlContent, new TypeReference<>() {});
     
-        List<Map<String, Object>> queriesData = root.get("createQuery");
+        Object queriesData = root.get("createQuery");
         if (queriesData == null) {
             throw new IllegalArgumentException("TOML does not contain any 'createQuery' entries.");
         }
     
+        List<Map<String, Object>> queriesList;
+        if (queriesData instanceof List<?>) {
+            // Multiple objects
+            queriesList = (List<Map<String, Object>>) queriesData;
+        } else if (queriesData instanceof Map<?, ?>) {
+            // Single object
+            queriesList = new ArrayList<>();
+            queriesList.add((Map<String, Object>) queriesData);
+        } else {
+            throw new IllegalArgumentException("'createQuery' format is invalid.");
+        }
+    
         List<CreateQuery> queries = new ArrayList<>();
-        for (Map<String, Object> queryData : queriesData) {
+        for (Map<String, Object> queryData : queriesList) {
             String type = (String) queryData.get("type");
-            @SuppressWarnings("unchecked")
             Map<String, Object> data = (Map<String, Object>) queryData.get("data");
     
             CreateQuery createQuery = CreateQuery.builder()
@@ -57,8 +68,10 @@ public class FileProcessingService {
                     .build();
             queries.add(createQuery);
         }
+    
         return queries;
     }
+    
     
        
     
