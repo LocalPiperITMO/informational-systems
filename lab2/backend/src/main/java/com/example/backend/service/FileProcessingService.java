@@ -1,6 +1,7 @@
 package com.example.backend.service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,12 +36,32 @@ public class FileProcessingService {
 
     private List<CreateQuery> parseToml(MultipartFile file) throws IOException {
         String tomlContent = new String(file.getBytes());
-
+    
         ObjectMapper tomlMapper = new TomlMapper();
-        List<CreateQuery> queries = tomlMapper.readValue(tomlContent, new TypeReference<List<CreateQuery>>() {});
-
+        Map<String, List<Map<String, Object>>> root = tomlMapper.readValue(tomlContent, new TypeReference<>() {});
+    
+        List<Map<String, Object>> queriesData = root.get("createQuery");
+        if (queriesData == null) {
+            throw new IllegalArgumentException("TOML does not contain any 'createQuery' entries.");
+        }
+    
+        List<CreateQuery> queries = new ArrayList<>();
+        for (Map<String, Object> queryData : queriesData) {
+            String type = (String) queryData.get("type");
+            @SuppressWarnings("unchecked")
+            Map<String, Object> data = (Map<String, Object>) queryData.get("data");
+    
+            CreateQuery createQuery = CreateQuery.builder()
+                    .type(type)
+                    .data(data)
+                    .build();
+            queries.add(createQuery);
+        }
         return queries;
     }
+    
+       
+    
 
     @Transactional
     private void executeQueries(List<CreateQuery> queries, String owner) throws IllegalArgumentException {
@@ -70,8 +91,12 @@ public class FileProcessingService {
     }
 
     private Coordinates buildCoordinates(Map<String, Object> data, String owner) {
-        Long x = (Long)data.get("x");
-        Double y = (Double)data.get("y");
+        Long x = (data.get("x") instanceof Integer) 
+                ? ((Integer)data.get("x")).longValue()
+                : (Long)data.get("x");
+        Double y = (data.get("y") instanceof BigDecimal)
+                ? ((BigDecimal)data.get("y")).doubleValue()
+                : (Double)data.get("y");
         Boolean isModifiable = (Boolean)data.get("isModifiable");
         Coordinates coordinates = new Coordinates(x, y, isModifiable, owner);
         return coordinatesService.createCoordinates(coordinates);
@@ -81,14 +106,22 @@ public class FileProcessingService {
         Coordinates coordinates = fetchCoordinates(data.get("coordinates"), owner);
         Human governor = fetchHuman(data.get("governor"), owner);
         String name = (String)data.get("name");
-        Double area = (Double)data.get("area");
-        Integer population = (Integer)data.get("population");
+        Double area = (data.get("area") instanceof BigDecimal)
+                      ? ((BigDecimal)data.get("area")).doubleValue()
+                      : (Double)data.get("area");
+        Integer population = (data.get("population") instanceof Integer)
+                             ? (Integer)data.get("population")
+                             : ((Long)data.get("population")).intValue();
         Boolean capital = (Boolean)data.get("capital");
-        Integer MASL = (Integer)data.get("metersAboveSeaLevel");
-        ZonedDateTime establishmentDate = (ZonedDateTime)data.get("establishmentDate");
-        Long telephoneCode = (Long)data.get("telephoneCode");
-        Climate climate = (Climate)data.get("climate");
-        Government government = (Government)data.get("government");
+        Integer MASL = (data.get("metersAboveSeaLevel") instanceof Integer)
+                       ? (Integer)data.get("metersAboveSeaLevel")
+                       : ((Long)data.get("metersAboveSeaLevel")).intValue();
+        ZonedDateTime establishmentDate = ZonedDateTime.parse((String)data.get("establishmentDate"));
+        Long telephoneCode = (data.get("telephoneCode") instanceof Integer)
+                             ? ((Integer)data.get("telephoneCode")).longValue()
+                             : (Long)data.get("telephoneCode");
+        Climate climate = Climate.valueOf((String)data.get("climate"));
+        Government government = Government.valueOf((String)data.get("government"));
         Boolean isModifiable = (Boolean)data.get("isModifiable");
         City city = new City(name, coordinates, area, population, establishmentDate, capital, MASL, telephoneCode, climate, government, governor, isModifiable, owner);
         return cityService.createCity(city);
