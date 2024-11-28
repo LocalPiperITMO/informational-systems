@@ -68,9 +68,9 @@ public class EntityParsingService {
     }
 
     public Coordinates fetchCoordinates(Object data, String owner) {
-        if (data instanceof Long id) {
+        if (data instanceof Integer id) {
             // trying to fetch existing Coordinates object
-            Coordinates coordinates = coordinatesService.findCoordinatesById(id);
+            Coordinates coordinates = coordinatesService.findCoordinatesById(id.longValue());
             if (!coordinates.getOwner().equals(owner)) {
                 throw new IllegalArgumentException("Attempt to map City to foreign Coordinates object!");
             }
@@ -88,9 +88,9 @@ public class EntityParsingService {
         public Human fetchHuman(Object data, String owner) {
             // governor field is optional
             if (data == null) return null;
-            if (data instanceof Long id) {
+            if (data instanceof Integer id) {
                 // trying to fetch existing Human object
-                Human human = humanService.findHumanById(id);
+                Human human = humanService.findHumanById(id.longValue());
                 if (!human.getOwner().equals(owner)) {
                     throw new IllegalArgumentException("Attempt to map City to foreign Human object!");
                 }

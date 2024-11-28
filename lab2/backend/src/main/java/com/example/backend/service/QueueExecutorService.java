@@ -39,13 +39,29 @@ public class QueueExecutorService {
                     }
                     case "city" -> {
                         City city = (City) p.getValue();
-                        if (city.getCoordinates() != null && city.getCoordinates().getId() == null) {
-                            session.save(city.getCoordinates());
-                            res.add("Coordinates for City created successfully");
+                        if (city.getCoordinates() != null) {
+                            if (city.getCoordinates().getId() == null) {
+                                session.save(city.getCoordinates());
+                                res.add("Coordinates for City created successfully");
+                            } else {
+                                Coordinates coordinates = session.get(Coordinates.class, city.getCoordinates().getId());
+                                if (coordinates == null) {
+                                    throw new IllegalArgumentException("Coordinates with ID " + city.getCoordinates().getId() + " do not exist.");
+                                }
+                                city.setCoordinates(coordinates);
+                            }
                         }
-                        if (city.getGovernor() != null && city.getGovernor().getId() == null) {
-                            session.save(city.getGovernor());
-                            res.add("Governor for City created successfully");
+                        if (city.getGovernor() != null) {
+                            if (city.getGovernor().getId() == null) {
+                                session.save(city.getGovernor());
+                                res.add("Governor for City created successfully");
+                            } else {
+                                Human governor = session.get(Human.class, city.getGovernor().getId());
+                                if (governor == null) {
+                                    throw new IllegalArgumentException("Human with ID " + city.getGovernor().getId() + " does not exist.");
+                                }
+                                city.setGovernor(governor);
+                            }
                         }
                         session.save(city);
                         res.add("City created successfully");
