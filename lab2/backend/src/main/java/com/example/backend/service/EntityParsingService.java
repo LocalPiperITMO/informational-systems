@@ -71,6 +71,9 @@ public class EntityParsingService {
         if (data instanceof Integer id) {
             // trying to fetch existing Coordinates object
             Coordinates coordinates = coordinatesService.findCoordinatesById(id.longValue());
+            if (coordinates == null) {
+                throw new IllegalArgumentException("Cannot find Coordinates by id: " + id.toString());
+            }
             if (!coordinates.getOwner().equals(owner)) {
                 throw new IllegalArgumentException("Attempt to map City to foreign Coordinates object!");
             }
@@ -91,6 +94,9 @@ public class EntityParsingService {
             if (data instanceof Integer id) {
                 // trying to fetch existing Human object
                 Human human = humanService.findHumanById(id.longValue());
+                if (human == null) {
+                    throw new IllegalArgumentException("Cannot find Human by id: " + id.toString());
+                }
                 if (!human.getOwner().equals(owner)) {
                     throw new IllegalArgumentException("Attempt to map City to foreign Human object!");
                 }
