@@ -1,38 +1,31 @@
 package com.example.backend.service;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.ZonedDateTime;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.backend.model.City;
-import com.example.backend.model.Climate;
-import com.example.backend.model.Coordinates;
-import com.example.backend.model.Government;
-import com.example.backend.model.Human;
 import com.example.backend.utils.CreateQuery;
+import com.example.backend.utils.Pair;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.toml.TomlMapper;
 
 @Service
 public class FileProcessingService {
-    
-    @Autowired
-    private HumanService humanService;
 
     @Autowired
-    private CoordinatesService coordinatesService;
+    private EntityParsingService entityParsingService;
 
     @Autowired
-    private CityService cityService;
+    private QueueExecutorService queueExecutorService;
 
     @SuppressWarnings("unchecked")
     private List<CreateQuery> parseToml(MultipartFile file) throws IOException {
@@ -72,110 +65,27 @@ public class FileProcessingService {
         return queries;
     }
     
-    
-       
-    
-
     @Transactional
-    private void executeQueries(List<CreateQuery> queries, String owner) throws IllegalArgumentException {
+    private List<String> executeQueries(List<CreateQuery> queries, String owner) throws IllegalArgumentException {
+        Queue<Pair<String, Object>> queue = new ArrayDeque<>();
         for (CreateQuery query : queries) {
             if (null == query.getType()) {
                 throw new IllegalArgumentException("Illegal object type! Expected: city, coordinates, human");
             } else switch (query.getType()) {
                 case "city" -> {
-                    buildCity(query.getData(), owner);
+                    queue.add(new Pair<>(query.getType(), entityParsingService.buildCity(query.getData(), owner)));
                 }
                 case "coordinates" -> {
-                    buildCoordinates(query.getData(), owner);
+                    queue.add(new Pair<>(query.getType(), entityParsingService.buildCoordinates(query.getData(), owner)));
                 }
                 case "human" -> {
-                    buildHuman(query.getData(), owner);
+                    queue.add(new Pair<>(query.getType(), entityParsingService.buildHuman(query.getData(), owner)));
                 }
                 default -> throw new IllegalArgumentException("Illegal object type! Expected: city, coordinates, human");
             }
         }
-    }
-
-    private Human buildHuman(Map<String, Object> data, String owner) {
-        Integer age = (Integer)data.get("age");
-        Boolean isModifiable = (Boolean)data.get("isModifiable");
-        Human human = new Human(age, isModifiable, owner);
-        return humanService.createHuman(human);
-    }
-
-    private Coordinates buildCoordinates(Map<String, Object> data, String owner) {
-        Long x = (data.get("x") instanceof Integer) 
-                ? ((Integer)data.get("x")).longValue()
-                : (Long)data.get("x");
-        Double y = (data.get("y") instanceof BigDecimal)
-                ? ((BigDecimal)data.get("y")).doubleValue()
-                : (Double)data.get("y");
-        Boolean isModifiable = (Boolean)data.get("isModifiable");
-        Coordinates coordinates = new Coordinates(x, y, isModifiable, owner);
-        return coordinatesService.createCoordinates(coordinates);
-    }
-
-    private City buildCity(Map<String, Object> data, String owner) {
-        Coordinates coordinates = fetchCoordinates(data.get("coordinates"), owner);
-        Human governor = fetchHuman(data.get("governor"), owner);
-        String name = (String)data.get("name");
-        Double area = (data.get("area") instanceof BigDecimal)
-                      ? ((BigDecimal)data.get("area")).doubleValue()
-                      : (Double)data.get("area");
-        Integer population = (data.get("population") instanceof Integer)
-                             ? (Integer)data.get("population")
-                             : ((Long)data.get("population")).intValue();
-        Boolean capital = (Boolean)data.get("capital");
-        Integer MASL = (data.get("metersAboveSeaLevel") instanceof Integer)
-                       ? (Integer)data.get("metersAboveSeaLevel")
-                       : ((Long)data.get("metersAboveSeaLevel")).intValue();
-        ZonedDateTime establishmentDate = ZonedDateTime.parse((String)data.get("establishmentDate"));
-        Long telephoneCode = (data.get("telephoneCode") instanceof Integer)
-                             ? ((Integer)data.get("telephoneCode")).longValue()
-                             : (Long)data.get("telephoneCode");
-        Climate climate = Climate.valueOf((String)data.get("climate"));
-        Government government = Government.valueOf((String)data.get("government"));
-        Boolean isModifiable = (Boolean)data.get("isModifiable");
-        City city = new City(name, coordinates, area, population, establishmentDate, capital, MASL, telephoneCode, climate, government, governor, isModifiable, owner);
-        return cityService.createCity(city);
-    }
-
-    private Coordinates fetchCoordinates(Object data, String owner) {
-        if (data instanceof Long id) {
-            // trying to fetch existing Coordinates object
-            Coordinates coordinates = coordinatesService.findCoordinatesById(id);
-            if (!coordinates.getOwner().equals(owner)) {
-                throw new IllegalArgumentException("Attempt to map City to foreign Coordinates object!");
-            }
-            return coordinates;
-        } else if (data instanceof Map<?, ?> cMap) {
-            // constructing new Coordinates object
-            @SuppressWarnings("unchecked")
-            Map<String, Object> coordinatesMap = (Map<String, Object>) cMap;
-            Coordinates coordinates = buildCoordinates(coordinatesMap, owner);
-            return coordinates;
-        }
-        throw new IllegalArgumentException("Invalid constructor for inner Coordinates object!");
-    }
-
-    private Human fetchHuman(Object data, String owner) {
-        // governor field is optional
-        if (data == null) return null;
-        if (data instanceof Long id) {
-            // trying to fetch existing Human object
-            Human human = humanService.findHumanById(id);
-            if (!human.getOwner().equals(owner)) {
-                throw new IllegalArgumentException("Attempt to map City to foreign Human object!");
-            }
-            return human;
-        } else if (data instanceof Map<?, ?> hMap) {
-            // constructing new Coordinates object
-            @SuppressWarnings("unchecked")
-            Map<String, Object> humanMap = (Map<String, Object>) hMap;
-            Human human = buildHuman(humanMap, owner);
-            return human;
-        }
-        throw new IllegalArgumentException("Invalid constructor for inner Human object!");
+        List<String> res = queueExecutorService.executeQueue(queue);
+        return res;
     }
 
     public List<String> processFiles(List<MultipartFile> files, String username) {
@@ -183,7 +93,7 @@ public class FileProcessingService {
         for (MultipartFile file : files) {
             try {
                 List<CreateQuery> queries = parseToml(file);
-                executeQueries(queries, username);
+                results.addAll(executeQueries(queries, username));
                 results.add("[SUCCESS] File processed sucessfully.");
             } catch (IOException | IllegalArgumentException e) {
                 results.add("[ERROR] Failed to process file: " + e.getMessage());
