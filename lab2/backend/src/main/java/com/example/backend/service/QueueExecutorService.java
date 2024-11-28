@@ -38,7 +38,16 @@ public class QueueExecutorService {
                         res.add("Coordinates created successfully");
                     }
                     case "city" -> {
-                        session.save((City)p.getValue());
+                        City city = (City) p.getValue();
+                        if (city.getCoordinates() != null && city.getCoordinates().getId() == null) {
+                            session.save(city.getCoordinates());
+                            res.add("Coordinates for City created successfully");
+                        }
+                        if (city.getGovernor() != null && city.getGovernor().getId() == null) {
+                            session.save(city.getGovernor());
+                            res.add("Governor for City created successfully");
+                        }
+                        session.save(city);
                         res.add("City created successfully");
                     }
                     default -> {
