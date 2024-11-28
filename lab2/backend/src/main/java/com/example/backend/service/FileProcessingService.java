@@ -117,25 +117,32 @@ public class FileProcessingService {
         List<String> finalLogs = new ArrayList<>();
         for (MultipartFile file : files) {
             List<String> logs = new ArrayList<>();
+            boolean isSuccess = true; // Track whether the file processed successfully
             try {
                 logs.add("[INFO] Processing file: " + file.getOriginalFilename());
-
+    
                 // Parse TOML file
                 List<CreateQuery> queries = parseToml(file, logs);
-
+    
                 // Execute queries
                 executeQueries(queries, username, logs);
-
-                logs.add("[SUCCESS] File processed successfully.");
+    
+                logs.add("[SUCCESS] File " + file.getOriginalFilename() + " processed successfully.");
             } catch (IOException | IllegalArgumentException e) {
-                logs.add("[ERROR] Failed to process file: " + file.getOriginalFilename());
+                isSuccess = false;
+                logs.add("[ERROR] File " + file.getOriginalFilename() + " encountered an error: " + e.getMessage());
             } catch (Exception e) {
-                logs.add("[ERROR] Unexpected error occurred while processing file: " + file.getOriginalFilename());
+                isSuccess = false;
+                logs.add("[ERROR] File " + file.getOriginalFilename() + " encountered an unexpected error: " + e.getMessage());
             } finally {
+                if (!isSuccess) {
+                    logs.add("[ERROR] File " + file.getOriginalFilename() + " encountered an error.");
+                }
                 finalLogs.addAll(logs);
-                finalLogs.add("[END] File processing complete.");
+                finalLogs.add("[END] Processing for file " + file.getOriginalFilename() + " completed.");
             }
         }
         return finalLogs;
     }
+    
 }
