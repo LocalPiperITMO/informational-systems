@@ -8,11 +8,12 @@ import ObjectTable from "../tables/ObjectTable";
 import CreateModal from "../modals/CreateModal";
 import UpdateModal from "../modals/UpdateModal";
 import { useNavigate } from "react-router-dom";
-import { fetchCitiesData, fetchCoordinatesData, fetchHumansData } from "../../services/dataService";
+import { fetchCitiesData, fetchCoordinatesData, fetchHumansData, fetchImopsData } from "../../services/dataService";
 import DeleteModal from "../modals/DeleteModal";
 import SpecOpsModal from "../modals/SpecOpsModal";
 import CheckRequestsModal from "../modals/CheckRequestsModal";
 import { Button } from "react-bootstrap";
+import ImportFilesModal from "../modals/ImportFilesModal";
 
 const Title: React.FC = () => {
     const { username } = useAuth();
@@ -29,8 +30,9 @@ const Commands: React.FC<{
     openDeleteModal: () => void;
     openSpecOpsModal: () => void;
     openCheckRequestsModal: () => void;
+    openImportFilesModal: () => void;
     handleLogout: () => void;
-}> = ({ openCreateModal, openUpdateModal, openDeleteModal, openSpecOpsModal, openCheckRequestsModal, handleLogout }) => {
+}> = ({ openCreateModal, openUpdateModal, openDeleteModal, openSpecOpsModal, openCheckRequestsModal, openImportFilesModal, handleLogout }) => {
     return (
         <div className="d-flex justify-content-around my-4">
             <Button variant="primary" onClick={openCreateModal} disabled={localStorage.getItem('admin') !== 'true'}>Create</Button>
@@ -38,6 +40,7 @@ const Commands: React.FC<{
             <Button variant="danger" onClick={openDeleteModal} disabled={localStorage.getItem('admin') !== 'true'}>Delete</Button>
             <Button variant="info" onClick={openCheckRequestsModal} disabled={localStorage.getItem('admin') !== 'true'}>Check Requests</Button>
             <Button variant="success" onClick={openSpecOpsModal} disabled={localStorage.getItem('admin') !== 'true'}>Special</Button>
+            <Button variant="dark" onClick={openImportFilesModal}>Import Files</Button>
             <Button variant="secondary" onClick={handleLogout}>Logout</Button>
         </div>
     );
@@ -51,7 +54,8 @@ const AdminPage: React.FC = () => {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isSpecOpsModalOpen, setIsSpecOpsModalOpen] = useState(false);
     const [isCheckRequestsModalOpen, setIsCheckRequestsModalOpen] = useState(false);
-    const [data, setData] = useState<{ cities: any[], coordinates: any[], humans: any[] } | null>(null);
+    const [isImportFilesModalOpen, setIsImportFilesModalOpen] = useState(false);
+    const [data, setData] = useState<{ cities: any[], coordinates: any[], humans: any[], imops: any[] } | null>(null);
     const [loading, setLoading] = useState(false);
 
     const handleLogout = () => {
@@ -69,6 +73,8 @@ const AdminPage: React.FC = () => {
     const closeSpecOpsModal = () => setIsSpecOpsModalOpen(false);
     const openCheckRequestsModal = () => setIsCheckRequestsModalOpen(true);
     const closeCheckRequestsModal = () => setIsCheckRequestsModalOpen(false);
+    const openImportFilesModal = () => setIsImportFilesModalOpen(true);
+    const closeImportFilesModal = () => setIsImportFilesModalOpen(false);
 
     const fetchData = async () => {
         try {
@@ -76,7 +82,8 @@ const AdminPage: React.FC = () => {
             const cities = await fetchCitiesData();
             const coordinates = await fetchCoordinatesData();
             const humans = await fetchHumansData();
-            setData({ cities, coordinates, humans });
+            const imops = await fetchImopsData();
+            setData({ cities, coordinates, humans, imops });
         } catch (error) {
             console.error("Error fetching data:", error);
         } finally {
@@ -102,6 +109,7 @@ const AdminPage: React.FC = () => {
                 openDeleteModal={openDeleteModal}
                 openSpecOpsModal={openSpecOpsModal}
                 openCheckRequestsModal={openCheckRequestsModal}
+                openImportFilesModal={openImportFilesModal}
                 handleLogout={handleLogout}
             />
 
@@ -113,6 +121,7 @@ const AdminPage: React.FC = () => {
                     <DeleteModal isOpen={isDeleteModalOpen} onClose={closeDeleteModal} data={data} onSuccess={fetchData} />
                     <SpecOpsModal isOpen={isSpecOpsModalOpen} onClose={closeSpecOpsModal} data={data} onSuccess={fetchData} />
                     <CheckRequestsModal isOpen={isCheckRequestsModalOpen} onClose={closeCheckRequestsModal} />
+                    <ImportFilesModal isOpen={isImportFilesModalOpen} onClose={closeImportFilesModal} onSuccess={fetchData} />
                 </>
             ) : (
                 <div className="text-center my-4">No data available</div>
