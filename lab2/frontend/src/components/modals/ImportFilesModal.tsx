@@ -29,6 +29,8 @@ const ImportFilesModal: React.FC<ImportFilesModalProps> = ({ isOpen, onClose, on
     const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [showExample, setShowExample] = useState(false);
+    const [logs, setLogs] = useState<string[]>([]); // Store logs from the backend
+    const [isLogModalOpen, setLogModalOpen] = useState(false);
 
     const handleDrop = (acceptedFiles: File[]) => {
         const tomlFiles = acceptedFiles.filter(file => file.name.endsWith('.toml'));
@@ -84,14 +86,20 @@ const ImportFilesModal: React.FC<ImportFilesModalProps> = ({ isOpen, onClose, on
                 token: localStorage.getItem('token'),
                 files: files
             };
-            await importFiles(data);
+            const response = await importFiles(data);
             setFiles([]);
-            onSuccess();
-            onClose();
+            setLogs(response.results || []);
+            setLogModalOpen(true);
         } catch (err) {
             setError('Failed to upload files. Please try again.');
             console.error(err);
         }
+    };
+
+    const closeLogModal = () => {
+        setLogModalOpen(false);
+        onSuccess(); // Call onSuccess after closing the modal
+        onClose(); // Call onClose after onSuccess
     };
 
     if (!isOpen) return null;
@@ -155,6 +163,28 @@ const ImportFilesModal: React.FC<ImportFilesModalProps> = ({ isOpen, onClose, on
                                 className="close-example-button"
                                 onClick={() => setShowExample(false)}
                             >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {isLogModalOpen && (
+                    <div className="log-modal">
+                        <div className="log-modal-content">
+                            <h3>Import Logs</h3>
+                            <div className="log-content">
+                                {logs.length > 0 ? (
+                                    logs.map((log, index) => (
+                                        <pre key={index} className="log-entry">
+                                            {log}
+                                        </pre>
+                                    ))
+                                ) : (
+                                    <p>No logs available.</p>
+                                )}
+                            </div>
+                            <button onClick={closeLogModal} className="close-button">
                                 Close
                             </button>
                         </div>
