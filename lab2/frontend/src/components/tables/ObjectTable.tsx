@@ -7,6 +7,7 @@ import '../../styles/ObjectTable.css';
 import CitiesTable from "./CitiesTable";
 import CoordinatesTable from "./CoordinatesTable";
 import HumansTable from "./HumansTable";
+import ImopsTable from "./ImopsTable";
 
 interface CommonTableProps<T extends object> {
   data: T[];
@@ -85,12 +86,13 @@ interface ObjectTableProps {
         cities: any[];
         coordinates: any[];
         humans: any[];
+        imops: any[];
     };
 }
 
 const ObjectTable: React.FC<ObjectTableProps> = ({ data }) => {
     const [currentTable, setCurrentTable] = useState(0);
-    const names = ["Cities", "Coordinates", "Humans"];
+    const names = ["Cities", "Coordinates", "Humans", "Import Operations"];
 
     const handleNext = () => {
         setCurrentTable((currentTable + 1) % names.length);
@@ -107,6 +109,7 @@ const ObjectTable: React.FC<ObjectTableProps> = ({ data }) => {
                 {currentTable === 0 && <CitiesTable data={data.cities} />}
                 {currentTable === 1 && <CoordinatesTable data={data.coordinates} />}
                 {currentTable === 2 && <HumansTable data={data.humans} />}
+                {currentTable === 3 && <ImopsTable data={data.imops} />}
             </div>
             {/* Spacer to prevent overlap with the footer */}
             <div style={{ height: '60px' }} /> {/* Adjust height as needed */}

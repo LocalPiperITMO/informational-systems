@@ -8,7 +8,7 @@ import ObjectTable from "../tables/ObjectTable";
 import CreateModal from "../modals/CreateModal";
 import UpdateModal from "../modals/UpdateModal";
 import { useNavigate } from "react-router-dom";
-import { fetchCitiesData, fetchCoordinatesData, fetchHumansData } from "../../services/dataService";
+import { fetchCitiesData, fetchCoordinatesData, fetchHumansData, fetchImopsData } from "../../services/dataService";
 import DeleteModal from "../modals/DeleteModal";
 import SpecOpsModal from "../modals/SpecOpsModal";
 import { sendAdminRequest } from "../../services/adminService";
@@ -56,7 +56,7 @@ const MainPage: React.FC = () => {
     const [isRequestAdminDisabled, setIsRequestAdminDisabled] = useState(false);
     const [isSpecOpsModalOpen, setIsSpecOpsModalOpen] = useState(false);
     const [isImportFilesModalOpen, setIsImportFilesModalOpen] = useState(false);
-    const [data, setData] = useState<{ cities: any[], coordinates: any[], humans: any[] } | null>(null);
+    const [data, setData] = useState<{ cities: any[], coordinates: any[], humans: any[], imops: any[] } | null>(null);
     const [loading, setLoading] = useState(false);
 
     const handleLogout = () => {
@@ -90,7 +90,8 @@ const MainPage: React.FC = () => {
             const cities = await fetchCitiesData();
             const coordinates = await fetchCoordinatesData();
             const humans = await fetchHumansData();
-            setData({ cities, coordinates, humans });
+            const imops = await fetchImopsData();
+            setData({ cities, coordinates, humans, imops });
         } catch (error) {
             console.error("Error fetching data:", error);
         } finally {

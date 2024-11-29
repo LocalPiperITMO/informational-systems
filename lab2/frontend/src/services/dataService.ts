@@ -48,4 +48,20 @@ export async function fetchHumansData() {
       throw new Error("Failed to fetch Humans");
     }
   }
-  
+
+export async function fetchImopsData() {
+  const response = await fetch('http://localhost:8080/api/data/imops', {
+    method: 'POST',
+    body: JSON.stringify({}),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    return data.importOperations;
+  } else {
+    throw new Error("Failed to fetch Import Operations");
+  }
+}
