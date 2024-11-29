@@ -95,6 +95,17 @@ public class QueueExecutorService {
 
     private void processCity(Session session, City city, List<String> res) {
         try {
+            // Check for city name uniqueness
+            String query = "SELECT count(*) FROM City WHERE name = :name";
+            Long count = (Long) session.createQuery(query)
+                .setParameter("name", city.getName())
+                .uniqueResult();
+            
+            if (count > 0) {
+                throw new IllegalArgumentException("A city with the name '" + city.getName() + "' already exists.");
+            }
+            
+            // Process coordinates
             if (city.getCoordinates() != null) {
                 if (city.getCoordinates().getId() == null) {
                     session.save(city.getCoordinates());
@@ -108,7 +119,8 @@ public class QueueExecutorService {
                     res.add("[INFO] Existing Coordinates mapped to City.");
                 }
             }
-            
+    
+            // Process governor
             try {
                 if (city.getGovernor() != null) {
                     if (city.getGovernor().getId() == null) {
@@ -130,8 +142,8 @@ public class QueueExecutorService {
                 res.add("[ERROR] Governor with the given ID does not exist.");
                 throw new IllegalArgumentException("Governor with the given ID does not exist.", ex);
             }
-            
-            
+    
+            // Save the city
             session.save(city);
             res.add("[INFO] City saved successfully.");
         } catch (Exception e) {
@@ -139,4 +151,5 @@ public class QueueExecutorService {
             throw e;
         }
     }
+    
 }
