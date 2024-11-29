@@ -18,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.backend.dto.response.FileResponse;
 import com.example.backend.model.City;
-import com.example.backend.model.Coordinates;
 import com.example.backend.model.Human;
 import com.example.backend.repo.ImportOperationRepository;
 import com.example.backend.service.EntityParsingService;
@@ -85,28 +84,30 @@ class FileProcessingServiceTest {
         // Arrange
         String tomlContent = """
                 [[createQuery]]
-                type = "coordinates"
-                data = { x = 444, y = 50, isModifiable = true }
+                type = "city"
+                data = { name = "", coordinates = 75, governor = 48, area = -1200.5, population = 500000, capital = true, metersAboveSeaLevel = 50, establishmentDate = "2022-01-01T00:00:00Z", telephoneCode = 12345, climate = "MONSOON", government = "NOOCRACY", isModifiable = true }
                 """;
-
+    
         MultipartFile file = mock(MultipartFile.class);
-        when(file.getOriginalFilename()).thenReturn("validationFile.toml");
+        when(file.getOriginalFilename()).thenReturn("validationError.toml");
         when(file.getBytes()).thenReturn(tomlContent.getBytes(StandardCharsets.UTF_8));
-
-        Coordinates mockCoordinates = new Coordinates();
-        when(entityParsingService.buildCoordinates(anyMap(), anyString())).thenReturn(mockCoordinates);
+    
+        City mockCity = new City();
+    
+        when(entityParsingService.buildCity(anyMap(), anyString())).thenReturn(mockCity);
         when(queueExecutorService.executeQueue(any())).thenThrow(
-                new IllegalArgumentException("Validation failed for object: [x must be <= 443]")
+            new IllegalArgumentException("Validation failed for object: [name must not be blank, area must be positive]")
         );
-
+    
         // Act
         FileResponse fr = fileProcessingService.processFiles(List.of(file), "testUser");
         List<String> logs = fr.getResults();
-
+    
         // Assert
-        assertTrue(logs.contains("[ERROR] File validationFile.toml encountered an error: Validation failed for object: [x must be <= 443]"));
-        assertTrue(logs.contains("[END] Processing for file validationFile.toml completed."));
+        assertTrue(logs.contains("[ERROR] File validationError.toml encountered an error: Validation failed for object: [name must not be blank, area must be positive]"));
+        assertTrue(logs.contains("[END] Processing for file validationError.toml completed."));
     }
+    
 
     @Test
     void testProcessFiles_InvalidTomlStructure() throws Exception {
@@ -149,4 +150,42 @@ class FileProcessingServiceTest {
         assertTrue(logs.contains("[ERROR] File unexpectedError.toml encountered an unexpected error: Unexpected exception occurred"));
         assertTrue(logs.contains("[END] Processing for file unexpectedError.toml completed."));
     }
+
+    @Test
+    void testProcessFiles_DuplicateCityName() throws Exception {
+        // Arrange
+        String tomlContent = """
+                [[createQuery]]
+                type = "city"
+                data = { name = "Springfield", coordinates = 75, governor = 48, area = 1200.5, population = 500000, capital = true, metersAboveSeaLevel = 50, establishmentDate = "2022-01-01T00:00:00Z", telephoneCode = 12345, climate = "MONSOON", government = "NOOCRACY", isModifiable = true }
+
+                [[createQuery]]
+                type = "city"
+                data = { name = "Springfield", coordinates = 76, governor = 49, area = 1500.0, population = 600000, capital = false, metersAboveSeaLevel = 100, establishmentDate = "2023-01-01T00:00:00Z", telephoneCode = 54321, climate = "TEMPERATE", government = "DEMOCRACY", isModifiable = true }
+                """;
+
+        MultipartFile file = mock(MultipartFile.class);
+        when(file.getOriginalFilename()).thenReturn("duplicateCityName.toml");
+        when(file.getBytes()).thenReturn(tomlContent.getBytes(StandardCharsets.UTF_8));
+
+        City mockCity1 = new City();
+        City mockCity2 = new City();
+
+        when(entityParsingService.buildCity(anyMap(), anyString()))
+            .thenReturn(mockCity1) // First city
+            .thenReturn(mockCity2); // Second city (duplicate)
+
+        when(queueExecutorService.executeQueue(any())).thenThrow(
+            new IllegalArgumentException("A city with the name 'Springfield' already exists.")
+        );
+
+        // Act
+        FileResponse fr = fileProcessingService.processFiles(List.of(file), "testUser");
+        List<String> logs = fr.getResults();
+
+        // Assert
+        assertTrue(logs.contains("[ERROR] File duplicateCityName.toml encountered an error: A city with the name 'Springfield' already exists."));
+        assertTrue(logs.contains("[END] Processing for file duplicateCityName.toml completed."));
+    }
+
 }
