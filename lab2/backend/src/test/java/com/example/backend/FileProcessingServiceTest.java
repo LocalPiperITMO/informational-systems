@@ -114,7 +114,7 @@ class FileProcessingServiceTest {
         List<String> logs = fileProcessingService.processFiles(List.of(file), "testUser");
 
         // Assert
-        assertTrue(logs.contains("[ERROR] File invalidFile.toml encountered an error: TOML does not contain any 'createQuery' entries."));
+        assertTrue(logs.contains("[ERROR] File invalidFile.toml has an illegal structure: Unknown token at line or invalid TOML structure."));
         assertTrue(logs.contains("[END] Processing for file invalidFile.toml completed."));
     }
 

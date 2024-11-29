@@ -36,37 +36,43 @@ public class FileProcessingService {
         logs.add("[INFO] File content read successfully.");
         
         ObjectMapper tomlMapper = new TomlMapper();
-        Map<String, Object> root = tomlMapper.readValue(tomlContent, new TypeReference<>() {});
-        
-        Object queriesData = root.get("createQuery");
-        if (queriesData == null) {
-            logs.add("[ERROR] TOML file does not contain 'createQuery' entries.");
-            throw new IllegalArgumentException("TOML does not contain any 'createQuery' entries.");
+        try {
+            Map<String, Object> root = tomlMapper.readValue(tomlContent, new TypeReference<>() {});
+            
+            Object queriesData = root.get("createQuery");
+            if (queriesData == null) {
+                logs.add("[ERROR] TOML file does not contain 'createQuery' entries.");
+                throw new IllegalArgumentException("TOML does not contain any 'createQuery' entries.");
+            }
+    
+            List<Map<String, Object>> queriesList;
+            if (queriesData instanceof List<?>) {
+                queriesList = (List<Map<String, Object>>) queriesData;
+            } else if (queriesData instanceof Map<?, ?>) {
+                queriesList = new ArrayList<>();
+                queriesList.add((Map<String, Object>) queriesData);
+            } else {
+                logs.add("[ERROR] 'createQuery' format is invalid.");
+                throw new IllegalArgumentException("'createQuery' format is invalid.");
+            }
+    
+            List<CreateQuery> queries = new ArrayList<>();
+            for (Map<String, Object> queryData : queriesList) {
+                String type = (String) queryData.get("type");
+                Map<String, Object> data = (Map<String, Object>) queryData.get("data");
+                CreateQuery createQuery = CreateQuery.builder().type(type).data(data).build();
+                logs.add("[INFO] Parsed query of type '" + type + "'.");
+                queries.add(createQuery);
+            }
+    
+            logs.add("[SUCCESS] File parsed successfully.");
+            return queries;
+        } catch (IOException e) {
+            logs.add("[ERROR] Invalid TOML structure: " + e.getMessage());
+            throw new IllegalArgumentException("Unknown token at line or invalid TOML structure.", e);
         }
-
-        List<Map<String, Object>> queriesList;
-        if (queriesData instanceof List<?>) {
-            queriesList = (List<Map<String, Object>>) queriesData;
-        } else if (queriesData instanceof Map<?, ?>) {
-            queriesList = new ArrayList<>();
-            queriesList.add((Map<String, Object>) queriesData);
-        } else {
-            logs.add("[ERROR] 'createQuery' format is invalid.");
-            throw new IllegalArgumentException("'createQuery' format is invalid.");
-        }
-
-        List<CreateQuery> queries = new ArrayList<>();
-        for (Map<String, Object> queryData : queriesList) {
-            String type = (String) queryData.get("type");
-            Map<String, Object> data = (Map<String, Object>) queryData.get("data");
-            CreateQuery createQuery = CreateQuery.builder().type(type).data(data).build();
-            logs.add("[INFO] Parsed query of type '" + type + "'.");
-            queries.add(createQuery);
-        }
-
-        logs.add("[SUCCESS] File parsed successfully.");
-        return queries;
     }
+    
 
     @Transactional
     private List<String> executeQueries(List<CreateQuery> queries, String owner, List<String> logs) throws IllegalArgumentException {
@@ -117,32 +123,39 @@ public class FileProcessingService {
         List<String> finalLogs = new ArrayList<>();
         for (MultipartFile file : files) {
             List<String> logs = new ArrayList<>();
-            boolean isSuccess = true; // Track whether the file processed successfully
+            boolean isSuccess = true;
             try {
                 logs.add("[INFO] Processing file: " + file.getOriginalFilename());
-    
-                // Parse TOML file
+                
                 List<CreateQuery> queries = parseToml(file, logs);
-    
-                // Execute queries
+                
                 executeQueries(queries, username, logs);
-    
-                logs.add("[SUCCESS] File " + file.getOriginalFilename() + " processed successfully.");
-            } catch (IOException | IllegalArgumentException e) {
+                
+            } catch (IllegalArgumentException e) {
                 isSuccess = false;
-                logs.add("[ERROR] File " + file.getOriginalFilename() + " encountered an error: " + e.getMessage());
+                if (e.getMessage().contains("Unknown token at line")) {
+                    logs.add("[ERROR] File " + file.getOriginalFilename() + " has an illegal structure: " + e.getMessage());
+                } else {
+                    logs.add("[ERROR] File " + file.getOriginalFilename() + " encountered an error: " + e.getMessage());
+                }
             } catch (Exception e) {
                 isSuccess = false;
                 logs.add("[ERROR] File " + file.getOriginalFilename() + " encountered an unexpected error: " + e.getMessage());
             } finally {
+                if (logs.stream().anyMatch(log -> log.startsWith("[ERROR]"))) {
+                    isSuccess = false;
+                }
+    
                 if (!isSuccess) {
                     logs.add("[ERROR] File " + file.getOriginalFilename() + " encountered an error.");
+                } else {
+                    logs.add("[SUCCESS] File " + file.getOriginalFilename() + " processed successfully.");
                 }
                 finalLogs.addAll(logs);
                 finalLogs.add("[END] Processing for file " + file.getOriginalFilename() + " completed.");
             }
         }
         return finalLogs;
-    }
+    }    
     
 }
