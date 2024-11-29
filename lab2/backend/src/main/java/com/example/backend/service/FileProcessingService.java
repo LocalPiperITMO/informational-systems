@@ -16,6 +16,9 @@ import com.example.backend.dto.response.FileResponse;
 import com.example.backend.model.City;
 import com.example.backend.model.Coordinates;
 import com.example.backend.model.Human;
+import com.example.backend.model.ImportOperation;
+import com.example.backend.model.OperationStatus;
+import com.example.backend.repo.ImportOperationRepository;
 import com.example.backend.utils.CreateQuery;
 import com.example.backend.utils.Pair;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -30,6 +33,9 @@ public class FileProcessingService {
 
     @Autowired
     private QueueExecutorService queueExecutorService;
+
+    @Autowired
+    private ImportOperationRepository importOperationRepository;
 
     @SuppressWarnings("unchecked")
     private List<CreateQuery> parseToml(MultipartFile file, List<String> logs) throws IOException {
@@ -126,11 +132,12 @@ public class FileProcessingService {
         for (MultipartFile file : files) {
             List<String> logs = new ArrayList<>();
             boolean isSuccess = true;
+            int objCount = 0;
             try {
                 logs.add("[INFO] Processing file: " + file.getOriginalFilename());
                 
                 List<CreateQuery> queries = parseToml(file, logs);
-                
+                objCount = queries.size();
                 executeQueries(queries, username, logs);
                 
             } catch (IllegalArgumentException e) {
@@ -154,6 +161,7 @@ public class FileProcessingService {
                 } else {
                     logs.add("[SUCCESS] File " + file.getOriginalFilename() + " processed successfully.");
                 }
+                importOperationRepository.save(new ImportOperation((isSuccess)? OperationStatus.SUCCESS : OperationStatus.ERROR, username, (isSuccess)? objCount : 0));
                 finalLogs.addAll(logs);
                 finalLogs.add("[END] Processing for file " + file.getOriginalFilename() + " completed.");
             }

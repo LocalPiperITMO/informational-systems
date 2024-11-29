@@ -34,4 +34,10 @@ public class ImportOperation {
     @Column
     @Min(0)
     private Integer objectCount;
+
+    public ImportOperation(OperationStatus oStatus, String username, Integer oc) {
+        this.status = oStatus;
+        this.username = username;
+        this.objectCount = oc;
+    }
 }
