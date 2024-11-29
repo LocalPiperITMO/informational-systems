@@ -10,10 +10,38 @@ interface ImportFilesModalProps {
     onSuccess: () => void;
 }
 
+const exampleTOML = `
+[[createQuery]]
+type = "human"
+data = { age = 52, isModifiable = true }
+
+[[createQuery]]
+type = "coordinates"
+data = { x = 1, y = -1.234, isModifiable = true }
+
+[[createQuery]]
+type = "city"
+data = { 
+    name = "Springfield", 
+    coordinates = 75, 
+    governor = { age = 30, isModifiable = true }, 
+    area = 1200.5, 
+    population = 500000, 
+    capital = true, 
+    metersAboveSeaLevel = 50, 
+    establishmentDate = "2022-01-01T00:00:00Z", 
+    telephoneCode = 12345, 
+    climate = "MONSOON", 
+    government = "NOOCRACY", 
+    isModifiable = true 
+}
+`;
+
 const ImportFilesModal: React.FC<ImportFilesModalProps> = ({ isOpen, onClose, onSuccess }) => {
     const [files, setFiles] = useState<File[]>([]);
     const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [showExample, setShowExample] = useState(false);
 
     const handleDrop = (acceptedFiles: File[]) => {
         const tomlFiles = acceptedFiles.filter(file => file.name.endsWith('.toml'));
@@ -36,7 +64,6 @@ const ImportFilesModal: React.FC<ImportFilesModalProps> = ({ isOpen, onClose, on
         setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
     };
 
-    // Handling drag events
     const handleDragStart = (index: number) => {
         setDraggingIndex(index);
     };
@@ -127,7 +154,25 @@ const ImportFilesModal: React.FC<ImportFilesModalProps> = ({ isOpen, onClose, on
                     <button onClick={onClose} className="cancel-button">
                         Close
                     </button>
+                    <button onClick={() => setShowExample(true)} className="example-button">
+                        Show Example
+                    </button>
                 </div>
+
+                {showExample && (
+                    <div className="example-modal">
+                        <div className="example-content">
+                            <h3>Example TOML File</h3>
+                            <pre className="example-code">{exampleTOML}</pre>
+                            <button
+                                className="close-example-button"
+                                onClick={() => setShowExample(false)}
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>,
         document.getElementById('modal-root') as HTMLElement
