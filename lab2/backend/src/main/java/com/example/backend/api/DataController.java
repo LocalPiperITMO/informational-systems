@@ -14,9 +14,12 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.backend.dto.response.CitiesResponse;
 import com.example.backend.dto.response.CoordinatesResponse;
 import com.example.backend.dto.response.HumansResponse;
+import com.example.backend.dto.response.ImportOperationResponse;
 import com.example.backend.model.City;
 import com.example.backend.model.Coordinates;
 import com.example.backend.model.Human;
+import com.example.backend.model.ImportOperation;
+import com.example.backend.repo.ImportOperationRepository;
 import com.example.backend.service.CityService;
 import com.example.backend.service.CoordinatesService;
 import com.example.backend.service.HumanService;
@@ -35,6 +38,9 @@ public class DataController {
 
     @Autowired
     private HumanService humanService;
+
+    @Autowired
+    private ImportOperationRepository ImportOperationRepository;
     
     @PostMapping("/cities")
     public ResponseEntity<CitiesResponse> getAllCities(@RequestBody String entity) {
@@ -65,4 +71,16 @@ public class DataController {
             throw new ResponseStatusException(500, "Error fetching humans", e);
         }
     }
+
+    @PostMapping("/imops")
+    public ResponseEntity<ImportOperationResponse> getAllImops(@RequestBody String entity) {
+        try {
+            List<ImportOperation> imops = ImportOperationRepository.findAll();
+            return ResponseEntity.ok(new ImportOperationResponse(imops));
+        } catch (Exception e) {
+            throw new ResponseStatusException(500, "Error fetching imops", e);
+        }
+
+    }
+    
 }
