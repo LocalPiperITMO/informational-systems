@@ -15,6 +15,7 @@ import com.example.backend.dto.request.CityRequest;
 import com.example.backend.dto.request.CoordinatesRequest;
 import com.example.backend.dto.request.DeleteRequest;
 import com.example.backend.dto.request.HumanRequest;
+import com.example.backend.exceptions.UniqueConstraintViolationException;
 import com.example.backend.model.City;
 import com.example.backend.model.Climate;
 import com.example.backend.model.Coordinates;
@@ -96,6 +97,8 @@ public class CUDController {
             return ResponseEntity.status(201).body(cityService.findAllCities());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(null);
+        } catch (UniqueConstraintViolationException e) {
+            return ResponseEntity.status(409).body(null);
         }
     }
 
@@ -134,6 +137,8 @@ public class CUDController {
             return ResponseEntity.ok(cityService.findAllCities());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(null);
+        } catch (UniqueConstraintViolationException e) {
+            return ResponseEntity.status(409).body(null);
         }
     }
 

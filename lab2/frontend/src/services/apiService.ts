@@ -17,6 +17,9 @@ export async function createCity(cityData: any) {
     } else if (response.status === 403){
         toast.warning("User is unauthorized! Redirecting...")
         throw new Error("User is unauthorized! Redirecting...");
+    } else if (response.status === 409){
+        toast.error("City with given name already exists!");
+        throw new Error("City with given name already exists!");
     } else {
         toast.error("Failed to create City")
         throw new Error("Failed to create City");
@@ -83,6 +86,9 @@ export async function updateCity(cityData: any) {
     } else if (response.status === 403){
         toast.warning("User is unauthorized! Redirecting...")
         throw new Error("User is unauthorized! Redirecting...");
+    } else if (response.status === 409){
+        toast.error("City with given name already exists!");
+        throw new Error("City with given name already exists!");
     } else {
         toast.error("Failed to update City")
         throw new Error("Failed to update City");

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.backend.exceptions.UniqueConstraintViolationException;
 import com.example.backend.model.City;
 import com.example.backend.model.Coordinates;
 import com.example.backend.model.Human;
@@ -30,9 +31,8 @@ public class CityServiceImpl implements CityService{
 
     @Override
     public City createCity(City city) {
-        // Check for city name uniqueness
         if (cityRepository.findByName(city.getName()) != null) {
-            throw new IllegalArgumentException("A city with this name already exists!");
+            throw new UniqueConstraintViolationException("A city with this name already exists!");
         }
         cityRepository.save(city);
         return city;
@@ -41,9 +41,9 @@ public class CityServiceImpl implements CityService{
     @Override
     public City updateCity(City newCity, Long cityId) {
         City oldCity = findCityById(cityId);
-        
+
         if (!oldCity.getName().equals(newCity.getName()) && cityRepository.findByName(newCity.getName()) != null) {
-            throw new IllegalArgumentException("A city with this name already exists!");
+            throw new UniqueConstraintViolationException("A city with this name already exists!");
         }
         oldCity.setName(newCity.getName());
         oldCity.setCoordinates(newCity.getCoordinates());

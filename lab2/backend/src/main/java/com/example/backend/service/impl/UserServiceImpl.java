@@ -3,6 +3,7 @@ package com.example.backend.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.backend.exceptions.UniqueConstraintViolationException;
 import com.example.backend.model.Admin;
 import com.example.backend.model.User;
 import com.example.backend.repo.AdminRepository;
@@ -31,7 +32,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void createUser(User user) {
         if (userRepository.findByUsername(user.getUsername()) != null) {
-            throw new IllegalArgumentException("A user with this username already exists!");
+            throw new UniqueConstraintViolationException("A user with this username already exists!");
         }
         userRepository.save(user);
     }
