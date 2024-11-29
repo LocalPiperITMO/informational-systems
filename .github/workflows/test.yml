@@ -1,4 +1,4 @@
-name: Run Tests for lab2
+name: Run Tests for backend in lab2
 
 on:
   push:
@@ -17,9 +17,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Change directory to lab2
-      - name: Set working directory to lab2
-        working-directory: lab2
+      # Change directory to lab2/backend
+      - name: Set working directory to lab2/backend
+        working-directory: lab2/backend
         run: pwd # Print the current directory for debugging
 
       # Set up Java
@@ -29,17 +29,16 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # Cache Gradle dependencies
-      - name: Cache Gradle dependencies
+      # Cache Maven dependencies
+      - name: Cache Maven dependencies
         uses: actions/cache@v3
         with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('lab2/**/*.gradle*', 'lab2/**/gradle-wrapper.properties') }}
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('lab2/backend/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-
+            ${{ runner.os }}-maven-
 
       # Run tests
-      - name: Run tests in lab2
-        working-directory: lab2
-        run: ./gradlew test
-
+      - name: Run tests in backend
+        working-directory: lab2/backend
+        run: ./mvnw test
