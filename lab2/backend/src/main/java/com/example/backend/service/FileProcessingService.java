@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.backend.dto.response.FileResponse;
 import com.example.backend.model.City;
 import com.example.backend.model.Coordinates;
 import com.example.backend.model.Human;
@@ -119,8 +120,9 @@ public class FileProcessingService {
         return logs;
     }
 
-    public List<String> processFiles(List<MultipartFile> files, String username) {
+    public FileResponse processFiles(List<MultipartFile> files, String username) {
         List<String> finalLogs = new ArrayList<>();
+        int faultyCount = 0;
         for (MultipartFile file : files) {
             List<String> logs = new ArrayList<>();
             boolean isSuccess = true;
@@ -147,6 +149,7 @@ public class FileProcessingService {
                 }
     
                 if (!isSuccess) {
+                    faultyCount += 1;
                     logs.add("[ERROR] File " + file.getOriginalFilename() + " encountered an error.");
                 } else {
                     logs.add("[SUCCESS] File " + file.getOriginalFilename() + " processed successfully.");
@@ -155,7 +158,7 @@ public class FileProcessingService {
                 finalLogs.add("[END] Processing for file " + file.getOriginalFilename() + " completed.");
             }
         }
-        return finalLogs;
+        return new FileResponse(faultyCount,finalLogs);
     }    
     
 }

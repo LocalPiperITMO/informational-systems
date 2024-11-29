@@ -1,7 +1,5 @@
 package com.example.backend.api;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -11,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.dto.request.FileRequest;
-import com.example.backend.dto.response.MessageResponse;
+import com.example.backend.dto.response.FileResponse;
 import com.example.backend.service.FileProcessingService;
 import com.example.backend.service.UserService;
 import com.example.backend.utils.JwtUtil;
@@ -42,10 +40,9 @@ public class FileController {
 
     // GUESS WHO'S BACK, BACK AGAIN
     @PostMapping("/executeScript")
-    public ResponseEntity<Object> executeScript(@ModelAttribute FileRequest request) {
-        if (!checkAuth(request.getToken())) return ResponseEntity.status(403).body(new MessageResponse("Access denied!"));
-        List<String> results = fileProcessingService.processFiles(request.getFiles(), jwtUtil.extractUsername(request.getToken()));
-        return ResponseEntity.ok(results);
+    public ResponseEntity<FileResponse> executeScript(@ModelAttribute FileRequest request) {
+        if (!checkAuth(request.getToken())) return ResponseEntity.status(403).body(new FileResponse(-1, null));
+        return ResponseEntity.ok(fileProcessingService.processFiles(request.getFiles(), jwtUtil.extractUsername(request.getToken())));
     }
     
 }

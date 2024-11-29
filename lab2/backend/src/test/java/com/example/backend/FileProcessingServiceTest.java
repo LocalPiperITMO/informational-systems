@@ -16,6 +16,7 @@ import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.backend.dto.response.FileResponse;
 import com.example.backend.model.City;
 import com.example.backend.model.Coordinates;
 import com.example.backend.model.Human;
@@ -67,7 +68,8 @@ class FileProcessingServiceTest {
         ));
 
         // Act
-        List<String> logs = fileProcessingService.processFiles(List.of(file), "testUser");
+        FileResponse fr = fileProcessingService.processFiles(List.of(file), "testUser");
+        List<String> logs = fr.getResults();
 
         // Assert
         assertTrue(logs.contains("[SUCCESS] File testFile.toml processed successfully."));
@@ -94,7 +96,8 @@ class FileProcessingServiceTest {
         );
 
         // Act
-        List<String> logs = fileProcessingService.processFiles(List.of(file), "testUser");
+        FileResponse fr = fileProcessingService.processFiles(List.of(file), "testUser");
+        List<String> logs = fr.getResults();
 
         // Assert
         assertTrue(logs.contains("[ERROR] File validationFile.toml encountered an error: Validation failed for object: [x must be <= 443]"));
@@ -111,7 +114,8 @@ class FileProcessingServiceTest {
         when(file.getBytes()).thenReturn(invalidTomlContent.getBytes(StandardCharsets.UTF_8));
 
         // Act
-        List<String> logs = fileProcessingService.processFiles(List.of(file), "testUser");
+        FileResponse fr = fileProcessingService.processFiles(List.of(file), "testUser");
+        List<String> logs = fr.getResults();
 
         // Assert
         assertTrue(logs.contains("[ERROR] File invalidFile.toml has an illegal structure: Unknown token at line or invalid TOML structure."));
@@ -134,7 +138,8 @@ class FileProcessingServiceTest {
         when(entityParsingService.buildHuman(anyMap(), anyString())).thenThrow(new RuntimeException("Unexpected exception occurred"));
 
         // Act
-        List<String> logs = fileProcessingService.processFiles(List.of(file), "testUser");
+        FileResponse fr = fileProcessingService.processFiles(List.of(file), "testUser");
+        List<String> logs = fr.getResults();
 
         // Assert
         assertTrue(logs.contains("[ERROR] File unexpectedError.toml encountered an unexpected error: Unexpected exception occurred"));
