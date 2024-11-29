@@ -49,10 +49,10 @@ export async function fetchHumansData() {
     }
   }
 
-export async function fetchImopsData() {
+export async function fetchImopsData(data : any) {
   const response = await fetch('http://localhost:8080/api/data/imops', {
     method: 'POST',
-    body: JSON.stringify({}),
+    body: JSON.stringify(data),
     headers: {
       'Content-Type': 'application/json'
     }

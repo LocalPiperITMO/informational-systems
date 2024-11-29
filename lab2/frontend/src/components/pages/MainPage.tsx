@@ -90,7 +90,7 @@ const MainPage: React.FC = () => {
             const cities = await fetchCitiesData();
             const coordinates = await fetchCoordinatesData();
             const humans = await fetchHumansData();
-            const imops = await fetchImopsData();
+            const imops = await fetchImopsData({ token: localStorage.getItem('token') });
             setData({ cities, coordinates, humans, imops });
         } catch (error) {
             console.error("Error fetching data:", error);
