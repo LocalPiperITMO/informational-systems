@@ -20,6 +20,7 @@ import com.example.backend.dto.response.FileResponse;
 import com.example.backend.model.City;
 import com.example.backend.model.Coordinates;
 import com.example.backend.model.Human;
+import com.example.backend.repo.ImportOperationRepository;
 import com.example.backend.service.EntityParsingService;
 import com.example.backend.service.FileProcessingService;
 import com.example.backend.service.QueueExecutorService;
@@ -31,6 +32,9 @@ class FileProcessingServiceTest {
 
     @Mock
     private QueueExecutorService queueExecutorService;
+
+    @Mock
+    private ImportOperationRepository importOperationRepository;
 
     @InjectMocks
     private FileProcessingService fileProcessingService;
@@ -47,7 +51,7 @@ class FileProcessingServiceTest {
                 [[createQuery]]
                 type = "human"
                 data = { age = 52, isModifiable = true }
-                
+
                 [[createQuery]]
                 type = "city"
                 data = { name = "Springfield", coordinates = 75, governor = 48, area = 1200.5, population = 500000, capital = true, metersAboveSeaLevel = 50, establishmentDate = "2022-01-01T00:00:00Z", telephoneCode = 12345, climate = "MONSOON", government = "NOOCRACY", isModifiable = true }
@@ -89,7 +93,7 @@ class FileProcessingServiceTest {
         when(file.getOriginalFilename()).thenReturn("validationFile.toml");
         when(file.getBytes()).thenReturn(tomlContent.getBytes(StandardCharsets.UTF_8));
 
-        Coordinates mockCoordinates = new Coordinates(); // Mocked Coordinates object
+        Coordinates mockCoordinates = new Coordinates();
         when(entityParsingService.buildCoordinates(anyMap(), anyString())).thenReturn(mockCoordinates);
         when(queueExecutorService.executeQueue(any())).thenThrow(
                 new IllegalArgumentException("Validation failed for object: [x must be <= 443]")
