@@ -30,6 +30,10 @@ public class CityServiceImpl implements CityService{
 
     @Override
     public City createCity(City city) {
+        // Check for city name uniqueness
+        if (cityRepository.findByName(city.getName()) != null) {
+            throw new IllegalArgumentException("A city with this name already exists!");
+        }
         cityRepository.save(city);
         return city;
     }
@@ -37,6 +41,10 @@ public class CityServiceImpl implements CityService{
     @Override
     public City updateCity(City newCity, Long cityId) {
         City oldCity = findCityById(cityId);
+        
+        if (!oldCity.getName().equals(newCity.getName()) && cityRepository.findByName(newCity.getName()) != null) {
+            throw new IllegalArgumentException("A city with this name already exists!");
+        }
         oldCity.setName(newCity.getName());
         oldCity.setCoordinates(newCity.getCoordinates());
         oldCity.setCreationDate(newCity.getCreationDate());
@@ -49,9 +57,11 @@ public class CityServiceImpl implements CityService{
         oldCity.setClimate(newCity.getClimate());
         oldCity.setGovernment(newCity.getGovernment());
         oldCity.setGovernor(newCity.getGovernor());
+    
         cityRepository.save(oldCity);
         return oldCity;
     }
+    
 
     @Override
     public void deleteCity(Long cityId) {

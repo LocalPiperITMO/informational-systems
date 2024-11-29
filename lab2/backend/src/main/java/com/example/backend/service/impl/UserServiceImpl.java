@@ -30,6 +30,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void createUser(User user) {
+        if (userRepository.findByUsername(user.getUsername()) != null) {
+            throw new IllegalArgumentException("A user with this username already exists!");
+        }
         userRepository.save(user);
     }
 
