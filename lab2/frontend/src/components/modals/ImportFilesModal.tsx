@@ -21,20 +21,7 @@ data = { x = 1, y = -1.234, isModifiable = true }
 
 [[createQuery]]
 type = "city"
-data = { 
-    name = "Springfield", 
-    coordinates = 75, 
-    governor = { age = 30, isModifiable = true }, 
-    area = 1200.5, 
-    population = 500000, 
-    capital = true, 
-    metersAboveSeaLevel = 50, 
-    establishmentDate = "2022-01-01T00:00:00Z", 
-    telephoneCode = 12345, 
-    climate = "MONSOON", 
-    government = "NOOCRACY", 
-    isModifiable = true 
-}
+data = { name = "Springfield", coordinates = 75, governor = { age = 30, isModifiable = true }, area = 1200.5, population = 500000, capital = true, metersAboveSeaLevel = 50, establishmentDate = "2022-01-01T00:00:00Z", telephoneCode = 12345, climate = "MONSOON", government = "NOOCRACY", isModifiable = true }
 `;
 
 const ImportFilesModal: React.FC<ImportFilesModalProps> = ({ isOpen, onClose, onSuccess }) => {
