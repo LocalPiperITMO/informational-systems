@@ -180,3 +180,15 @@
 .close-button:hover {
     background: #0056b3;
 }
+
+.log-success {
+    background: lightgreen;
+}
+
+.log-error {
+    background: #ff7373; /* Slightly red */
+}
+
+.log-constraint {
+    background: #ffcc00; /* Slightly yellow */
+}

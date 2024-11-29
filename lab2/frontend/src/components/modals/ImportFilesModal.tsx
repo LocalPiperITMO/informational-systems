@@ -175,11 +175,22 @@ const ImportFilesModal: React.FC<ImportFilesModalProps> = ({ isOpen, onClose, on
                             <h3>Import Logs</h3>
                             <div className="log-content">
                                 {logs.length > 0 ? (
-                                    logs.map((log, index) => (
-                                        <pre key={index} className="log-entry">
-                                            {log}
-                                        </pre>
-                                    ))
+                                    logs.map((log, index) => {
+                                        let logClass = '';
+                                        if (log.startsWith('[SUCCESS]')) {
+                                            logClass = 'log-success';
+                                        } else if (log.startsWith('[ERROR]')) {
+                                            logClass = 'log-error';
+                                        } else if (log.startsWith('    [CONSTRAINT]')) {
+                                            logClass = 'log-constraint';
+                                        }
+
+                                        return (
+                                            <pre key={index} className={`log-entry ${logClass}`}>
+                                                {log}
+                                            </pre>
+                                        );
+                                    })
                                 ) : (
                                     <p>No logs available.</p>
                                 )}
