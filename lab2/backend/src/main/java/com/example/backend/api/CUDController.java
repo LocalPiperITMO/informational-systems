@@ -150,7 +150,8 @@ public class CUDController {
         if (!checkAuth(request.getToken())) {
             return ResponseEntity.status(403).body(null);
         }
-        if (request.getId() == null || cityService.findCityById(request.getId()) == null) return ResponseEntity.status(422).body(null);
+        if (request.getId() == null) return ResponseEntity.status(422).body(null);
+        if (cityService.findCityById(request.getId()) == null) return ResponseEntity.ok(cityService.findAllCities());
         if (!cityService.findCityById(request.getId()).getOwner().equals(jwtUtil.extractUsername(request.getToken())) && adminService.findByUser(userService.findByUsername(jwtUtil.extractUsername(request.getToken()))) == null) return ResponseEntity.status(400).body(null);
         cityService.deleteCity(request.getId());
         return ResponseEntity.ok(cityService.findAllCities());
