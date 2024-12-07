@@ -1,0 +1,92 @@
+/* src/components/modals/CreateModal.css */
+
+.modal-overlay {
+    position: fixed; /* Positioning to overlay entire screen */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7); /* Dark background with transparency */
+    display: flex; /* Center modal */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure modal is on top */
+}
+
+.modal-container {
+    background: white; /* Modal background color */
+    padding: 20px; /* Space inside modal */
+    border-radius: 8px; /* Rounded corners */
+    width: 400px; /* Fixed width */
+    max-width: 90%; /* Responsive max width */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
+
+.object-type-switcher {
+    margin-bottom: 20px; /* Space below switcher */
+    display: flex; /* Layout buttons in a row */
+    justify-content: space-around; /* Space between buttons */
+}
+
+.object-type-switcher button {
+    background-color: #007bff; /* Primary button color */
+    color: white; /* Text color */
+    border: none; /* Remove border */
+    border-radius: 4px; /* Rounded corners for buttons */
+    padding: 10px 15px; /* Space inside buttons */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth background color change */
+}
+
+.object-type-switcher button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+.button-container {
+    display: flex; /* Layout buttons in a row */
+    justify-content: space-between; /* Space between buttons */
+    margin-top: 20px; /* Space above buttons */
+}
+
+.submit-button {
+    background-color: #28a745; /* Success button color */
+    color: white; /* Text color */
+    border: none; /* Remove border */
+    border-radius: 4px; /* Rounded corners */
+    padding: 10px 15px; /* Space inside button */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth background color change */
+}
+
+.submit-button:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+.cancel-button {
+    background-color: #dc3545; /* Danger button color */
+    color: white; /* Text color */
+    border: none; /* Remove border */
+    border-radius: 4px; /* Rounded corners */
+    padding: 10px 15px; /* Space inside button */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth background color change */
+}
+
+.cancel-button:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+
+/* Optional: Style form inputs for better consistency */
+input[type="text"], input[type="number"], textarea {
+    width: 100%; /* Full width */
+    padding: 10px; /* Space inside */
+    margin-bottom: 10px; /* Space below inputs */
+    border: 1px solid #ced4da; /* Border color */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 16px; /* Font size */
+}
+
+input[type="text"]:focus, input[type="number"]:focus, textarea:focus {
+    border-color: #80bdff; /* Focus border color */
+    outline: none; /* Remove default outline */
+}

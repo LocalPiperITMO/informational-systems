@@ -1,0 +1,194 @@
+.drag-drop-zone {
+    border: 2px dashed #aaa;
+    border-radius: 8px;
+    padding: 50px;
+    text-align: center;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    min-height: 200px; /* Increased minimum height */
+    margin-bottom: 20px; /* Spacing below the dropzone */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9f9f9; /* Light background */
+}
+
+.drag-drop-zone.active {
+    background-color: #e1e1e1; /* Change color when file is dragged over */
+    border-color: #007bff;
+}
+
+.file-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border-radius: 4px;
+    margin: 8px 0;
+    cursor: move;
+}
+
+.file-item span {
+    font-size: 16px;
+}
+
+.delete-button {
+    background: transparent;
+    border: none;
+    color: red;
+    cursor: pointer;
+}
+
+.delete-button:hover {
+    color: darkred;
+}
+
+.error-message {
+    color: red;
+    margin-top: 10px;
+}
+
+.actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.submit-button, .cancel-button,  .example-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.submit-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.cancel-button, .example-button {
+    background-color: #ddd;
+    color: black;
+}
+
+.submit-button:hover {
+    background-color: #0056b3;
+}
+
+.cancel-button:hover, .example-button:hover {
+    background-color: #bbb;
+}
+
+.example-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    z-index: 1001;
+    width: 80%;
+    max-height: 80%;
+    overflow: auto;
+}
+
+.example-content {
+    text-align: left;
+}
+
+.example-code {
+    background: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: monospace;
+    white-space: pre-wrap;
+    overflow-x: auto;
+}
+
+.close-example-button {
+    margin-top: 10px;
+    padding: 5px 10px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.log-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.log-modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-height: 80%;
+    overflow-y: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.log-content {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.log-entry {
+    margin-bottom: 10px;
+    padding: 5px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 14px;
+    white-space: pre-wrap;
+}
+
+.close-button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.close-button:hover {
+    background: #0056b3;
+}
+
+.log-success {
+    background: lightgreen;
+}
+
+.log-error {
+    background: #ff7373; /* Slightly red */
+}
+
+.log-constraint {
+    background: #ffcc00; /* Slightly yellow */
+}

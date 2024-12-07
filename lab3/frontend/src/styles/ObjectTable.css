@@ -1,0 +1,16 @@
+/* src/styles/ObjectTable.css */
+
+.table-responsive {
+  max-height: 400px; /* Set a fixed height */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.table {
+  margin-bottom: 0; /* Prevent margin at the bottom of the table */
+}
+
+.table th, .table td {
+  text-align: center; /* Center the text */
+}
+
+/* No need for fixed-buttons class anymore since we're handling position differently */
