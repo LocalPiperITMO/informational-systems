@@ -1,6 +1,7 @@
 import React from "react";
 import { CommonTable } from "./ObjectTable";
 import { Column } from "react-table";
+import { toast } from "react-toastify";
 
 export interface Imop {
   id: number;
@@ -28,7 +29,9 @@ const ImopsTable: React.FC<ImopsTableProps> = ({ data }) => {
         Header: "Actions",
         id: "download",
         Cell: ({ row }: { row: any }) => (
-          <button onClick={() => handleDownload(row.original.id, row.original.filename)}>
+          <button
+          className="btn btn-primary" 
+          onClick={() => handleDownload(row.original.id, row.original.filename)}>
             Download
           </button>
         ),
@@ -56,9 +59,10 @@ const ImopsTable: React.FC<ImopsTableProps> = ({ data }) => {
   
       // Check if the response is successful
       if (!response.ok) {
-        throw new Error(`Failed to download file: ${response.statusText}`);
+        toast.error(`Failed to download file: ${response.statusText}`);
+        return;
       }
-  
+      
       // Read the response as a Blob
       const blob = await response.blob();
   
@@ -75,8 +79,9 @@ const ImopsTable: React.FC<ImopsTableProps> = ({ data }) => {
       // Cleanup
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
+      toast.success("File downloaded!")
     } catch (error) {
-      console.error("Error downloading the file:", error);
+      toast.error("Error downloading the file")
       alert("Failed to download file. Please try again.");
     }
   };
