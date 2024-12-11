@@ -163,12 +163,18 @@ public class FileProcessingService {
                 } else {
                     logs.add("[SUCCESS] File " + file.getOriginalFilename() + " processed successfully.");
                 }
-                importOperationRepository.save(new ImportOperation((isSuccess)? OperationStatus.SUCCESS : OperationStatus.ERROR, username, (isSuccess)? objCount : 0));
+                importOperationRepository.save(
+                    ImportOperation.builder()
+                    .status((isSuccess)? OperationStatus.SUCCESS : OperationStatus.ERROR)
+                    .username(username)
+                    .objectCount((isSuccess)? objCount : 0)
+                    .filename(file.getOriginalFilename())
+                    .uuid(uuid)
+                    .build());
                 finalLogs.addAll(logs);
                 finalLogs.add("[END] Processing for file " + file.getOriginalFilename() + " completed.");
             }
         }
         return new FileResponse(faultyCount,finalLogs);
-    }    
-    
+    }
 }

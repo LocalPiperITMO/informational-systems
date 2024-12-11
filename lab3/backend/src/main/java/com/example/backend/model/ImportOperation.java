@@ -31,13 +31,16 @@ public class ImportOperation {
     @NotBlank
     private String username;
 
+    @Column(nullable=false)
+    @NotBlank
+    private String filename;
+
+    @Column(nullable=false)
+    @NotBlank
+    private String uuid;
+
     @Column
     @Min(0)
     private Integer objectCount;
 
-    public ImportOperation(OperationStatus oStatus, String username, Integer oc) {
-        this.status = oStatus;
-        this.username = username;
-        this.objectCount = oc;
-    }
 }
