@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -82,7 +83,7 @@ public class FileProcessingService {
     
 
     @Transactional
-    private List<String> executeQueries(List<CreateQuery> queries, String owner, MultipartFile file, List<String> logs) throws IllegalArgumentException {
+    private List<String> executeQueries(List<CreateQuery> queries, String owner, String uuid, MultipartFile file, List<String> logs) throws IllegalArgumentException {
         Queue<Pair<String, Object>> queue = new ArrayDeque<>();
         for (CreateQuery query : queries) {
             try {
@@ -117,7 +118,7 @@ public class FileProcessingService {
 
         // Execute queue and collect results
         try {
-            logs.addAll(TMS.execute(queue, file));
+            logs.addAll(TMS.execute(queue, owner, uuid, file));
         } catch (Exception e) {
             logs.add("[ERROR] Transaction failed: " + e.getMessage());
             throw e;
@@ -133,12 +134,13 @@ public class FileProcessingService {
             List<String> logs = new ArrayList<>();
             boolean isSuccess = true;
             int objCount = 0;
+            String uuid = UUID.randomUUID().toString();
             try {
                 logs.add("[INFO] Processing file: " + file.getOriginalFilename());
                 
                 List<CreateQuery> queries = parseToml(file, logs);
                 objCount = queries.size();
-                executeQueries(queries, username, file, logs);
+                executeQueries(queries, username, uuid, file, logs);
                 
             } catch (IllegalArgumentException e) {
                 isSuccess = false;

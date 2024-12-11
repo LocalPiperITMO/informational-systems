@@ -1,6 +1,5 @@
 package com.example.backend.service;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -28,11 +27,12 @@ public class TransactionManagerService {
     @Autowired
     private MinioService minioService;
     
-    public List<String> execute(Queue<Pair<String, Object>> queue, MultipartFile file) {
+    public List<String> execute(Queue<Pair<String, Object>> queue, String username, String uuid, MultipartFile file) {
         // initial data prep
         Transaction transaction = null;
         List<String> res = new ArrayList<>();
         String objectName = file.getOriginalFilename();
+        String path = username + "/" + uuid;
         boolean fileMoved = false;
 
         try (Session session = sessionFactory.openSession()) {
@@ -41,9 +41,8 @@ public class TransactionManagerService {
             res.add("[INFO] Transaction started.");
     
             // staging file
-            InputStream inputStream = file.getInputStream();
             String contentType = file.getContentType();
-            minioService.stageFile(objectName, inputStream, contentType);
+            minioService.stageFile(path, file.getInputStream(), contentType);
             res.add("[INFO] File staged in MinIO: " + objectName);
     
             // processing objects from the queue
@@ -95,8 +94,8 @@ public class TransactionManagerService {
     
             // all objects processed, now trying to finalize file and commit
             if (!fileMoved) {
-                minioService.uploadFile(objectName, inputStream, contentType);
-                minioService.deleteFile(objectName, "staging");
+                minioService.uploadFile(path, file.getInputStream(), contentType);
+                minioService.deleteFile(path, "staging");
                 fileMoved = true;
             }
     
@@ -108,7 +107,7 @@ public class TransactionManagerService {
             // remove file + rollback
             if (!fileMoved) {
                 try {
-                    minioService.deleteFile(objectName, "bucket");
+                    minioService.deleteFile(path, "staging");
                     res.add("[INFO] Staging file deleted from MinIO due to error.");
                 } catch (Exception deleteEx) {
                     res.add("[ERROR] Failed to delete file from staging: " + deleteEx.getMessage());
@@ -116,7 +115,7 @@ public class TransactionManagerService {
             } else {
                 // If the file was already moved, remove it from the 'scripts' bucket
                 try {
-                    minioService.deleteFile(objectName, "scripts");
+                    minioService.deleteFile(path, "scripts");
                     res.add("[INFO] File deleted from scripts bucket due to error.");
                 } catch (Exception deleteEx) {
                     // WORST POSSIBLE OUTCOME
