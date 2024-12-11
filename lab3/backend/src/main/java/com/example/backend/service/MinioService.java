@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import io.minio.CopyObjectArgs;
-import io.minio.CopySource;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
@@ -33,6 +31,18 @@ public class MinioService {
         return objectName;
     }
 
+    public String stageFile(String objectName, InputStream inputStream, String contentType) throws Exception {
+        minioClient.putObject(
+            PutObjectArgs.builder()
+                .bucket("staging")
+                .object(objectName)
+                .stream(inputStream, inputStream.available(), -1)
+                .contentType(contentType)
+                .build()
+        );
+        return objectName;
+    }
+
     public InputStream downloadFile(String objectName) throws Exception {
         return minioClient.getObject(
             GetObjectArgs.builder()
@@ -42,27 +52,12 @@ public class MinioService {
         );
     }
 
-    public void deleteFile(String objectName) throws Exception {
+    public void deleteFile(String objectName, String bucket) throws Exception {
         minioClient.removeObject(
             RemoveObjectArgs.builder()
-                .bucket(bucketName)
+                .bucket(bucket)
                 .object(objectName)
                 .build()
         );
-    }
-
-    public void moveFile(String sourceObjectName, String destinationObjectName) throws Exception {
-        minioClient.copyObject(
-            CopyObjectArgs.builder()
-                .bucket(bucketName)
-                .object(destinationObjectName)
-                .source(CopySource.builder()
-                    .bucket(bucketName)
-                    .object(sourceObjectName)
-                    .build())
-                .build()
-        );
-
-        deleteFile(sourceObjectName);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.backend.service;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -9,6 +10,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.backend.model.City;
 import com.example.backend.model.Coordinates;
@@ -18,26 +20,41 @@ import com.example.backend.utils.Pair;
 import jakarta.validation.ConstraintViolationException;
 
 @Service
-public class QueueExecutorService {
+public class TransactionManagerService {
 
     @Autowired
     private SessionFactory sessionFactory;
+
+    @Autowired
+    private MinioService minioService;
     
-    public List<String> executeQueue(Queue<Pair<String, Object>> queue) {
+    public List<String> execute(Queue<Pair<String, Object>> queue, MultipartFile file) {
+        // initial data prep
         Transaction transaction = null;
         List<String> res = new ArrayList<>();
+        String objectName = file.getOriginalFilename();
+        boolean fileMoved = false;
+
         try (Session session = sessionFactory.openSession()) {
+            // transaction start
             transaction = session.beginTransaction();
             res.add("[INFO] Transaction started.");
-            
+    
+            // staging file
+            InputStream inputStream = file.getInputStream();
+            String contentType = file.getContentType();
+            minioService.stageFile(objectName, inputStream, contentType);
+            res.add("[INFO] File staged in MinIO: " + objectName);
+    
+            // processing objects from the queue
             while (!queue.isEmpty()) {
                 Pair<String, Object> p = queue.poll();
                 if (p != null && p.getKey() != null) {
                     String objectType = p.getKey();
                     Object object = p.getValue();
-                    
+    
                     res.add(String.format("[INFO] Processing object of type '%s'.", objectType));
-                    
+    
                     try {
                         switch (objectType) {
                             case "human" -> {
@@ -75,22 +92,50 @@ public class QueueExecutorService {
                     }
                 }
             }
-            
+    
+            // all objects processed, now trying to finalize file and commit
+            if (!fileMoved) {
+                minioService.uploadFile(objectName, inputStream, contentType);
+                minioService.deleteFile(objectName, "staging");
+                fileMoved = true;
+            }
+    
+            // commit
             transaction.commit();
+            res.add("[INFO] File saved in MinIO.");
             res.add("[INFO] Transaction committed successfully.");
-        } catch (ConstraintViolationException ex) {
-            // Rollback already handled, logging was done above
-            res.add("[ERROR] Validation errors encountered. Transaction rolled back.");
         } catch (Exception e) {
+            // remove file + rollback
+            if (!fileMoved) {
+                try {
+                    minioService.deleteFile(objectName, "bucket");
+                    res.add("[INFO] Staging file deleted from MinIO due to error.");
+                } catch (Exception deleteEx) {
+                    res.add("[ERROR] Failed to delete file from staging: " + deleteEx.getMessage());
+                }
+            } else {
+                // If the file was already moved, remove it from the 'scripts' bucket
+                try {
+                    minioService.deleteFile(objectName, "scripts");
+                    res.add("[INFO] File deleted from scripts bucket due to error.");
+                } catch (Exception deleteEx) {
+                    // WORST POSSIBLE OUTCOME
+                    res.add("[ERROR] Failed to delete file from scripts: " + deleteEx.getMessage());
+                }
+            }
+            
+            // Rollback transaction if something failed
             if (transaction != null) {
                 transaction.rollback();
             }
+    
             res.add(String.format("[ERROR] Transaction rolled back due to error: %s", e.getMessage()));
         } finally {
             res.add("[END] Queue processing completed.");
         }
         return res;
     }
+    
 
     private void processCity(Session session, City city, List<String> res) {
         try {

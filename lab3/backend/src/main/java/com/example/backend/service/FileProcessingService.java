@@ -32,7 +32,7 @@ public class FileProcessingService {
     private EntityParsingService entityParsingService;
 
     @Autowired
-    private QueueExecutorService queueExecutorService;
+    private TransactionManagerService TMS;
 
     @Autowired
     private ImportOperationRepository importOperationRepository;
@@ -82,7 +82,7 @@ public class FileProcessingService {
     
 
     @Transactional
-    private List<String> executeQueries(List<CreateQuery> queries, String owner, List<String> logs) throws IllegalArgumentException {
+    private List<String> executeQueries(List<CreateQuery> queries, String owner, MultipartFile file, List<String> logs) throws IllegalArgumentException {
         Queue<Pair<String, Object>> queue = new ArrayDeque<>();
         for (CreateQuery query : queries) {
             try {
@@ -117,7 +117,7 @@ public class FileProcessingService {
 
         // Execute queue and collect results
         try {
-            logs.addAll(queueExecutorService.executeQueue(queue));
+            logs.addAll(TMS.execute(queue, file));
         } catch (Exception e) {
             logs.add("[ERROR] Transaction failed: " + e.getMessage());
             throw e;
@@ -138,7 +138,7 @@ public class FileProcessingService {
                 
                 List<CreateQuery> queries = parseToml(file, logs);
                 objCount = queries.size();
-                executeQueries(queries, username, logs);
+                executeQueries(queries, username, file, logs);
                 
             } catch (IllegalArgumentException e) {
                 isSuccess = false;

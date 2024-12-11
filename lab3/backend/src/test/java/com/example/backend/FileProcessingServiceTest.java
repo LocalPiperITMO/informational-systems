@@ -22,7 +22,7 @@ import com.example.backend.model.Human;
 import com.example.backend.repo.ImportOperationRepository;
 import com.example.backend.service.EntityParsingService;
 import com.example.backend.service.FileProcessingService;
-import com.example.backend.service.QueueExecutorService;
+import com.example.backend.service.TransactionManagerService;
 
 class FileProcessingServiceTest {
 
@@ -30,7 +30,7 @@ class FileProcessingServiceTest {
     private EntityParsingService entityParsingService;
 
     @Mock
-    private QueueExecutorService queueExecutorService;
+    private TransactionManagerService TMS;
 
     @Mock
     private ImportOperationRepository importOperationRepository;
@@ -65,7 +65,7 @@ class FileProcessingServiceTest {
 
         when(entityParsingService.buildHuman(anyMap(), anyString())).thenReturn(mockHuman);
         when(entityParsingService.buildCity(anyMap(), anyString())).thenReturn(mockCity);
-        when(queueExecutorService.executeQueue(any())).thenReturn(List.of(
+        when(TMS.execute(any(), file)).thenReturn(List.of(
                 "[SUCCESS] Human created successfully.",
                 "[SUCCESS] City created successfully."
         ));
@@ -95,7 +95,7 @@ class FileProcessingServiceTest {
         City mockCity = new City();
     
         when(entityParsingService.buildCity(anyMap(), anyString())).thenReturn(mockCity);
-        when(queueExecutorService.executeQueue(any())).thenThrow(
+        when(TMS.execute(any(), file)).thenThrow(
             new IllegalArgumentException("Validation failed for object: [name must not be blank, area must be positive]")
         );
     
@@ -175,7 +175,7 @@ class FileProcessingServiceTest {
             .thenReturn(mockCity1) // First city
             .thenReturn(mockCity2); // Second city (duplicate)
 
-        when(queueExecutorService.executeQueue(any())).thenThrow(
+        when(TMS.execute(any(), file)).thenThrow(
             new IllegalArgumentException("A city with the name 'Springfield' already exists.")
         );
 
