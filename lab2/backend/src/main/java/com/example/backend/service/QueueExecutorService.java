@@ -58,7 +58,6 @@ public class QueueExecutorService {
                             }
                         }
                     } catch (ConstraintViolationException ex) {
-                        // Handle validation errors specifically
                         res.add("[ERROR] Validation failed for object:");
                         ex.getConstraintViolations().forEach(violation -> {
                             String errorMessage = String.format(
@@ -69,10 +68,10 @@ public class QueueExecutorService {
                             );
                             res.add(errorMessage);
                         });
-                        throw ex; // Ensure rollback still occurs
+                        throw ex;
                     } catch (IllegalArgumentException | org.hibernate.HibernateException ex) {
                         res.add(String.format("[ERROR] Failed to save '%s': %s", objectType, ex.getMessage()));
-                        throw ex; // Ensure rollback still occurs
+                        throw ex;
                     }
                 }
             }
