@@ -11,10 +11,10 @@ const Header: React.FC = () => {
                         <h1>Informational Systems</h1>
                     </Col>
                     <Col className="text-center">
-                        <h2>Lab2</h2>
+                        <h2>Lab3</h2>
                     </Col>
                     <Col className="text-end">
-                        <h3>Variant 120861</h3>
+                        <h3>Variant 120869</h3>
                     </Col>
                 </Row>
             </Container>
