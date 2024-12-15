@@ -1,5 +1,7 @@
 package com.example.backend.service;
 
+
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -15,14 +17,19 @@ public class HealthCheckService {
     }
 
     public boolean checkPostgresReadiness() {
-        Integer result = jdbcTemplate.queryForObject("SELECT 1", Integer.class);
-        return !(result == null || result != 1);
+        try {
+            Integer result = jdbcTemplate.queryForObject("SELECT 1", Integer.class);
+            return result != null && result == 1;
+        } catch (DataAccessResourceFailureException e) {
+            return false;
+        }
     }
+    
 
     public boolean checkMinioReadiness() {
         try {
             RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<String> response = restTemplate.getForEntity("http://minio-server/minio/health/ready", String.class);
+            ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:9000/minio/health/live", String.class);
             return response.getStatusCode().is2xxSuccessful();
         } catch (RestClientException e) {
             return false;
