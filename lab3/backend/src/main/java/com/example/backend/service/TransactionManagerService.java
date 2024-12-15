@@ -88,7 +88,8 @@ public class TransactionManagerService {
                                 res.add("[SUCCESS] City created successfully.");
                             }
                             default -> {
-                                res.add(String.format("[ERROR] Unknown object type '%s'. Skipping.", objectType));
+                                res.add(String.format("[ERROR] Unknown object type '%s'.", objectType));
+                                throw new IllegalArgumentException("Unknown object type.");
                             }
                         }
                     } catch (ConstraintViolationException ex) {
