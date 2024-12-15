@@ -118,7 +118,7 @@ public class FileProcessingService {
 
         // Execute queue and collect results
         try {
-            logs.addAll(TMS.execute(queue, owner, uuid, file));
+            logs.addAll(TMS.startExecution(queue, owner, uuid, file));
         } catch (Exception e) {
             logs.add("[ERROR] Transaction failed: " + e.getMessage());
             throw e;

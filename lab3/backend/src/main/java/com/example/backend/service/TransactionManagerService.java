@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.backend.exceptions.ServiceNotReadyException;
 import com.example.backend.model.City;
 import com.example.backend.model.Coordinates;
 import com.example.backend.model.Human;
@@ -26,7 +27,24 @@ public class TransactionManagerService {
 
     @Autowired
     private MinioService minioService;
-    
+
+    @Autowired
+    private HealthCheckService healthCheckService;
+
+    public List<String> prepare() {
+        List<String> res = new ArrayList<>();
+        res.add("[INFO] Checking readiness...");
+        boolean postgresReady = healthCheckService.checkPostgresReadiness();
+        boolean minioReady = healthCheckService.checkMinioReadiness();
+        if (!postgresReady) {
+            throw new ServiceNotReadyException("PostgreSQL failed readiness check");
+        } else if (!minioReady) {
+            throw new ServiceNotReadyException("MinIO failed readiness check");
+        }
+        res.add("[INFO] All services ready.");
+        return res;
+    }
+
     public List<String> execute(Queue<Pair<String, Object>> queue, String username, String uuid, MultipartFile file) {
         // initial data prep
         Transaction transaction = null;
@@ -131,6 +149,17 @@ public class TransactionManagerService {
             res.add(String.format("[ERROR] Transaction rolled back due to error: %s", e.getMessage()));
         } finally {
             res.add("[END] Queue processing completed.");
+        }
+        return res;
+    }
+    
+    public List<String> startExecution(Queue<Pair<String, Object>> queue, String username, String uuid, MultipartFile file) {
+        List<String> res = new ArrayList<>();
+        try {
+            res.addAll(prepare());
+            res.addAll(execute(queue, username, uuid, file));   
+        } catch (ServiceNotReadyException e) {
+            res.add("[ERROR]" + " " + e.getMessage());
         }
         return res;
     }
