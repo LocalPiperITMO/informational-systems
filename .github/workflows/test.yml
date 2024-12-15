@@ -1,4 +1,4 @@
-name: Run Tests for backend in lab2
+name: Run Tests for backend in lab3
 
 on:
   push:
@@ -17,9 +17,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Change directory to lab2/backend
-      - name: Set working directory to lab2/backend
-        working-directory: lab2/backend
+      # Change directory to lab3/backend
+      - name: Set working directory to lab3/backend
+        working-directory: lab3/backend
         run: pwd # Print the current directory for debugging
 
       # Set up Java
@@ -40,5 +40,5 @@ jobs:
 
       # Run tests
       - name: Run tests in backend
-        working-directory: lab2/backend
+        working-directory: lab3/backend
         run: ./mvnw test
