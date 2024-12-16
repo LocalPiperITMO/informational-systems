@@ -164,7 +164,7 @@ public class TransactionManagerService {
         }
         return res;
     }
-    
+
 
     private void processCity(Session session, City city, List<String> res) {
         try {
